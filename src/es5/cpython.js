@@ -14,33 +14,123 @@ Object.defineProperty(exports, "__esModule", {
 
 var _SomeClass = require("./math");
 
-var _PyCalls2 = require("./PyCalls");
+var _PyCalls = require("./PyCalls");
 
-var Emscripten = (function (_PyCalls) {
-  function Emscripten(opts) {
-    _classCallCheck(this, Emscripten);
+var _EventEmitter2 = require("events");
 
-    _get(Object.getPrototypeOf(Emscripten.prototype), "constructor", this).call(this);
+"use strict";
+
+var CPython = (function (_EventEmitter) {
+  function CPython(opts) {
+    _classCallCheck(this, CPython);
+
+    _get(Object.getPrototypeOf(CPython.prototype), "constructor", this).call(this);
     //Emscripten.init.call(this)
     this.opts = opts
     //super()
     ;
   }
 
-  _inherits(Emscripten, _PyCalls);
+  _inherits(CPython, _EventEmitter);
 
-  _createClass(Emscripten, [{
-    key: "hello",
-    value: function hello() {
-      console.log("hello from Emscripten");
-      _get(Object.getPrototypeOf(Emscripten.prototype), "helloPy", this).call(this);
+  _createClass(CPython, [{
+    key: "anyFile",
+
+    /**
+    *
+    */
+    value: function anyFile() {}
+  }, {
+    key: "simpleString",
+
+    /**
+    *
+    */
+    value: function simpleString() {}
+  }, {
+    key: "simpleFile",
+
+    /**
+    *
+    */
+    value: function simpleFile(argv) {
+      var args = Array.prototype.slice.call(argv);
+
+      if (args.length > 2) {
+        var err = new Error("Function can only take two paramters.");
+        this.emit("error", err);
+      }
+      return;
     }
+  }, {
+    key: "interactiveOne",
+
+    /**
+    *
+    */
+    value: function interactiveOne() {}
+  }, {
+    key: "interactiveLoop",
+
+    /**
+    *
+    */
+    value: function interactiveLoop() {}
+  }, {
+    key: "simpleParseString",
+
+    /**
+    *
+    */
+    value: function simpleParseString() {}
+  }, {
+    key: "simpleParseFile",
+
+    /**
+    *
+    */
+    value: function simpleParseFile() {}
+  }, {
+    key: "string",
+
+    /**
+    *
+    */
+    value: function string() {}
+  }, {
+    key: "file",
+
+    /**
+    *
+    */
+    value: function file() {}
+  }, {
+    key: "compileString",
+
+    /**
+    *
+    */
+    value: function compileString() {}
+  }, {
+    key: "evalCode",
+
+    /**
+    *
+    */
+    value: function evalCode() {}
+  }, {
+    key: "evalFrame",
+
+    /**
+    *
+    */
+    value: function evalFrame() {}
   }]);
 
-  return Emscripten;
-})(_PyCalls2.PyCalls);
+  return CPython;
+})(_EventEmitter2.EventEmitter);
 
-exports.Emscripten = Emscripten;
+exports.CPython = CPython;
 
-var inst = new Emscripten();
+var inst = new CPython();
 module.exports = inst;
