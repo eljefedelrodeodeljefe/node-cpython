@@ -1,0 +1,45 @@
+{
+  "name": "node-cpython",
+  "version": "0.1.0-alpha",
+  "description": "Native bindings to run python in its native interpreter.",
+  "main": "index.js",
+  "bin": {
+    "emscripten": "./bin/cpython"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eljefedelrodeodeljefe/node-cpython.git"
+  },
+  "keywords": [
+    "python",
+    "native",
+    "bindings"
+  ],
+  "author": "Robert Jefe Lindstädt <robert.lindstaedt@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eljefedelrodeodeljefe/node-cpython/issues"
+  },
+  "homepage": "https://github.com/eljefedelrodeodeljefe/node-cpython",
+  "dependencies": {
+    "commander": "^2.7.1",
+    "minimist": "^1.1.1",
+    "nan": "^1.7.0",
+    "pangyp": "^2.1.0"
+  },
+  "devDependencies": {
+    "babel": "^5.1.9",
+    "chai": "^2.2.0",
+    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-karma": "0.0.4",
+    "gulp-mocha": "^2.0.1",
+    "karma": "^0.12.31",
+    "karma-babel-preprocessor": "^5.0.1",
+    "liftoff": "^2.0.3",
+    "should": "^5.2.0"
+  }
+}
