@@ -1,6 +1,6 @@
 {
   "name": "node-cpython",
-  "version": "0.1.0-alpha",
+  "version": "0.1.1-alpha",
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "bin": {
