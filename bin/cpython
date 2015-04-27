@@ -1,0 +1,45 @@
+#!/usr/bin/env node --harmony
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('commander');
+
+program.command('compile [file]')
+  .description('Some help.')
+  .action(function(file) {
+    console.log('hello' + file)
+});
+
+
+
+// custom help below<
+// program.on('--help', function(){
+//   console.log('  Examples:');
+//   console.log('');
+//   console.log('    $ custom-help --help');
+//   console.log('    $ custom-help -h');
+//   console.log('');
+// });
+
+/**
+* if invalid command is given...
+*/
+program
+  .command('')
+  .action(function(env){
+    console.log('Enter a Valid command');
+    // terminate(true);
+});
+/**
+* if no command is given ...
+*/
+// if (typeof cmdValue === 'undefined') {
+//    console.error('no command given!');
+//    process.exit(1);
+// }
+/**
+* TODO: FInd out what its functionality is
+*/
+program.parse(process.argv);
