@@ -5,7 +5,9 @@
       "target_name": "hello",
       "sources": [ "src/hello.cc" ],
       "include_dirs": [
-        "<!(node -e \"require('nan')\")"
+        "<!(node -e \"require('nan')\")",
+        'lib/cpython/Include',
+        'lib/cpython'
       ]
     }
   ]
