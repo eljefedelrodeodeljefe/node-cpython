@@ -25,6 +25,7 @@ var CPython = (function (_EventEmitter) {
     _classCallCheck(this, CPython);
 
     _get(Object.getPrototypeOf(CPython.prototype), "constructor", this).call(this);
+
     //Emscripten.init.call(this)
     this.opts = opts
     //super()
@@ -53,14 +54,17 @@ var CPython = (function (_EventEmitter) {
     /**
     *
     */
-    value: function simpleFile(argv) {
-      var args = Array.prototype.slice.call(argv);
+    value: function simpleFile(file, filedesciptor, callback) {
+      var args = Array.prototype.slice.call(arguments);
 
       if (args.length > 2) {
+        var err = "errpr";
         var err = new Error("Function can only take two paramters.");
+
         this.emit("error", err);
       }
-      return;
+
+      return this;
     }
   }, {
     key: "interactiveOne",
