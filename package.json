@@ -7,6 +7,7 @@
     "test": "test"
   },
   "dependencies": {
+    "bindings": "^1.2.1",
     "commander": "^2.8.1",
     "minimist": "^1.1.1",
     "nan": "^1.8.4"
