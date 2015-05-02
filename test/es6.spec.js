@@ -16,17 +16,21 @@ describe('CPython class', function () {
     cpython.emit('testevent', "test")
   });
 
-  it('Throws errors through EventEmitter', function (done) {
-    try {
-      cpython.simpleFile('someargument1', 'someargument2', 'someargument2')
-    } catch (e) {
-      cpyton.on('error', function(err) {
-        expect(err).to.throw(Error)
+  it('Throws errors through EventEmitter if more than 2 args', function (done) {
+      cpython.on('error', function(err) {
+        expect(err).to.be.an.instanceof(Error)
         done()
       })
-    } finally {
-      done()
-    }
-
+      cpython.simpleFile('someargument1', 'someargument2', 'someargument3')
   });
+
+  it('Throws no error with less than 3 args', function (done) {
+      cpython.on('error', function(err) {
+        expect(err).to.be.undefined;
+      })
+      cpython.simpleFile('someargument1','some')
+      done()
+  });
+
+
 });

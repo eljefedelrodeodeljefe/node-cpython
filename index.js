@@ -4,6 +4,3 @@
 * detect its support and require conditionally
 */
 module.exports = require('./src/es5/cpython')
-
-
-//e.hello()
