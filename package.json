@@ -1,41 +1,45 @@
 {
-  "name": "node-cpython",
+  "name": "cpython",
   "version": "0.1.1-alpha",
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
-  "bin": {
-    "emscripten": "./bin/cpython"
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+      "commander": "^2.8.1",
+      "minimist": "^1.1.1",
+      "nan": "^1.8.4"
+  },
+  "devDependencies": {
+    "babel": "^5.1.13",
+    "gulp": "^4.0.0-alpha.1",
+    "del": "^1.1.1",
+    "chai": "^2.3.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-mocha": "^2.0.1",
+    "gulp-util": "^3.0.4",
+    "gulp-git": "^1.2.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp mocha",
+    "install": "node-gyp rebuild"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/eljefedelrodeodeljefe/node-cpython.git"
+    "url": "git+https://github.com/eljefedelrodeodeljefe/node-cpython.git"
   },
   "keywords": [
-    "python",
+    "bindings",
     "native",
-    "bindings"
+    "cpython",
+    "python"
   ],
   "author": "Robert Jefe Lindstädt <robert.lindstaedt@gmail.com>",
   "license": "MIT",
+  "gypfile": true,
   "bugs": {
     "url": "https://github.com/eljefedelrodeodeljefe/node-cpython/issues"
   },
-  "homepage": "https://github.com/eljefedelrodeodeljefe/node-cpython",
-  "dependencies": {
-    "commander": "^2.7.1",
-    "minimist": "^1.1.1",
-    "nan": "^1.7.0"
-  },
-  "devDependencies": {
-    "babel": "^5.1.9",
-    "chai": "^2.2.0",
-    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
-    "gulp-babel": "^5.1.0",
-    "gulp-karma": "0.0.4",
-    "gulp-mocha": "^2.0.1",
-    "should": "^5.2.0"
-  }
+  "homepage": "https://github.com/eljefedelrodeodeljefe/node-cpython#readme"
 }
