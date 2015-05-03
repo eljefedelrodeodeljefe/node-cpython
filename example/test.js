@@ -1,5 +1,5 @@
 'use strict';
-var module = require('./index');
+var module = require('../index');
 
 
 module.on('error', function(err) {console.log(err);})
