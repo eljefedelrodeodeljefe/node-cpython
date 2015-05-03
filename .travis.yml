@@ -14,4 +14,4 @@ deploy:
   api_key:
     secure: rOohrnlI0+5mBNLF4seS0EaqAjji6mf3v2nyYQOw3bPfX17AZ+S68QVpRC83aZ5xxqoXclODtbr0Zte+zPQ8N+YUrYFvhywmvv2ge9zmRXaVRyjtQudOk74BNFldr+HIprSf4TWrs0mRuM74rGmpQ6dkRmlHYlaTPePM5/vNLKU=
   on:
-    repo: cpython
+    branch: master
