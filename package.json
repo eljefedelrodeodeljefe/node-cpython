@@ -1,6 +1,6 @@
 {
   "name": "cpython",
-  "version": "0.1.1-alpha",
+  "version": "0.1.2-alpha",
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "directories": {
@@ -18,7 +18,9 @@
     "del": "^1.1.1",
     "gulp": "gulpjs/gulp#4.0",
     "gulp-babel": "^5.1.0",
+    "gulp-concat": "^2.5.2",
     "gulp-git": "^1.2.1",
+    "gulp-jsdoc-to-markdown": "^1.0.2",
     "gulp-mocha": "^2.0.1",
     "gulp-util": "^3.0.4"
   },
