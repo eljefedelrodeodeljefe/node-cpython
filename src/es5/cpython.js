@@ -20,6 +20,13 @@ var _EventEmitter2 = require("events");
 
 "use strict";
 
+var nanCPython = require("bindings")("../build/Release/cpython");
+
+/**
+ * Implements the CPython Python interpreter
+ * @class CPython
+ */
+
 var CPython = (function (_EventEmitter) {
   function CPython(opts) {
     _classCallCheck(this, CPython);
@@ -45,9 +52,43 @@ var CPython = (function (_EventEmitter) {
     key: "simpleString",
 
     /**
+    * Executes the Python source code from command.
+    * See also [Python docs]{@link https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_SimpleStringFlags} for Reference
     *
+    * @example
+    * 'use strict';
+    * var cpython = require('cpython');
+    *
+    * cpython.on('error', function(err) {console.log(err);})
+    *
+    * cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", "hello")
+    *
+    * @param {string} str - String of python denoted code
+    * @param {string|string[]} [flags=null] - Compiler flag or array of flags for CPython
+    * @param {callback} [cb] - Optional callback
+    * TODO: actually implement compiler flags and callbacks
     */
-    value: function simpleString() {}
+    value: function simpleString(str, flags, cb) {
+      var args = Array.prototype.slice.call(arguments);
+
+      // TODO: check if condition is valid at all (after first review: seems to be the case)
+      if (args.length != 1 || typeof str != "string" || str instanceof String) {
+
+        var err = new Error("Method 'simpleString' expects one argument, which must be a string");
+        err.name = "InputError";
+
+        this.emit("error", err);
+        return;
+      }
+
+      /**
+      * call simpleString from below and pass args as string
+      */
+      nanCPython.simpleString(str);
+
+      // TODO: Check if chainability is actually usuful
+      return this;
+    }
   }, {
     key: "simpleFile",
 
@@ -58,10 +99,10 @@ var CPython = (function (_EventEmitter) {
       var args = Array.prototype.slice.call(arguments);
 
       if (args.length > 2) {
-        var err = "errpr";
         var err = new Error("Function can only take two paramters.");
 
         this.emit("error", err);
+        return;
       }
 
       return this;
