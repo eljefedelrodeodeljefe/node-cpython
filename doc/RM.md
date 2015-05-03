@@ -2,15 +2,15 @@
 
 Native bindings to run python in its native interpreter.
 
-This Library is in alpha status.
+This Library is in alpha status. **Do not use for fun or profit**
 
 [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython)
 
-[![NPM](https://nodei.co/npm/cpython.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/cpython/) [![NPM](https://nodei.co/npm-dl/cpython.png?months=6&height=2)](https://nodei.co/npm/cpython/)
+[![NPM](https://nodei.co/npm/cpython.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/cpython/)[![NPM](https://nodei.co/npm-dl/cpython.png?months=6&height=2)](https://nodei.co/npm/cpython/)
 
 ## TL;DR
 
-Sometimes you want to use Python scripts or even whole libraries, but you don't want to rely on `child_process.exec()` or `chold_process.spawn()`. This module initializes the standard Python interpreter and passes Py code to it.
+Sometimes you want to use Python scripts or even whole libraries, but you don't want to rely on `child_process.exec()` or `child_process.spawn()`. This module initializes the standard Python interpreter and passes Py code to it.
 
 ## Implementation Status
 | Method | implemented |
