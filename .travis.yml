@@ -1,17 +1,15 @@
 language: node_js
 node_js:
-  - iojs
-services:
+- iojs
+services: 
 before_script:
-  - npm install gulpjs/gulp-cli#4.0 -g
+- npm install gulpjs/gulp-cli#4.0 -g
 script:
-  - gulp mocha
-#  - ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/**/*.spec.js
-# after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+- gulp mocha
 deploy:
   provider: npm
   email: devraindance@gmail.com
   api_key:
-    secure: rOohrnlI0+5mBNLF4seS0EaqAjji6mf3v2nyYQOw3bPfX17AZ+S68QVpRC83aZ5xxqoXclODtbr0Zte+zPQ8N+YUrYFvhywmvv2ge9zmRXaVRyjtQudOk74BNFldr+HIprSf4TWrs0mRuM74rGmpQ6dkRmlHYlaTPePM5/vNLKU=
+    secure: bcQR5Ks4qh2gH9W3Em+NAqsQKaTYxsS5aMmXLsllJW5suzOh80Cf8FqLunNx5iMjfzh0tOKSqcyn94640jqOnxCO97pN8bHMWoaA9Q8E2b6f/JgEkmS1HxNf+CNLSsM3QFiG1UbRjpuAXoKl9OV3bjY25k5e8wDfFNmUNVMsXyI=
   on:
-    branch: master
+    repo: eljefedelrodeodeljefe/node-cpython
