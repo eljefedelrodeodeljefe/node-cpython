@@ -1,6 +1,10 @@
 {
   "name": "cpython",
+<<<<<<< Updated upstream
   "version": "0.1.5-alpha",
+=======
+  "version": "0.1.8-alpha",
+>>>>>>> Stashed changes
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "directories": {

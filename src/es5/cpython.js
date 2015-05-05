@@ -61,13 +61,13 @@ var CPython = (function (_EventEmitter) {
     *
     * cpython.on('error', function(err) {console.log(err);})
     *
-    * cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", "hello")
+    * cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n")
     *
     * @param {string} str - String of python denoted code
     * @param {string|string[]} [flags=null] - Compiler flag or array of flags for CPython
     * @param {callback} [cb] - Optional callback
-    * TODO: actually implement compiler flags and callbacks
     */
+    // TODO: actually implement compiler flags and callbacks
     value: function simpleString(str, flags, cb) {
       var args = Array.prototype.slice.call(arguments);
 
@@ -93,18 +93,43 @@ var CPython = (function (_EventEmitter) {
     key: "simpleFile",
 
     /**
+    * Executes the Python source code from file.
+    * Similar to simpleString(), but the Python source code is read from a file
+    * instead of an in-memory string. filename should be the name of the file.
+    * See also [Python docs]{@link https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_SimpleFileExFlags} for Reference
     *
+    * @example
+    * 'use strict';
+    * var cpython = require('cpython');
+    *
+    * cpython.on('error', function(err) {console.log(err);})
+    *
+    * cpython.simpleFile("./example/multiply.py")
+    *
+    * @param {string} filename - String of filename
+    * @param {string|string[]} [flags=null] - Compiler flag or array of flags for CPython
+    * @param {callback} [cb] - Optional callback
     */
-    value: function simpleFile(file, filedesciptor, callback) {
+    // TODO: actually implement compiler flags and callbacks
+    value: function simpleFile(filePath, filedesciptor, callback) {
       var args = Array.prototype.slice.call(arguments);
 
-      if (args.length > 2) {
-        var err = new Error("Function can only take two paramters.");
+      // TODO: check if condition is valid at all (after first review: seems to be the case)
+      if (args.length != 1 || typeof str != "string" || str instanceof String) {
+
+        var err = new Error("Method 'simpleString' expects one argument, which must be a string");
+        err.name = "InputError";
 
         this.emit("error", err);
         return;
       }
 
+      /**
+      * call simpleFile from below and pass args as string
+      */
+      nanCPython.simpleFile(filePath);
+
+      // TODO: Check if chainability is actually usuful
       return this;
     }
   }, {
