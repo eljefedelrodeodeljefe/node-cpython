@@ -1,6 +1,10 @@
 {
   "name": "cpython",
+<<<<<<< HEAD
   "version": "0.1.9-alpha",
+=======
+  "version": "0.1.7-alpha",
+>>>>>>> origin/master
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "directories": {
