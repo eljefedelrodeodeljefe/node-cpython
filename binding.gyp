@@ -2,10 +2,9 @@
 {
   "targets": [
     {
-      "target_name": "cpython",
+      "target_name": "node-cpython",
       "sources": [
-        "src/simpleString.cc",
-        "src/simpleFile.cc"
+        "src/node-cpython.cc"
         ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
