@@ -6,7 +6,7 @@
   * [new CPython()](#new_CPython_new)
   * [.anyFile()](#CPython#anyFile)
   * [.simpleString(str, [flags], [cb])](#CPython#simpleString)
-  * [.simpleFile()](#CPython#simpleFile)
+  * [.simpleFile(filepath, filename, [flags], [cb])](#CPython#simpleFile)
   * [.interactiveOne()](#CPython#interactiveOne)
   * [.interactiveLoop()](#CPython#interactiveLoop)
   * [.simpleParseString()](#CPython#simpleParseString)
@@ -44,11 +44,35 @@ var cpython = require('cpython');
 
 cpython.on('error', function(err) {console.log(err);})
 
-cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", "hello")
+cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n")
 ```
 <a name="CPython#simpleFile"></a>
-### cPython.simpleFile()
+### cPython.simpleFile(filepath, filename, [flags], [cb])
+Executes the Python source code from file.
+Similar to simpleString(), but the Python source code is read from a file
+instead of an in-memory string. filename should be the name of the file.
+See also [Python docs](https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_SimpleFileExFlags) for Reference
+
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| filepath | <code>string</code> |  | String of filepath |
+| filename | <code>string</code> |  | String of filename |
+| [flags] | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | <code>null</code> | Compiler flag or array of flags for CPython |
+| [cb] | <code>callback</code> |  | Optional callback |
+
+**Example**  
+```js
+'use strict';
+var cpython = require('cpython');
+
+cpython.on('error', function(err) {console.log(err);})
+
+cpython.simpleFile("example/multiply.py", "multiply.py")
+// passing the filename seems to be a necessity of the C-API
+// TODO: this will only last very shortly and be made optional
+```
 <a name="CPython#interactiveOne"></a>
 ### cPython.interactiveOne()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  

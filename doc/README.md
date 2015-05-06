@@ -12,12 +12,12 @@ This Library is in alpha status. **Do not use for fun or profit**
 
 Sometimes you want to use Python scripts or even whole libraries, but you don't want to rely on `child_process.exec()` or `child_process.spawn()`. This module initializes the standard Python interpreter and passes Py code to it.
 
-## Implementation Status
+## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
 | .anyFile() | -  |
-| .simpleString(str, [flags], [cb]) | **yes** |
-| .simpleFile() | *pending* |
+| .simpleString(str, [flags], [cb]) | **yes** \* |
+| .simpleFile() | **yes** \* |
 | .interactiveOne() | - |
 | .interactiveLoop() | - |
 | .simpleParseString() | - |
@@ -27,6 +27,8 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .compileString() | - |
 | .evalCode() | - |
 | .evalFrame() | - |
+
+\* Will be extended, but not directly in JS user space. It will be optional to pass more than the required params so the functionality of the CPython-API will be implicitly usable. This includes closeits and compiler flags.
 
 ## Introduction
 
@@ -55,5 +57,10 @@ This module is currently tested on:
 | Mac OS X | - | **yes** |
 | Linux | - | - |
 | Windows | - | - |
+
+## Roadmap
+
+Please see [list of the implemented methods](#status) for now.
+
 
 ## API
