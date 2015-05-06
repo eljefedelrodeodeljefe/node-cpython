@@ -12,12 +12,12 @@ This Library is in alpha status. **Do not use for fun or profit**
 
 Sometimes you want to use Python scripts or even whole libraries, but you don't want to rely on `child_process.exec()` or `child_process.spawn()`. This module initializes the standard Python interpreter and passes Py code to it.
 
-## Implementation Status
+## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
 | .anyFile() | -  |
-| .simpleString(str, [flags], [cb]) | **yes** |
-| .simpleFile() | *pending* |
+| .simpleString(str, [flags], [cb]) | **yes** \* |
+| .simpleFile() | **yes** \* |
 | .interactiveOne() | - |
 | .interactiveLoop() | - |
 | .simpleParseString() | - |
@@ -27,6 +27,8 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .compileString() | - |
 | .evalCode() | - |
 | .evalFrame() | - |
+
+\* Will be extended, but not directly in JS user space. It will be optional to pass more than the required params so the functionality of the CPython-API will be implicitly usable. This includes closeits and compiler flags.
 
 ## Introduction
 
@@ -56,6 +58,11 @@ This module is currently tested on:
 | Linux | - | - |
 | Windows | - | - |
 
+## Roadmap
+
+Please see [list of the implemented methods](#status) for now.
+
+
 ## API
 
 <a name="CPython"></a>
@@ -66,7 +73,7 @@ This module is currently tested on:
   * [new CPython()](#new_CPython_new)
   * [.anyFile()](#CPython#anyFile)
   * [.simpleString(str, [flags], [cb])](#CPython#simpleString)
-  * [.simpleFile()](#CPython#simpleFile)
+  * [.simpleFile(filepath, filename, [flags], [cb])](#CPython#simpleFile)
   * [.interactiveOne()](#CPython#interactiveOne)
   * [.interactiveLoop()](#CPython#interactiveLoop)
   * [.simpleParseString()](#CPython#simpleParseString)
@@ -104,11 +111,35 @@ var cpython = require('cpython');
 
 cpython.on('error', function(err) {console.log(err);})
 
-cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", "hello")
+cpython.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n")
 ```
 <a name="CPython#simpleFile"></a>
-### cPython.simpleFile()
+### cPython.simpleFile(filepath, filename, [flags], [cb])
+Executes the Python source code from file.
+Similar to simpleString(), but the Python source code is read from a file
+instead of an in-memory string. filename should be the name of the file.
+See also [Python docs](https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_SimpleFileExFlags) for Reference
+
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| filepath | <code>string</code> |  | String of filepath |
+| filename | <code>string</code> |  | String of filename |
+| [flags] | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | <code>null</code> | Compiler flag or array of flags for CPython |
+| [cb] | <code>callback</code> |  | Optional callback |
+
+**Example**  
+```js
+'use strict';
+var cpython = require('cpython');
+
+cpython.on('error', function(err) {console.log(err);})
+
+cpython.simpleFile("example/multiply.py", "multiply.py")
+// passing the filename seems to be a necessity of the C-API
+// TODO: this will only last very shortly and be made optional
+```
 <a name="CPython#interactiveOne"></a>
 ### cPython.interactiveOne()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
