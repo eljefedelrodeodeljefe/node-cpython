@@ -19,6 +19,45 @@ export class CPython extends EventEmitter {
   }
 
   /**
+  * Executes any number of Python source code files.
+  * This is JS userland API and automates and abstracts many choices of the
+  * below C-API. If you want to have more control, please use the below methods.
+  *
+  * @example
+  * 'use strict';
+  * var cpython = require('cpython');
+  *
+  * cpython.on('error', function(err) {console.log(err);})
+  *
+  * cpython.run('[example/**\/*.py', function(result) { console.log(result) })
+  *
+  * @param {string|string[]} glob - a glob of valid .py files
+  * @param {callback} [cb] - Optional callback
+  */
+  // TODO: actually implement callbacks
+  run(glob, callback) {
+    var args = Array.prototype.slice.call(arguments);
+
+    // //TODO: check if condition is valid at all (after first review: seems to be the case)
+    // if (args.length != 2 || typeof filepath != 'string' || filepath instanceof String) {
+    //
+    //   var err = new Error("Method 'simpleString' expects one argument, which must be a string")
+    //   err.name = "InputError"
+    //
+    //   this.emit('error', err)
+    //   return
+    // }
+
+    /**
+    * call simpleFile from below and pass args as string
+    */
+    nanCPython.simpleFile(filepath, filename)
+
+    // TODO: Check if chainability is actually usuful
+    return this
+  }
+
+  /**
   *
   */
   anyFile() {
