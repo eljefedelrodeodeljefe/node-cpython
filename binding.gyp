@@ -12,7 +12,7 @@
         './lib/cpython'
       ],
       "libraries": [
-        "-lpython2.7",
+        "-lpython3.5m",
         "-lpthread",
         "-lm",
         "-ldl",
