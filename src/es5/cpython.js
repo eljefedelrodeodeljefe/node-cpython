@@ -77,7 +77,7 @@ var CPython = (function (_EventEmitter) {
       /**
       * call simpleFile from below and pass args as string
       */
-      nanCPython.simpleFile(filepath, filename);
+      nanCPython.runRun();
 
       // TODO: Check if chainability is actually usuful
       return this;
