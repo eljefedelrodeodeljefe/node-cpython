@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - iojs
-services: 
+services:
 before_script:
 - npm install gulpjs/gulp-cli#4.0 -g
 script:
@@ -12,4 +12,5 @@ deploy:
   api_key:
     secure: Z/hpH3P793Abzp9XQGzToXjnG379wKdNbFg1vPIlRHgOUDVILLp+J7aRNCA3RihnahS3EBvlhXc1Rpc+iAW0Dbc6E2g2w5OOAOrgYMIVOf3IrJ9qn3wXD35QUI/pTzHmliExAmvdeHJovf8PlkI7tzgVojfoqCdRs7uiJG6MBUM=
   on:
-    repo: eljefedelrodeodeljefe/node-cpython
+    branch: master
+    repo: eljefederodeodeljefe/node-cpython
