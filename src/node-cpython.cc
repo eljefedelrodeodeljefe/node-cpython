@@ -18,7 +18,7 @@ extern "C" {
     }
 
     Py_Initialize();
-    pName = PyUnicode_DecodeFSDefault(arrv[1]);
+    //pName = PyUnicode_DecodeFSDefault(arrv[1]);
     /* Error checking of pName left out */
 
     pModule = PyImport_Import(pName);

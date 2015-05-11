@@ -8,11 +8,11 @@
         ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
-        './lib/cpython/Include',
-        './lib/cpython'
+        './deps/2.7/cpython/Include',
+        './deps/2.7/cpython'
       ],
       "libraries": [
-        "-lpython3.5m",
+        "-lpython2.7",
         "-lpthread",
         "-lm",
         "-ldl",
