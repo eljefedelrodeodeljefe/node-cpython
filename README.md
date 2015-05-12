@@ -12,6 +12,8 @@ This Library is in alpha status. **Do not use for fun or profit**
 
 Sometimes you want to use Python scripts or even whole libraries, but you don't want to rely on `child_process.exec()` or `child_process.spawn()`. This module initializes the standard Python interpreter and passes Py code to it.
 
+![](http://res.cloudinary.com/jefe-io/image/upload/c_scale,w_500/v1431433374/Node-CPython-Logo_cw7rko.png)
+
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
@@ -71,6 +73,7 @@ Please see [list of the implemented methods](#status) for now.
 
 * [CPython](#CPython)
   * [new CPython()](#new_CPython_new)
+  * [.run(glob, [cb])](#CPython#run)
   * [.anyFile()](#CPython#anyFile)
   * [.simpleString(str, [flags], [cb])](#CPython#simpleString)
   * [.simpleFile(filepath, filename, [flags], [cb])](#CPython#simpleFile)
@@ -88,6 +91,28 @@ Please see [list of the implemented methods](#status) for now.
 ### new CPython()
 Implements the CPython Python interpreter
 
+<a name="CPython#run"></a>
+### cPython.run(glob, [cb])
+Executes any number of Python source code files.
+This is JS userland API and automates and abstracts many choices of the
+below C-API. If you want to have more control, please use the below methods.
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| glob | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | a glob of valid .py files |
+| [cb] | <code>callback</code> | Optional callback |
+
+**Example**  
+```js
+'use strict';
+var cpython = require('cpython');
+
+cpython.on('error', function(err) {console.log(err);})
+
+cpython.run('[example/**\/*.py', function(result) { console.log(result) })
+```
 <a name="CPython#anyFile"></a>
 ### cPython.anyFile()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  

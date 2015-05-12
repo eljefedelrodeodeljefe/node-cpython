@@ -4,6 +4,7 @@
 
 * [CPython](#CPython)
   * [new CPython()](#new_CPython_new)
+  * [.run(glob, [cb])](#CPython#run)
   * [.anyFile()](#CPython#anyFile)
   * [.simpleString(str, [flags], [cb])](#CPython#simpleString)
   * [.simpleFile(filepath, filename, [flags], [cb])](#CPython#simpleFile)
@@ -21,6 +22,28 @@
 ### new CPython()
 Implements the CPython Python interpreter
 
+<a name="CPython#run"></a>
+### cPython.run(glob, [cb])
+Executes any number of Python source code files.
+This is JS userland API and automates and abstracts many choices of the
+below C-API. If you want to have more control, please use the below methods.
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| glob | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | a glob of valid .py files |
+| [cb] | <code>callback</code> | Optional callback |
+
+**Example**  
+```js
+'use strict';
+var cpython = require('cpython');
+
+cpython.on('error', function(err) {console.log(err);})
+
+cpython.run('[example/**\/*.py', function(result) { console.log(result) })
+```
 <a name="CPython#anyFile"></a>
 ### cPython.anyFile()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
