@@ -48,7 +48,7 @@ So in order to run scripts programmatically it seemed a good idea to use the the
 **Rquirements:**
 * Python 2.7 (for now)
 * Any Python for Gyp
-* Node 0.12+ / IO.js
+* Node 0.12+ / io.js 1.8.1
 
 ## Platform
 
