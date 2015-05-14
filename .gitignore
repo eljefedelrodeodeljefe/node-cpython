@@ -28,5 +28,6 @@ node_modules
 
 .DS_Store
 dest
+*.o
 
 build
