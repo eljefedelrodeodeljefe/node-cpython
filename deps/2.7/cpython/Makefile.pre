@@ -92,17 +92,17 @@ MACHDEP=	darwin
 MULTIARCH=	
 
 # Install prefix for architecture-independent files
-prefix=		/usr/local
+prefix=		/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python
 
 # Install prefix for architecture-dependent files
-exec_prefix=	${prefix}
+exec_prefix=	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python
 
 # Install prefix for data files
 datarootdir=    ${prefix}/share
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
-LIBDIR=		${exec_prefix}/lib
+LIBDIR=		/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/cpython/Lib
 MANDIR=		${datarootdir}/man
 INCLUDEDIR=	${prefix}/include
 CONFINCLUDEDIR=	$(exec_prefix)/include
@@ -154,7 +154,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	
+CONFIG_ARGS=	 '--prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python' '--exec-prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python' '--libdir=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/cpython/Lib'
 
 
 # Subdirectories with code

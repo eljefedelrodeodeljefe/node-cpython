@@ -1,6 +1,6 @@
-prefix=/usr/local
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
+prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python
+exec_prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python
+libdir=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/cpython/Lib
 includedir=${prefix}/include
 
 Name: Python
