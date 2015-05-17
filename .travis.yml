@@ -3,6 +3,7 @@ node_js:
 - iojs
 services:
 before_script:
+- node install.js
 - npm install gulpjs/gulp-cli#4.0 -g
 script:
 - gulp mocha
