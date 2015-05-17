@@ -26,6 +26,7 @@
   },
   "scripts": {
     "test": "gulp mocha",
+    "pre-install": "node install",
     "install": "node-gyp rebuild"
   },
   "repository": {
