@@ -1,10 +1,11 @@
-var spawn = require('child_process').spawn;
+var spawn2 = require('child_process').spawn;
+var log = require('util').log;
 
 var EventEmitter = require('events');
 var ee = new EventEmitter();
 
 
-var configureOpts = ["--prefix=" + process.cwd() + "deps/2.7/cpython/build",  "--exec-prefix=" + process.cwd() + "deps/2.7/cpython/build"];
+var configureOpts = ["--prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/cpython/build --exec-prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/cpython/build"];
 
 // console.log('Starting directory: ' + process.cwd());
 // try {
@@ -17,7 +18,7 @@ var configureOpts = ["--prefix=" + process.cwd() + "deps/2.7/cpython/build",  "-
 
 var configure = spawn('./configure', configureOpts, {cwd: "deps/2.7/cpython"})
 
-
+console.log('Configure: started');
 configure.stdout.on('data', function (data) {
   console.log('stdout: ' + data);
 });
@@ -32,7 +33,9 @@ configure.on('close', function (code) {
 });
 
 ee.on('done:configure', function() {
+  console.log('Make: started');
   var make = spawn('make', {cwd: "deps/2.7/cpython"})
+
   make.stdout.on('data', function (data) {
     console.log('stdout: ' + data);
   });
@@ -47,7 +50,9 @@ ee.on('done:configure', function() {
   });
 })
 
+
 ee.on('done:make', function() {
+  console.log('Make install: started');
   var makeInstall = spawn('make install', {cwd: "deps/2.7/cpython"})
   makeInstall.stdout.on('data', function (data) {
     console.log('stdout: ' + data);
@@ -62,6 +67,7 @@ ee.on('done:make', function() {
     ee.emit('done:makeInstall')
   });
 })
+ee.emit('done:make');
 
 // ee.on('done:makeInstall', function () {
 //   console.log('Changing workdir back from: ' + process.cwd());
