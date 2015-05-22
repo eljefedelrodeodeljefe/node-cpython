@@ -2,8 +2,8 @@
 {
   "variables": {
      "CC": "gcc",
-     "BLDDIR" : "deps/<(VERSION)/cpython/build/lib",
-     "SRCDIR" : "deps/<(VERSION)/cpython/build",
+     "BLDDIR" : "./deps/<(VERSION)/build/lib",
+     "SRCDIR" : "./deps/<(VERSION)/build",
      "INCLUDES_DIR" : "<(SRCDIR)/include/python<(VERSION)",
      "VERSION" : "2.7",
      "OPT" : "-g",
