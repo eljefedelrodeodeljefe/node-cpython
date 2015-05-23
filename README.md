@@ -4,7 +4,8 @@ Native bindings to run python in its native interpreter.
 
 This Library is in alpha status. **Do not use for fun or profit**
 
-[![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython)
+[![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/node-cpython)
+
 
 [![NPM](https://nodei.co/npm/cpython.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/cpython/)[![NPM](https://nodei.co/npm-dl/cpython.png?months=6&height=2)](https://nodei.co/npm/cpython/)
 
