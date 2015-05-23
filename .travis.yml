@@ -3,11 +3,12 @@ node_js:
   - "0.12"
   - "iojs-v1.8.1"
 services:
+before_install:
+  - node install.js
 before_script:
-- node install.js
-- npm install gulpjs/gulp-cli#4.0 -g
+  - npm install gulpjs/gulp-cli#4.0 -g
 script:
-- gulp mocha
+  - gulp mocha
 deploy:
   provider: npm
   email: devraindance@gmail.com
