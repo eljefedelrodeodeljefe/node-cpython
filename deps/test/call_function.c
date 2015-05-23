@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 	setenv("PYTHONPATH",".",1);
 	printf("1 ");
 	int i;
-	PyObject *pName, *pModule, *pDict, *pFunc, *pArgs, *pValue;
+	PyObject *pName, *pModule, *pDict, *pFunc, *pArgs, *pValue, *moduleName;
 
 	if (argc < 3)
 	{
@@ -15,69 +15,60 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	printf("2 ");
-	char pySearchPath[] = "/usr/lib/python2.7/";
+	char * path;
+	/*
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python27.zip
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/plat-darwin
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/plat-mac
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/plat-mac/lib-scriptpackages
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/
+	../../Extras/lib/python
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/lib-tk
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/lib-old
+	/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/test/some/lib/python2.7/lib-dynload
+
+	--prefix=PREFIX         install architecture-independent files in PREFIX
+												[/usr/local]
+	--exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+												[PREFIX]
+  --libexecdir=DIR        program executables [EPREFIX/libexec]
+  --libdir=DIR            object code libraries [EPREFIX/lib]
+	./configure --prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python --exec-prefix=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/python --libdir=/Users/robert.lindstaedt/Documents/repos/node-cpython/deps/2.7/cpython/Lib
+
+	*/
+	char pySearchPath[] = "/usr/";
+	char pyName[] = "pyName";
 	Py_SetPythonHome(pySearchPath);
+	Py_SetProgramName(pyName);
 	printf("3 ");
+	path = Py_GetPythonHome();
+	printf(" %s ", path);
+
+	//char * pySetName;
+	//pySetName = Py_GetPath();
+	//printf(" %s ", pySetName);
 	// Initialize the Python Interpreter
+	int init;
+
 	Py_Initialize();
-	printf("hello");
+	init = Py_IsInitialized();
+	printf("Is initialized with %i", init);
 	// Build the name object
-	pName = PyString_FromString(argv[1]);
+
+	moduleName = "/call_function/";
+
 
 	// Load the module object
-	pModule = PyImport_Import(pName);
+
 
 	// pDict is a borrowed reference
-	pDict = PyModule_GetDict(pModule);
+
 
 	// pFunc is also a borrowed reference
-	pFunc = PyDict_GetItemString(pDict, argv[2]);
 
-	if (PyCallable_Check(pFunc))
-	{
-		// Prepare the argument list for the call
-		if( argc > 3 )
-		{
-    			pArgs = PyTuple_New(argc - 3);
-    			for (i = 0; i < argc - 3; i++)
-    			{
-					pValue = PyInt_FromLong(atoi(argv[i + 3]));
-        			if (!pValue)
-        			{
-						PyErr_Print();
-             			return 1;
-        			}
-        			PyTuple_SetItem(pArgs, i, pValue);
-    			}
 
-				pValue = PyObject_CallObject(pFunc, pArgs);
 
-				if (pArgs != NULL)
-				{
-					Py_DECREF(pArgs);
-				}
-		} else
-		{
-				pValue = PyObject_CallObject(pFunc, NULL);
-		}
-
-		if (pValue != NULL)
-		{
-			printf("Return of call : %d\n", PyInt_AsLong(pValue));
-			Py_DECREF(pValue);
-		}
-		else
-		{
-			PyErr_Print();
-		}
-	} else
-	{
-		PyErr_Print();
-	}
-
-	// Clean up
-	Py_DECREF(pModule);
-	Py_DECREF(pName);
 
 	// Finish the Python Interpreter
 	Py_Finalize();
