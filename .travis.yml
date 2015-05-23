@@ -3,6 +3,7 @@ node_js:
   - "0.12"
   - "iojs-v1.8.1"
 install:
+  - npm install node-gyp -g
   - node install.js
   - npm install
 before_script:
