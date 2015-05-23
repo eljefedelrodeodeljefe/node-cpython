@@ -18,7 +18,8 @@ var colors = require('./bin/colors.js');
 
 var configureOpts = ["--prefix=" + process.cwd() + "/deps/2.7/build",
                      "--exec-prefix=" + process.cwd() + "/deps/2.7/build",
-                     "--with-PACKAGE=no"];
+                     "--with-PACKAGE=no",
+                     "--without-doc-strings"];
 
 var installTime = process.hrtime();
 var time = process.hrtime();
@@ -30,7 +31,7 @@ configure.stderr.on('data', function (data) { console.log(colors+ 'ERR: ' + data
 configure.on('close', function (code) {
   var diff = process.hrtime(time);
   var prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-  console.log('\n\n\n' + colors + 'Configure: child process exited with code after' + code + '\n' + colors + 'after ' + prettyTime + '\n\n');
+  console.log('\n\n\n' + colors + 'Configure: child process exited with code ' + code + '\n' + colors + 'after ' + prettyTime + '\n\n');
   ee.emit('done:configure')
 });
 
