@@ -27,7 +27,7 @@
   "scripts": {
     "test": "gulp mocha",
     "pre-install": "",
-    "install": "node install.js && node-gyp rebuild"
+    "install": "node install.js"
   },
   "repository": {
     "type": "git",

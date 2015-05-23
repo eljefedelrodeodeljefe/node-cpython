@@ -74,4 +74,19 @@ ee.on('done:makeInstall', function() {
   // pretty hrtime -> [$mm:$ss] mm:ss
   var prettyTime = '[' + ('0' + ~~(installDiff[0] / 60)).slice(-2) + ':' + ( '0'+ installDiff[0] % 60).slice(-2) + '] mm:ss\n'
   console.log('\n\n\n' + colors + 'Install took ' + prettyTime + '\n\n');
+  ee.emit('done:summarizeinstall')
+})
+
+ee.on('done:summarizeinstall', function() {
+  var time = process.hrtime();
+  var makeInstall = spawn('node-gyp', ['rebuild'])
+
+  makeInstall.stdout.on('data', function (data) { console.log(colors + data); });
+  makeInstall.stderr.on('data', function (data) { console.log(colors+ 'ERR: ' + data); });
+
+  makeInstall.on('close', function (code) {
+    var diff = process.hrtime(time);
+    var prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
+    console.log('\n\n\n' + colors + 'Node-Gyp: child process exited with code ' + code + '\n'+ colors + 'after ' + prettyTime + '\n\n');
+  });
 })
