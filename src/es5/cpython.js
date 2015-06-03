@@ -1,24 +1,23 @@
 "use strict";
-
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _SomeClass = require("./math");
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+var _math = require("./math");
 
 var _PyCalls = require("./PyCalls");
 
-var _EventEmitter2 = require("events");
+var _events = require("events");
 
-"use strict";
+var _glob = require("glob");
 
 var nanCPython = require("bindings")("../build/Release/node-cpython");
 
@@ -239,10 +238,85 @@ var CPython = (function (_EventEmitter) {
     *
     */
     value: function evalFrame() {}
+  }, {
+    key: "_pyInitialize",
+
+    /**
+    * initialize python context, reserve memory.
+    * @private
+    */
+    value: function _pyInitialize() {
+      nanCPython.initialize();
+    }
+  }, {
+    key: "_pyFinalize",
+
+    /**
+    * Finalize python context, clear memory.
+    * @private
+    */
+    value: function _pyFinalize() {
+      nanCPython.finalize();
+    }
+  }, {
+    key: "_pySetProgramName",
+
+    /**
+    * set low level python program name (optional)
+    * @private
+    */
+    value: function _pySetProgramName() {}
+  }, {
+    key: "_pySetArgv",
+
+    /**
+    * set low level python argv
+    * @private
+    */
+    value: function _pySetArgv() {
+      nanCPython.setargv();
+    }
+  }, {
+    key: "_pyCreateContext",
+
+    /**
+    * Create a context in memory to run the python script in
+    * @private
+    * @param {Object}
+    */
+    value: function _pyCreateContext(program) {
+      this._pySetProgramName();
+      this._pyInitialize();
+      this._pySetArgv;
+
+      // execute program here
+      program();
+
+      this._pyFinalize();
+    }
+  }, {
+    key: "_getListOfFiles",
+
+    /**
+    * Create a context in memory to run the python script in
+    * @private
+    * @param {string[]} globbing pattern
+    * @param {callback} [cb] - Optional callback
+    */
+    value: function _getListOfFiles(pattern, options, cb) {
+      //var args = Array.prototype.slice.call(arguments);
+      (0, _glob.glob)("**/*.js", options, function (err, files) {
+        // files is an array of filenames.
+        // If the `nonull` option is set, and nothing
+        // was found, then files is ["**/*.js"]
+        // er is an error object or null.
+        return cb(err, files);
+      });
+    }
   }]);
 
   return CPython;
-})(_EventEmitter2.EventEmitter);
+})(_events.EventEmitter);
 
 exports.CPython = CPython;
 

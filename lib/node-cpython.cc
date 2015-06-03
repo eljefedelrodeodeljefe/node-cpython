@@ -7,69 +7,34 @@ using namespace v8;
 extern "C" {
   #include <Python.h>
 
-  int run_Run(int arrc, const char *arrv[]) {
-    PyObject *pName, *pModule, *pDict, *pFunc;
-    PyObject *pArgs, *pValue;
-    int i;
-
-    if (arrc < 3) {
-        fprintf(stderr,"Usage: call pythonfile funcname [arrs]\n");
-        return 1;
-    }
+  int run_Run() {
+    char *argv[] = {"program name", "arg1", "arg2"};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
 
     Py_Initialize();
-    //pName = PyUnicode_DecodeFSDefault(arrv[1]);
-    /* Error checking of pName left out */
+    PySys_SetArgvEx(argc, argv, 0);
 
-    pModule = PyImport_Import(pName);
-    Py_DECREF(pName);
+    // Get a reference to the main module.
+    PyObject* main_module = PyImport_AddModule("__main__");
 
-    if (pModule != NULL) {
-        pFunc = PyObject_GetAttrString(pModule, arrv[2]);
-        /* pFunc is a new reference */
+    // Get the main module's dictionary
+    // and make a copy of it.
+    PyObject* main_dict = PyModule_GetDict(main_module);
+    PyObject* main_dict_copy = PyDict_Copy(main_dict);
 
-        if (pFunc && PyCallable_Check(pFunc)) {
-            pArgs = PyTuple_New(arrc - 3);
-            for (i = 0; i < arrc - 3; ++i) {
-                pValue = PyLong_FromLong(atoi(arrv[i + 3]));
-                if (!pValue) {
-                    Py_DECREF(pArgs);
-                    Py_DECREF(pModule);
-                    fprintf(stderr, "Cannot convert argument\n");
-                    return 1;
-                }
-                /* pValue reference stolen here: */
-                PyTuple_SetItem(pArgs, i, pValue);
-            }
-            pValue = PyObject_CallObject(pFunc, pArgs);
-            Py_DECREF(pArgs);
-            if (pValue != NULL) {
-                printf("Result of call: %ld\n", PyLong_AsLong(pValue));
-                Py_DECREF(pValue);
-            }
-            else {
-                Py_DECREF(pFunc);
-                Py_DECREF(pModule);
-                PyErr_Print();
-                fprintf(stderr,"Call failed\n");
-                return 1;
-            }
-        }
-        else {
-            if (PyErr_Occurred())
-                PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", arrv[2]);
-        }
-        Py_XDECREF(pFunc);
-        Py_DECREF(pModule);
-    }
-    else {
-        PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", arrv[1]);
-        return 1;
-    }
+    // Execute two different files of
+    // Python code in separate environments
+    FILE* file_1 = fopen("example/multiply_2.py", "r");
+    PyRun_File(file_1, "file1.py", Py_file_input, main_dict, main_dict);
+    PyRun_SimpleString("import sys\n");
+    PyRun_SimpleString("print sys.argv\n");
+
+    FILE* file_2 = fopen("file2.py", "r");
+    PyRun_File(file_2, "file2.py", Py_file_input, main_dict_copy, main_dict_copy);
+
+
+
     Py_Finalize();
-    printf("%s\n", "hello from within");
 
     return 0;
   }
@@ -163,13 +128,8 @@ NAN_METHOD(Method3) {
   // v8::String::Utf8Value py_filename_string_param(args[1]->ToString());
   // std::string param1 = std::string(*py_filename_string_param);
   // const char *py_filename_cstr = param1.c_str();
-  int arc = 4;
-  const char *arv[4];
-  arv[1] = "multiply";
-  arv[2] = "multiply";
-  arv[3] = "2";
-  arv[4] = "2";
-  run_Run(arc, arv);
+
+  run_Run();
 
   // TODO: Clean-up
   NanReturnValue(NanNew("world2"));
