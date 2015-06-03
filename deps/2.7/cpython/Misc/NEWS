@@ -1,4 +1,4 @@
-﻿+++++++++++
++++++++++++
 Python News
 +++++++++++
 
@@ -10,6 +10,18 @@ What's New in Python 2.7.11?
 Core and Builtins
 -----------------
 
+- Issue #19543: encode() and decode() methods and constructors of str,
+  unicode and bytearray classes now emit deprecation warning for known
+  non-text encodings when Python is ran with the -3 option.
+
+- Issue #24115: Update uses of PyObject_IsTrue(), PyObject_Not(),
+  PyObject_IsInstance(), PyObject_RichCompareBool() and _PyDict_Contains()
+  to check for and handle errors correctly.
+
+- Issue #4753: On compilers where it is supported, use "computed gotos" for
+  bytecode dispatch in the interpreter. This improves interpretation
+  performance.
+
 - Issue #22939: Fixed integer overflow in iterator object.  Original patch by
   Clement Rouault.
 
@@ -18,8 +30,26 @@ Core and Builtins
 Library
 -------
 
+- Issue #19543: io.TextIOWrapper (and hence io.open()) now uses the internal
+  codec marking system added to emit deprecation warning for known non-text
+  encodings at stream construction time when Python is ran with the -3 option.
+
+- Issue #24264: Fixed buffer overflow in the imageop module.
+
+- Issue #5633: Fixed timeit when the statement is a string and the setup is not.
+
+- Issue #24326: Fixed audioop.ratecv() with non-default weightB argument.
+  Original patch by David Moore.
+
+- Issue #22095: Fixed HTTPConnection.set_tunnel with default port.  The port
+  value in the host header was set to "None".  Patch by Demian Brecht.
+
 - Issue #24257: Fixed segmentation fault in sqlite3.Row constructor with faked
   cursor type.
+
+- Issue #24286:  Dict view were not registered with the MappingView abstract
+  base classes.  This caused key and item views in OrderedDict to not be equal
+  to their regular dict counterparts.
 
 - Issue #22107: tempfile.gettempdir() and tempfile.mkdtemp() now try again
   when a directory with the chosen name already exists on Windows as well as
@@ -48,13 +78,23 @@ IDLE
 
 - Issue #15809: IDLE shell now uses locale encoding instead of Latin1 for
   decoding unicode literals.
-  
+
 Documentation
 -------------
 
 - Issue #22155: Add File Handlers subsection with createfilehandler to Tkinter
   doc.  Remove obsolete example from FAQ.  Patch by Martin Panter.
 
+
+What's New in Python 2.7.10?
+============================
+
+*Release date: 2015-05-23*
+
+Library
+-------
+
+- Issue #22931: Allow '[' and ']' in cookie values.
 
 What's New in Python 2.7.10 release candidate 1?
 ================================================
@@ -64,16 +104,10 @@ What's New in Python 2.7.10 release candidate 1?
 Core and Builtins
 -----------------
 
-- Issue #20274: When calling a _sqlite.Connection, it now complains if passed
-  any keyword arguments.  Previously it silently ignored them.
-
 - Issue #23971:  Fix underestimated presizing in dict.fromkeys().
 
 - Issue #23757:  PySequence_Tuple() incorrectly called the concrete list API
   when the data was a list subclass.
-
-- Issue #20274: Remove ignored and erroneous "kwargs" parameters from three
-  METH_VARARGS methods on _sqlite.Connection.
 
 - Issue #23629: Fix the default __sizeof__ implementation for variable-sized
   objects.
@@ -87,6 +121,12 @@ Library
 -------
 
 - The keywords attribute of functools.partial is now always a dictionary.
+
+- Issue #20274: When calling a _sqlite.Connection, it now complains if passed
+  any keyword arguments.  Previously it silently ignored them.
+
+- Issue #20274: Remove ignored and erroneous "kwargs" parameters from three
+  METH_VARARGS methods on _sqlite.Connection.
 
 - Issue #24134: assertRaises() and assertRaisesRegexp() checks are not longer
   successful if the callable is None.
