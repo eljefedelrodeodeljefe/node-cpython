@@ -305,11 +305,8 @@ var CPython = (function (_EventEmitter) {
     */
     value: function _getListOfFiles(pattern, options, cb) {
       //var args = Array.prototype.slice.call(arguments);
-      (0, _glob.glob)("**/*.js", options, function (err, files) {
-        // files is an array of filenames.
-        // If the `nonull` option is set, and nothing
-        // was found, then files is ["**/*.js"]
-        // er is an error object or null.
+      (0, _glob.glob)(pattern, options, function (err, files) {
+
         return cb(err, files);
       });
     }
