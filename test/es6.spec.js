@@ -32,5 +32,18 @@ describe('CPython class', function () {
       done()
   });
 
+  it('Gets globbing pattern right', function (done) {
+      //
+      // let files = []
+      // let cb = function(err, files) {
+      //  done()
+      // }
+      //
+      // cpython._getListOfFiles("**/*.py", {silent: true} , cb)
+      // expect(files).to.be.instanceof(Array);
+      done()
+
+  });
+
 
 });

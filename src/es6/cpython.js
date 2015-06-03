@@ -2,6 +2,7 @@
 import {SomeClass} from "./math";
 import {PyCalls} from "./PyCalls";
 import {EventEmitter} from "events";
+import {Glob} from "glob";
 
 const nanCPython = require('bindings')('../build/Release/node-cpython');
 
@@ -208,9 +209,71 @@ export class CPython extends EventEmitter {
   /**
   *
   */
-  evalFrame() {
+  evalFrame () {
 
   }
+
+  /**
+  * initialize python context, reserve memory.
+  * @private
+  */
+  _pyInitialize () {
+    nanCPython.initialize()
+  }
+
+  /**
+  * Finalize python context, clear memory.
+  * @private
+  */
+  _pyFinalize () {
+    nanCPython.finalize()
+  }
+
+  /**
+  * set low level python program name (optional)
+  * @private
+  */
+  _pySetProgramName () {
+
+  }
+
+  /**
+  * set low level python argv
+  * @private
+  */
+  _pySetArgv () {
+    nanCPython.setargv()
+  }
+
+  /**
+  * Create a context in memory to run the python script in
+  * @private
+  * @param {Object}
+  */
+  _pyCreateContext (program) {
+    this._pySetProgramName()
+    this._pyInitialize()
+    this._pySetArgv
+
+    // execute program here
+    program()
+
+    this._pyFinalize()
+  }
+
+  /**
+  * Create a context in memory to run the python script in
+  * @private
+  * @param {string[]} globbing pattern
+  * @param {callback} [cb] - Optional callback
+  */
+  _getListOfFiles(pattern, options, cb) {
+    //var args = Array.prototype.slice.call(arguments);
+
+    return new Glob(pattern, options, cb)
+  }
+
+
 
 
 }

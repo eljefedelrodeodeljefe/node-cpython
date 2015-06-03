@@ -18,6 +18,8 @@ var _PyCalls = require("./PyCalls");
 
 var _EventEmitter2 = require("events");
 
+var _Glob = require("glob");
+
 "use strict";
 
 var nanCPython = require("bindings")("../build/Release/node-cpython");
@@ -239,6 +241,76 @@ var CPython = (function (_EventEmitter) {
     *
     */
     value: function evalFrame() {}
+  }, {
+    key: "_pyInitialize",
+
+    /**
+    * initialize python context, reserve memory.
+    * @private
+    */
+    value: function _pyInitialize() {
+      nanCPython.initialize();
+    }
+  }, {
+    key: "_pyFinalize",
+
+    /**
+    * Finalize python context, clear memory.
+    * @private
+    */
+    value: function _pyFinalize() {
+      nanCPython.finalize();
+    }
+  }, {
+    key: "_pySetProgramName",
+
+    /**
+    * set low level python program name (optional)
+    * @private
+    */
+    value: function _pySetProgramName() {}
+  }, {
+    key: "_pySetArgv",
+
+    /**
+    * set low level python argv
+    * @private
+    */
+    value: function _pySetArgv() {
+      nanCPython.setargv();
+    }
+  }, {
+    key: "_pyCreateContext",
+
+    /**
+    * Create a context in memory to run the python script in
+    * @private
+    * @param {Object}
+    */
+    value: function _pyCreateContext(program) {
+      this._pySetProgramName();
+      this._pyInitialize();
+      this._pySetArgv;
+
+      // execute program here
+      program();
+
+      this._pyFinalize();
+    }
+  }, {
+    key: "_getListOfFiles",
+
+    /**
+    * Create a context in memory to run the python script in
+    * @private
+    * @param {string[]} globbing pattern
+    * @param {callback} [cb] - Optional callback
+    */
+    value: function _getListOfFiles(pattern, options, cb) {
+      //var args = Array.prototype.slice.call(arguments);
+
+      return new _Glob.Glob(pattern, options, cb);
+    }
   }]);
 
   return CPython;
