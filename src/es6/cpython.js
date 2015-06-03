@@ -1,6 +1,7 @@
 'use strict';
 import {SomeClass} from "./math";
 import {PyCalls} from "./PyCalls";
+import {log} from "./Log";
 import {EventEmitter} from "events";
 import {glob} from "glob";
 
@@ -269,11 +270,8 @@ export class CPython extends EventEmitter {
   */
   _getListOfFiles(pattern, options, cb) {
     //var args = Array.prototype.slice.call(arguments);
-    glob("**/*.js", options, function (err, files) {
-      // files is an array of filenames.
-      // If the `nonull` option is set, and nothing
-      // was found, then files is ["**/*.js"]
-      // er is an error object or null.
+    glob(pattern, options, function (err, files) {
+
       return cb(err,files)
     })
   }

@@ -56,6 +56,31 @@ extern "C" {
     PyRun_SimpleFile(fp, filename);
     Py_Finalize();
   }
+
+
+  int initialize() {
+
+    Py_Initialize();
+    return 0;
+  }
+
+
+  int finalize() {
+
+    Py_Finalize();
+    return 0;
+  }
+
+  // get "your own" argc and argv from above
+  int pysetargv(int arrc, char *arrv[]) {
+
+    PySys_SetArgvEx(arrc, arrv, 0);
+    return 0;
+  }
+
+
+
+
 }
 
 
@@ -135,10 +160,57 @@ NAN_METHOD(Method3) {
   NanReturnValue(NanNew("world2"));
 }
 
+//
+//
+NAN_METHOD(Method4) {
+  NanScope();
+
+  initialize();
+
+  // TODO: Clean-up
+  NanReturnValue(NanNew("world4"));
+}
+
+//
+//
+NAN_METHOD(Method5) {
+  NanScope();
+
+  finalize();
+
+  // TODO: Clean-up
+  NanReturnValue(NanNew("world5"));
+}
+
+//
+//
+NAN_METHOD(Method6) {
+  NanScope();
+
+  // v8::String::Utf8Value py_filename_string_param(args[0]->ToString());
+  // std::string param1 = std::string(*py_filename_string_param);
+  // const char *py_filename_cstr = param1.c_str();
+
+
+
+  char *arrv[] = {"program name", "arg1", "arg2"};
+  int arrc = sizeof(arrv) / sizeof(char*) - 1;
+
+  pysetargv(arrc,arrv);
+
+  // TODO: Clean-up
+  NanReturnValue(NanNew("world6"));
+}
+
+
+
 void Init(Handle<Object> exports) {
   exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(Method)->GetFunction());
   exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(Method2)->GetFunction());
   exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(Method3)->GetFunction());
+  exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(Method4)->GetFunction());
+  exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(Method5)->GetFunction());
+  exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(Method6)->GetFunction());
 }
 
 

@@ -15,6 +15,8 @@ var _math = require("./math");
 
 var _PyCalls = require("./PyCalls");
 
+var _Log = require("./Log");
+
 var _events = require("events");
 
 var _glob = require("glob");
@@ -273,9 +275,7 @@ var CPython = (function (_EventEmitter) {
     * set low level python argv
     * @private
     */
-    value: function _pySetArgv() {
-      nanCPython.setargv();
-    }
+    value: function _pySetArgv() {}
   }, {
     key: "_pyCreateContext",
 
@@ -319,3 +319,5 @@ exports.CPython = CPython;
 
 var inst = new CPython();
 module.exports = inst;
+
+//nanCPython.setargv()
