@@ -11,7 +11,7 @@
      "CFLAGS" :"<(OPT)",
      "CPPFLAGS" : "<(INCLUDES)",
      "LIBPYTHON" : "",
-     #"LIBPYTHON" : "-I<(SRCDIR)/lib/libpython<(VERSION).a",
+     "LIBPYTHON" : "-I<(SRCDIR)/lib/libpython<(VERSION).a",
      "LIBS" : "-ldl -lreadline -ltermcap -lpthread -lutil",
      "LDFLAGS" : "-Xlinker",
      "SYSLIBS" : "-lm",
