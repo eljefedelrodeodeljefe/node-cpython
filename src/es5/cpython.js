@@ -18,7 +18,7 @@ var _PyCalls = require("./PyCalls");
 
 var _EventEmitter2 = require("events");
 
-var _Glob = require("glob");
+var _glob = require("glob");
 
 "use strict";
 
@@ -308,8 +308,13 @@ var CPython = (function (_EventEmitter) {
     */
     value: function _getListOfFiles(pattern, options, cb) {
       //var args = Array.prototype.slice.call(arguments);
-
-      return new _Glob.Glob(pattern, options, cb);
+      _glob.glob("**/*.js", options, function (err, files) {
+        // files is an array of filenames.
+        // If the `nonull` option is set, and nothing
+        // was found, then files is ["**/*.js"]
+        // er is an error object or null.
+        return cb(err, files);
+      });
     }
   }]);
 

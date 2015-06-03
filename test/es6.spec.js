@@ -32,17 +32,26 @@ describe('CPython class', function () {
       done()
   });
 
-  it('Gets globbing pattern right', function (done) {
-      //
-      // let files = []
-      // let cb = function(err, files) {
-      //  done()
-      // }
-      //
-      // cpython._getListOfFiles("**/*.py", {silent: true} , cb)
-      // expect(files).to.be.instanceof(Array);
-      done()
+  it('Globbing: return Array with only string as input', function (done) {
 
+      var fn = function(err, files) {
+        var ar = []
+        ar = files
+        expect(ar).to.be.instanceof(Array);
+        done()
+      }
+      cpython._getListOfFiles("src/es6/**/*.js", {silent: true} , fn)
+  });
+
+  it('Globbing: return Array with array of strings as input', function (done) {
+
+      var fn2 = function(err, files) {
+        var ar = []
+        ar = files
+        expect(ar).to.be.instanceof(Array);
+        done()
+      }
+      cpython._getListOfFiles(["src/es6/**/*.js", "src/es5/**/*.js"], {silent: true} , fn)
   });
 
 

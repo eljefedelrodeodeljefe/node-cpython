@@ -2,7 +2,7 @@
 import {SomeClass} from "./math";
 import {PyCalls} from "./PyCalls";
 import {EventEmitter} from "events";
-import {Glob} from "glob";
+import {glob} from "glob";
 
 const nanCPython = require('bindings')('../build/Release/node-cpython');
 
@@ -269,8 +269,13 @@ export class CPython extends EventEmitter {
   */
   _getListOfFiles(pattern, options, cb) {
     //var args = Array.prototype.slice.call(arguments);
-
-    return new Glob(pattern, options, cb)
+    glob("**/*.js", options, function (err, files) {
+      // files is an array of filenames.
+      // If the `nonull` option is set, and nothing
+      // was found, then files is ["**/*.js"]
+      // er is an error object or null.
+      return cb(err,files)
+    })
   }
 
 
