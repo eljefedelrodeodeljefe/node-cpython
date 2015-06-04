@@ -52,7 +52,7 @@ export class CPython extends EventEmitter {
     /**
     * call simpleFile from below and pass args as string
     */
-    nanCPython.runRun()
+    nanCPython.runRun("example/multiply_2.py", 3, ["name1","name2"])
 
     // TODO: Check if chainability is actually usuful
     return this
@@ -215,50 +215,55 @@ export class CPython extends EventEmitter {
 
   /**
   * initialize python context, reserve memory.
-  * @private
+  *
   */
-  _pyInitialize () {
+  initialize () {
     nanCPython.initialize()
   }
 
   /**
   * Finalize python context, clear memory.
-  * @private
+  * @param {callback} callback for completion of py context
   */
-  _pyFinalize () {
+  finalize (cb) {
+
     nanCPython.finalize()
+
+    cb()
+
   }
 
   /**
   * set low level python program name (optional)
-  * @private
+  * @param {string} Program name.
   */
-  _pySetProgramName () {
-
+  setProgramName (str) {
+    nanCPython.setprogramname(str)
   }
 
   /**
   * set low level python argv
-  * @private
+  * @param {string|string[]} string or an array of strings as argv; argc is auto computed by the arrays length
   */
-  _pySetArgv () {
-    nanCPython.setargv()
+  setArgv ( arr ) {
+    nanCPython.setargv(arr)
   }
 
   /**
-  * Create a context in memory to run the python script in
-  * @private
-  * @param {Object}
+  * Create a context in memory to run the python script and injects a python function to run in.
+  * @param {callback} python function to run in the memory
   */
-  _pyCreateContext (program) {
-    this._pySetProgramName()
-    this._pyInitialize()
-    this._pySetArgv
+  pyCreateContext (program) {
+    this.setProgramName()
+    this.initialize()
+    this.setArgv
 
     // execute program here
     program()
 
-    this._pyFinalize()
+    this.finalize( (err) => {
+      this.emit('err', err)
+    })
   }
 
   /**
@@ -277,8 +282,6 @@ export class CPython extends EventEmitter {
       return cb(err,files)
     })
   }
-
-
 
 
 }

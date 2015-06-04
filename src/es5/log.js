@@ -8,21 +8,21 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var PyCalls = (function () {
-  function PyCalls(opts) {
-    _classCallCheck(this, PyCalls);
+var Log = (function () {
+  function Log(opts) {
+    _classCallCheck(this, Log);
 
     this.opts = opts;
   }
 
-  _createClass(PyCalls, [{
-    key: 'helloPy',
-    value: function helloPy() {
-      console.log('hello from PyCalls');
+  _createClass(Log, [{
+    key: 'log',
+    value: function log() {
+      console.log('hello');
     }
   }]);
 
-  return PyCalls;
+  return Log;
 })();
 
-exports.PyCalls = PyCalls;
+exports.Log = Log;
