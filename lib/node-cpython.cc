@@ -3,11 +3,12 @@
 
 
 using namespace v8;
+using namespace std;
 
 extern "C" {
   #include <Python.h>
 
-  int run_Run(const char *filename, int arrc, char *arrv[]) {
+  int run_Run(char *filename, int arrc, char *arrv[]) {
 
 
     Py_Initialize();
@@ -78,7 +79,7 @@ extern "C" {
   int setprogramname(const char *namestr) {
 
 
-    char *name;
+    char *name= {};
     strcpy(name, namestr);
 
     Py_SetProgramName(name);
@@ -151,41 +152,68 @@ NAN_METHOD(Method3) {
     NanReturnUndefined();
   }
 
-  v8::String::Utf8Value py_filepath_string_param(args[0]->ToString());
-  std::string param0 = std::string(*py_filepath_string_param);
-  const char *py_filepath_cstr = param0.c_str();
-
   int arrc = args[1]->NumberValue();
 
+  v8::String::Utf8Value py_program_path_string(args[0]->ToString());
+  std::string param0 = std::string(*py_program_path_string);
+  const char *path = param0.c_str();
+
+  char *program_path;
+  strcpy(program_path, path);
 
 
 
-  char *arrv[] = {};
 
-  v8::Handle<v8::Object> arg[2];
-// ... init obj from arguments or wherever ...
 
-int length = 1;
-if(arg[2]->IsArray())
-{
-    length = arg[2]->Get(v8::String::New("length"))->ToObject()->Uint32Value();
-}
 
-for(int i = 0; i < length; i++)
-{
-    v8::Local<v8::Value> element = arg[2]->Get(i);
-    v8::String::Utf8Value string(element->ToString());
-    std::string str = std::string(*string);
-    const char *cstr= str.c_str();
-    arrv[i] = cstr;
-    // do something with element
-}
+  Local<Array> arr= Local<Array>::Cast(args[2]);
+
+  Local<Value> item1 = arr->Get(0);
+
+  v8::String::Utf8Value array_string1(item1->ToString());
+  std::string param1 = std::string(*array_string1);
+  const char *arr_string1 = param1.c_str();
+
+  char *str1;
+  strcpy(str1, arr_string1);
+  printf("%s\n", str1);
+
+
+
+  Local<Value> item2 = arr->Get(1);
+
+  v8::String::Utf8Value array_string2(item2->ToString());
+  std::string param2 = std::string(*array_string2);
+  const char *arr_string2 = param2.c_str();
+
+  char *str2;
+  strcpy(str2, arr_string2);
+  printf("%s\n", str2);
+
+
+  char * arrv[] = {"", "", ""};
+  const char *a[2];
+  a[0] = arr_string1;
+  a[1] = arr_string2;
+
+
+  printf("%s\n", a[0]);
+
+
+
+
+
+
+  //printf("%s\n", arr_string1);
+
+
   // int arrc = sizeof(arrv) / sizeof(char*) - 1;
 
-  run_Run(py_filepath_cstr, arrc, arrv);
+
+  run_Run(program_path , arrc , arrv);
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world2"));
+  NanReturnValue(NanNew("world3"));
 }
 
 //
