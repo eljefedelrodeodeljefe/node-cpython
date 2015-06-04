@@ -52,8 +52,7 @@ extern "C" {
     PyRun_SimpleFile(fp, filename);
     Py_Finalize();
   }
-<<<<<<< Updated upstream
-=======
+
 
 
   int initialize() {
@@ -86,7 +85,7 @@ extern "C" {
     return 0;
   }
 
->>>>>>> Stashed changes
+
 }
 
 
@@ -189,8 +188,6 @@ for(int i = 0; i < length; i++)
   NanReturnValue(NanNew("world2"));
 }
 
-<<<<<<< Updated upstream
-=======
 //
 //
 NAN_METHOD(Method4) {
@@ -244,18 +241,14 @@ NAN_METHOD(Method7) {
   NanReturnValue(NanNew("world7"));
 }
 
->>>>>>> Stashed changes
 void Init(Handle<Object> exports) {
   exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(Method)->GetFunction());
   exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(Method2)->GetFunction());
   exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(Method3)->GetFunction());
-<<<<<<< Updated upstream
-=======
   exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(Method4)->GetFunction());
   exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(Method5)->GetFunction());
   exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(Method6)->GetFunction());
   exports->Set(NanNew("setprogramname"), NanNew<FunctionTemplate>(Method7)->GetFunction());
->>>>>>> Stashed changes
 }
 
 

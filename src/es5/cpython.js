@@ -16,13 +16,7 @@ var _SomeClass = require("./math");
 
 var _PyCalls = require("./PyCalls");
 
-<<<<<<< Updated upstream
-var _events = require("events");
-=======
-var _log = require("./Log");
-
 var _EventEmitter2 = require("events");
->>>>>>> Stashed changes
 
 var _glob = require("glob");
 
@@ -287,13 +281,8 @@ var CPython = (function (_EventEmitter) {
     * set low level python argv
     * @param {string|string[]} string or an array of strings as argv; argc is auto computed by the arrays length
     */
-<<<<<<< Updated upstream
-    value: function _pySetArgv() {
-      nanCPython.setargv();
-=======
     value: function setArgv(arr) {
       nanCPython.setargv(arr);
->>>>>>> Stashed changes
     }
   }, {
     key: "pyCreateContext",
@@ -327,16 +316,11 @@ var CPython = (function (_EventEmitter) {
     */
     value: function _getListOfFiles(pattern, options, cb) {
       //var args = Array.prototype.slice.call(arguments);
-<<<<<<< Updated upstream
-      (0, _glob.glob)("**/*.js", options, function (err, files) {
+      _glob.glob("**/*.js", options, function (err, files) {
         // files is an array of filenames.
         // If the `nonull` option is set, and nothing
         // was found, then files is ["**/*.js"]
         // er is an error object or null.
-=======
-      _glob.glob(pattern, options, function (err, files) {
-
->>>>>>> Stashed changes
         return cb(err, files);
       });
     }

@@ -19,11 +19,9 @@ var fn = function(err, files) {
   console.log(files);
 }
 module._getListOfFiles("src/**/*.js", {silent: true} , fn)
-<<<<<<< Updated upstream
-=======
+
 
 
 var b = function() { console.log('From within Create context')}
 
 module.pyCreateContext(b)
->>>>>>> Stashed changes
