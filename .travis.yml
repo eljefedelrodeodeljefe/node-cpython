@@ -6,12 +6,13 @@ node_js:
 matrix:
   allow_failures:
     - "iojs-v1.8.1"
+before_install:
+  - npm install node-gyp -g
 install:
-  - node install.js
   - npm install
+  - node install.js
 before_script:
   - npm install gulpjs/gulp-cli#4.0 -g
-  - npm install node-gyp -g
 script:
   - gulp mocha
 deploy:
