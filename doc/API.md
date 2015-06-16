@@ -8,6 +8,8 @@
   * [.anyFile()](#CPython#anyFile)
   * [.simpleString(str, [flags], [cb])](#CPython#simpleString)
   * [.simpleFile(filepath, filename, [flags], [cb])](#CPython#simpleFile)
+  * [.callForeignFunction(file, functioname)](#CPython#callForeignFunction) ⇒ <code>function</code>
+  * [.ffi(file, functionname)](#CPython#ffi) ⇒ <code>function</code>
   * [.interactiveOne()](#CPython#interactiveOne)
   * [.interactiveLoop()](#CPython#interactiveLoop)
   * [.simpleParseString()](#CPython#simpleParseString)
@@ -17,6 +19,11 @@
   * [.compileString()](#CPython#compileString)
   * [.evalCode()](#CPython#evalCode)
   * [.evalFrame()](#CPython#evalFrame)
+  * [.initialize()](#CPython#initialize)
+  * [.finalize(callback)](#CPython#finalize)
+  * [.setProgramName(Program)](#CPython#setProgramName)
+  * [.setArgv(string)](#CPython#setArgv)
+  * [.pyCreateContext(python)](#CPython#pyCreateContext)
 
 <a name="new_CPython_new"></a>
 ### new CPython()
@@ -96,6 +103,30 @@ cpython.simpleFile("example/multiply.py", "multiply.py")
 // passing the filename seems to be a necessity of the C-API
 // TODO: this will only last very shortly and be made optional
 ```
+<a name="CPython#callForeignFunction"></a>
+### cPython.callForeignFunction(file, functioname) ⇒ <code>function</code>
+[callForeignFunction description]
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+**Returns**: <code>function</code> - [description]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| file | <code>string</code> | [description] |
+| functioname | <code>string</code> | [description] |
+
+<a name="CPython#ffi"></a>
+### cPython.ffi(file, functionname) ⇒ <code>function</code>
+[ffi description]
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+**Returns**: <code>function</code> - [description]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| file | <code>string</code> | [description] |
+| functionname | <code>string</code> | [description] |
+
 <a name="CPython#interactiveOne"></a>
 ### cPython.interactiveOne()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
@@ -123,3 +154,48 @@ cpython.simpleFile("example/multiply.py", "multiply.py")
 <a name="CPython#evalFrame"></a>
 ### cPython.evalFrame()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
+<a name="CPython#initialize"></a>
+### cPython.initialize()
+initialize python context, reserve memory.
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+<a name="CPython#finalize"></a>
+### cPython.finalize(callback)
+Finalize python context, clear memory.
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>callback</code> | for completion of py context |
+
+<a name="CPython#setProgramName"></a>
+### cPython.setProgramName(Program)
+set low level python program name (optional)
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Program | <code>string</code> | name. |
+
+<a name="CPython#setArgv"></a>
+### cPython.setArgv(string)
+set low level python argv
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| string | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | or an array of strings as argv; argc is auto computed by the arrays length |
+
+<a name="CPython#pyCreateContext"></a>
+### cPython.pyCreateContext(python)
+Create a context in memory to run the python script and injects a python function to run in.
+
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| python | <code>callback</code> | function to run in the memory |
+
