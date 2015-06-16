@@ -51,7 +51,7 @@ describe('CPython class', function () {
         expect(ar).to.be.instanceof(Array);
         done()
       }
-      cpython._getListOfFiles(["src/es6/**/*.js", "src/es5/**/*.js"], {silent: true} , fn)
+      cpython._getListOfFiles(["src/es6/**/*.js", "src/es5/**/*.js"], {silent: true} , fn2)
   });
 
 
