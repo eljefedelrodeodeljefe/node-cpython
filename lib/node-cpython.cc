@@ -26,7 +26,7 @@ extern "C" {
     Py_Finalize();
   }
 
-  int run(char *filename, int arrc, char *arrv[]) {
+  int run(char *filename, char *somepath, int arrc, char *arrv[]) {
 
     Py_Initialize();
     PySys_SetArgvEx(arrc, arrv, 0);
@@ -35,14 +35,12 @@ extern "C" {
     PyObject* main_module = PyImport_AddModule("__main__");
 
     // Get the main module's dictionary
-    // and make a copy of it.
     PyObject* main_dict = PyModule_GetDict(main_module);
-    PyObject* main_dict_copy = PyDict_Copy(main_dict);
 
     // Execute two different files of
     // Python code in separate environments
     FILE* file = fopen("/Users/rob/Desktop/node-cpython/example/multiply_2.py", "r");
-    PyRun_File(file, filename, Py_file_input, main_dict, main_dict);
+    PyRun_File(file, "example/multiply_2.py", Py_file_input, main_dict, main_dict);
     PyRun_SimpleString("import sys\n");
 
     Py_Finalize();
@@ -139,28 +137,35 @@ NAN_METHOD(simpleFile) {
 NAN_METHOD(run) {
   NanScope();
 
-  if (args.Length() != 3) {
-    NanThrowTypeError("Function expects one argument");
+  if (args.Length() != 4) {
+    NanThrowTypeError("Function expects four argument");
     NanReturnUndefined();
   }
 
+  //  first arg: filename
+  v8::String::Utf8Value py_file_name_string(args[0]->ToString());
+  std::string param0 = std::string(*py_file_name_string);
+  const char *pname = param0.c_str();
+  char *pfilename;
+  strcpy(pfilename, pname);
 
-
-  v8::String::Utf8Value py_program_path_string(args[0]->ToString());
-  std::string param0 = std::string(*py_program_path_string);
-  const char *path = param0.c_str();
-
+  //  second arg: filepath
+  v8::String::Utf8Value py_program_path_string(args[1]->ToString());
+  std::string param2 = std::string(*py_program_path_string);
+  const char *ppath = param2.c_str();
   char *program_path;
-  strcpy(program_path, path);
+  strcpy(program_path, ppath);
+  program_path ="/Users/rob/Desktop/node-cpython/example/multiply_2.py";
 
-  printf("hello %s\n", program_path);
 
-  int arrc = args[1]->NumberValue();
+  //  third arg: array counter
+  int arrc = args[2]->NumberValue();
 
-  Local<Array> arr= Local<Array>::Cast(args[2]);
+  //  forth arg: array of args for py
+  Local<Array> arr= Local<Array>::Cast(args[3]);
   char * arrv[] = {};
 
-  for (size_t i = 0; i < arrc; i++) {
+  for (int i = 0; i < arrc; i++) {
 
     Local<Value> item = arr->Get(i);
     v8::String::Utf8Value array_string(item->ToString());
@@ -173,7 +178,7 @@ NAN_METHOD(run) {
 
 
 
-  run(program_path , arrc , arrv);
+  run(pfilename, program_path , arrc , arrv);
 
   // TODO: Clean-up
   NanReturnValue(NanNew(0));
@@ -210,10 +215,7 @@ NAN_METHOD(setArgv) {
   // std::string param1 = std::string(*py_filename_string_param);
   // const char *py_filename_cstr = param1.c_str();
 
-  char *arrv[] = {"program name", "arg1", "arg2"};
-  int arrc = sizeof(arrv) / sizeof(char*) - 1;
-
-  pysetargv(arrc,arrv);
+  //pysetargv(arrc,arrv);
 
   // TODO: Clean-up
   NanReturnValue(NanNew(0));
@@ -235,7 +237,7 @@ NAN_METHOD(setProgramName) {
 void Init(Handle<Object> exports) {
   exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(simpleString)->GetFunction());
   exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(simpleFile)->GetFunction());
-  exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(run)->GetFunction());
+  exports->Set(NanNew("run"), NanNew<FunctionTemplate>(run)->GetFunction());
   exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(initialize)->GetFunction());
   exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(finalize)->GetFunction());
   exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(setArgv)->GetFunction());

@@ -63,7 +63,7 @@ var CPython = (function (_EventEmitter) {
     * @param {callback} [cb] - Optional callback
     */
     // TODO: actually implement callbacks
-    value: function run(glob, callback) {
+    value: function run(filename, callback) {
       var args = Array.prototype.slice.call(arguments);
 
       // //TODO: check if condition is valid at all (after first review: seems to be the case)
@@ -75,11 +75,11 @@ var CPython = (function (_EventEmitter) {
       //   this.emit('error', err)
       //   return
       // }
-
+      var filepath = "/Users/rob/Desktop/node-cpython/example/multiply_2.py";
       /**
       * call simpleFile from below and pass args as string
       */
-      nanCPython.runRun(glob, args[1].length, args[1]);
+      nanCPython.run(filename, filepath, args[1].length, args[1]);
 
       // TODO: Check if chainability is actually usuful
       return this;
@@ -343,7 +343,7 @@ var CPython = (function (_EventEmitter) {
     */
     value: function _getListOfFiles(pattern, options, cb) {
       //var args = Array.prototype.slice.call(arguments);
-      _glob.glob("**/*.js", options, function (err, files) {
+      _glob.glob(pattern, options, function (err, files) {
         // files is an array of filenames.
         // If the `nonull` option is set, and nothing
         // was found, then files is ["**/*.js"]
