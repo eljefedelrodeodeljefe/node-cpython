@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		.
 
-abs_srcdir=	/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/cpython
-abs_builddir=	/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/cpython
+abs_srcdir=	/Users/rob/Desktop/node-cpython/deps/2.7/cpython
+abs_builddir=	/Users/rob/Desktop/node-cpython/deps/2.7/cpython
 build=		x86_64-apple-darwin14.3.0
 host=		x86_64-apple-darwin14.3.0
 
@@ -93,10 +93,10 @@ MACHDEP=	darwin
 MULTIARCH=	
 
 # Install prefix for architecture-independent files
-prefix=		/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/build
+prefix=		/Users/rob/Desktop/node-cpython/deps/2.7/build
 
 # Install prefix for architecture-dependent files
-exec_prefix=	/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/build
+exec_prefix=	/Users/rob/Desktop/node-cpython/deps/2.7/build
 
 # Install prefix for data files
 datarootdir=    ${prefix}/share
@@ -155,7 +155,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/build' '--exec-prefix=/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/build' '--with-PACKAGE=no' '--without-doc-strings'
+CONFIG_ARGS=	 '--prefix=/Users/rob/Desktop/node-cpython/deps/2.7/build' '--exec-prefix=/Users/rob/Desktop/node-cpython/deps/2.7/build' '--with-PACKAGE=no' '--without-doc-strings'
 
 
 # Subdirectories with code
@@ -316,6 +316,16 @@ ASDLGEN=	$(srcdir)/Parser/asdl_c.py
 
 ##########################################################################
 # Python
+
+OPCODETARGETS_H= \
+		$(srcdir)/Python/opcode_targets.h
+		
+OPCODETARGETGEN= \
+		$(srcdir)/Python/makeopcodetargets.py
+
+OPCODETARGETGEN_FILES= \
+		$(OPCODETARGETGEN) $(srcdir)/Lib/opcode.py
+
 PYTHON_OBJS=	\
 		Python/_warnings.o \
 		Python/Python-ast.o \
@@ -686,6 +696,11 @@ Objects/bytearrayobject.o: $(srcdir)/Objects/bytearrayobject.c \
 
 Objects/stringobject.o: $(srcdir)/Objects/stringobject.c \
 				$(STRINGLIB_HEADERS)
+
+$(OPCODETARGETS_H): $(OPCODETARGETGEN_FILES)
+	$(OPCODETARGETGEN) $(OPCODETARGETS_H)
+
+Python/ceval.o: $(OPCODETARGETS_H)
 
 Python/formatter_unicode.o: $(srcdir)/Python/formatter_unicode.c \
 				$(STRINGLIB_HEADERS)

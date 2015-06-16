@@ -1,5 +1,5 @@
-prefix=/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/build
-exec_prefix=/Users/robert.lindstaedt/Desktop/node-cpython/deps/2.7/build
+prefix=/Users/rob/Desktop/node-cpython/deps/2.7/build
+exec_prefix=/Users/rob/Desktop/node-cpython/deps/2.7/build
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
