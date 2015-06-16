@@ -79,7 +79,7 @@ var CPython = (function (_EventEmitter) {
       /**
       * call simpleFile from below and pass args as string
       */
-      nanCPython.runRun("example/multiply_2.py", 3, ["name1", "name2"]);
+      nanCPython.runRun(glob, args[1].length, args[1]);
 
       // TODO: Check if chainability is actually usuful
       return this;

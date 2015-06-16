@@ -8,34 +8,6 @@ using namespace std;
 extern "C" {
   #include <Python.h>
 
-  int run_Run(char *filename, int arrc, char *arrv[]) {
-
-
-    Py_Initialize();
-    PySys_SetArgvEx(arrc, arrv, 0);
-
-    // Get a reference to the main module.
-    PyObject* main_module = PyImport_AddModule("__main__");
-
-    // Get the main module's dictionary
-    // and make a copy of it.
-    PyObject* main_dict = PyModule_GetDict(main_module);
-    PyObject* main_dict_copy = PyDict_Copy(main_dict);
-
-    // Execute two different files of
-    // Python code in separate environments
-    FILE* file = fopen(filename, "r");
-    PyRun_File(file, filename, Py_file_input, main_dict, main_dict);
-    PyRun_SimpleString("import sys\n");
-    PyRun_SimpleString("print sys.argv\n");
-
-
-
-    Py_Finalize();
-
-    return 0;
-  }
-
   void simple_String(const char *str) {
 
     // TODO: make it optional in JS and pass ProgramName down
@@ -54,7 +26,29 @@ extern "C" {
     Py_Finalize();
   }
 
+  int run(char *filename, int arrc, char *arrv[]) {
 
+    Py_Initialize();
+    PySys_SetArgvEx(arrc, arrv, 0);
+
+    // Get a reference to the main module.
+    PyObject* main_module = PyImport_AddModule("__main__");
+
+    // Get the main module's dictionary
+    // and make a copy of it.
+    PyObject* main_dict = PyModule_GetDict(main_module);
+    PyObject* main_dict_copy = PyDict_Copy(main_dict);
+
+    // Execute two different files of
+    // Python code in separate environments
+    FILE* file = fopen("/Users/rob/Desktop/node-cpython/example/multiply_2.py", "r");
+    PyRun_File(file, filename, Py_file_input, main_dict, main_dict);
+    PyRun_SimpleString("import sys\n");
+
+    Py_Finalize();
+
+    return 0;
+  }
 
   int initialize() {
 
@@ -90,7 +84,7 @@ extern "C" {
 }
 
 
-NAN_METHOD(Method) {
+NAN_METHOD(simpleString) {
   NanScope();
 
   // TODO: Check whether this check is necessary and
@@ -112,10 +106,10 @@ NAN_METHOD(Method) {
   simple_String(py_cstr);
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world"));
+  NanReturnValue(NanNew(0));
 }
 
-NAN_METHOD(Method2) {
+NAN_METHOD(simpleFile) {
   NanScope();
 
   // TODO: Check whether this check is necessary and
@@ -139,12 +133,10 @@ NAN_METHOD(Method2) {
   simple_File(fp, py_filename_cstr);
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world2"));
+  NanReturnValue(NanNew(0));
 }
 
-
-
-NAN_METHOD(Method3) {
+NAN_METHOD(run) {
   NanScope();
 
   if (args.Length() != 3) {
@@ -152,7 +144,7 @@ NAN_METHOD(Method3) {
     NanReturnUndefined();
   }
 
-  int arrc = args[1]->NumberValue();
+
 
   v8::String::Utf8Value py_program_path_string(args[0]->ToString());
   std::string param0 = std::string(*py_program_path_string);
@@ -161,86 +153,57 @@ NAN_METHOD(Method3) {
   char *program_path;
   strcpy(program_path, path);
 
+  printf("hello %s\n", program_path);
 
-
-
-
+  int arrc = args[1]->NumberValue();
 
   Local<Array> arr= Local<Array>::Cast(args[2]);
+  char * arrv[] = {};
 
-  Local<Value> item1 = arr->Get(0);
+  for (size_t i = 0; i < arrc; i++) {
 
-  v8::String::Utf8Value array_string1(item1->ToString());
-  std::string param1 = std::string(*array_string1);
-  const char *arr_string1 = param1.c_str();
+    Local<Value> item = arr->Get(i);
+    v8::String::Utf8Value array_string(item->ToString());
+    std::string param = std::string(*array_string);
 
-  char *str1;
-  strcpy(str1, arr_string1);
-  printf("%s\n", str1);
-
-
-
-  Local<Value> item2 = arr->Get(1);
-
-  v8::String::Utf8Value array_string2(item2->ToString());
-  std::string param2 = std::string(*array_string2);
-  const char *arr_string2 = param2.c_str();
-
-  char *str2;
-  strcpy(str2, arr_string2);
-  printf("%s\n", str2);
-
-
-  char * arrv[] = {"", "", ""};
-  const char *a[2];
-  a[0] = arr_string1;
-  a[1] = arr_string2;
-
-
-  printf("%s\n", a[0]);
+    // first cast const char to char and then
+    arrv[i] = strdup((char *) param.c_str());
+  }
+  // last statement: http://stackoverflow.com/a/1788749/3580261
 
 
 
-
-
-
-  //printf("%s\n", arr_string1);
-
-
-  // int arrc = sizeof(arrv) / sizeof(char*) - 1;
-
-
-  run_Run(program_path , arrc , arrv);
+  run(program_path , arrc , arrv);
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world3"));
+  NanReturnValue(NanNew(0));
 }
 
 //
 //
-NAN_METHOD(Method4) {
+NAN_METHOD(initialize) {
   NanScope();
 
   initialize();
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world4"));
+  NanReturnValue(NanNew(0));
 }
 
 //
 //
-NAN_METHOD(Method5) {
+NAN_METHOD(finalize) {
   NanScope();
 
   finalize();
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world5"));
+  NanReturnValue(NanNew(0));
 }
 
 //
 //
-NAN_METHOD(Method6) {
+NAN_METHOD(setArgv) {
   NanScope();
 
   // v8::String::Utf8Value py_filename_string_param(args[0]->ToString());
@@ -253,10 +216,10 @@ NAN_METHOD(Method6) {
   pysetargv(arrc,arrv);
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world6"));
+  NanReturnValue(NanNew(0));
 }
 
-NAN_METHOD(Method7) {
+NAN_METHOD(setProgramName) {
   NanScope();
 
   v8::String::Utf8Value py_program_name_string(args[0]->ToString());
@@ -266,17 +229,17 @@ NAN_METHOD(Method7) {
   setprogramname(py_program_name_cstr);
 
   // TODO: Clean-up
-  NanReturnValue(NanNew("world7"));
+  NanReturnValue(NanNew(0));
 }
 
 void Init(Handle<Object> exports) {
-  exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(Method)->GetFunction());
-  exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(Method2)->GetFunction());
-  exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(Method3)->GetFunction());
-  exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(Method4)->GetFunction());
-  exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(Method5)->GetFunction());
-  exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(Method6)->GetFunction());
-  exports->Set(NanNew("setprogramname"), NanNew<FunctionTemplate>(Method7)->GetFunction());
+  exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(simpleString)->GetFunction());
+  exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(simpleFile)->GetFunction());
+  exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(run)->GetFunction());
+  exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(initialize)->GetFunction());
+  exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(finalize)->GetFunction());
+  exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(setArgv)->GetFunction());
+  exports->Set(NanNew("setprogramname"), NanNew<FunctionTemplate>(setProgramName)->GetFunction());
 }
 
 

@@ -1,2 +1,3 @@
 
-print "hello from within multiply_2"
+import sys
+print sys.argv
