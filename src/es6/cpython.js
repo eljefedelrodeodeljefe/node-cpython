@@ -151,6 +151,29 @@ export class CPython extends EventEmitter {
   }
 
   /**
+   * [callForeignFunction description]
+   * @param  {string} file        [description]
+   * @param  {string} functioname [description]
+   * @return {function}             [description]
+   */
+  callForeignFunction(file, functioname) {
+    nanCPython.simpleFile(file, functionname)
+
+    // TODO: Check if chainability is actually usuful
+    return this
+  }
+
+  /**
+   * [ffi description]
+   * @param  {string} file         [description]
+   * @param  {string} functionname [description]
+   * @return {function}              [description]
+   */
+  ffi(file, functionname) {
+    this.callForeignFunction(file, filename)
+  }
+
+  /**
   *
   */
   interactiveOne() {

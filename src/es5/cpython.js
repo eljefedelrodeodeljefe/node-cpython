@@ -179,6 +179,33 @@ var CPython = (function (_EventEmitter) {
       return this;
     }
   }, {
+    key: "callForeignFunction",
+
+    /**
+     * [callForeignFunction description]
+     * @param  {string} file        [description]
+     * @param  {string} functioname [description]
+     * @return {function}             [description]
+     */
+    value: function callForeignFunction(file, functioname) {
+      nanCPython.simpleFile(file, functionname);
+
+      // TODO: Check if chainability is actually usuful
+      return this;
+    }
+  }, {
+    key: "ffi",
+
+    /**
+     * [ffi description]
+     * @param  {string} file         [description]
+     * @param  {string} functionname [description]
+     * @return {function}              [description]
+     */
+    value: function ffi(file, functionname) {
+      this.callForeignFunction(file, filename);
+    }
+  }, {
     key: "interactiveOne",
 
     /**
