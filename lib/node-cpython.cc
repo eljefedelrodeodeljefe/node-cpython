@@ -26,7 +26,7 @@ extern "C" {
     Py_Finalize();
   }
 
-  int run(char *filename, char *somepath, int arrc, char *arrv[]) {
+  int run(char *filename, char * filepath, int arrc, char *arrv[]) {
 
     Py_Initialize();
     PySys_SetArgvEx(arrc, arrv, 0);
@@ -35,13 +35,15 @@ extern "C" {
     PyObject* main_module = PyImport_AddModule("__main__");
 
     // Get the main module's dictionary
+    // and make a copy of it.
     PyObject* main_dict = PyModule_GetDict(main_module);
 
     // Execute two different files of
     // Python code in separate environments
-    FILE* file = fopen("/Users/rob/Desktop/node-cpython/example/multiply_2.py", "r");
-    PyRun_File(file, "example/multiply_2.py", Py_file_input, main_dict, main_dict);
-    PyRun_SimpleString("import sys\n");
+    // TODO: check why only relative path works when passed through from above
+    FILE* file = fopen(filepath, "r");
+    PyRun_File(file, filename, Py_file_input, main_dict, main_dict);
+
 
     Py_Finalize();
 
@@ -137,35 +139,28 @@ NAN_METHOD(simpleFile) {
 NAN_METHOD(run) {
   NanScope();
 
-  if (args.Length() != 4) {
-    NanThrowTypeError("Function expects four argument");
+  if (args.Length() != 3) {
+    NanThrowTypeError("Function expects one argument");
     NanReturnUndefined();
   }
 
-  //  first arg: filename
-  v8::String::Utf8Value py_file_name_string(args[0]->ToString());
-  std::string param0 = std::string(*py_file_name_string);
-  const char *pname = param0.c_str();
-  char *pfilename;
-  strcpy(pfilename, pname);
 
-  //  second arg: filepath
-  v8::String::Utf8Value py_program_path_string(args[1]->ToString());
-  std::string param2 = std::string(*py_program_path_string);
-  const char *ppath = param2.c_str();
+
+  v8::String::Utf8Value py_program_path_string(args[0]->ToString());
+  std::string param0 = std::string(*py_program_path_string);
+  const char *path = param0.c_str();
+
   char *program_path;
-  strcpy(program_path, ppath);
-  program_path ="/Users/rob/Desktop/node-cpython/example/multiply_2.py";
+  strcpy(program_path, path);
 
+  printf("hello %s\n", program_path);
 
-  //  third arg: array counter
-  int arrc = args[2]->NumberValue();
+  int arrc = args[1]->NumberValue();
 
-  //  forth arg: array of args for py
-  Local<Array> arr= Local<Array>::Cast(args[3]);
+  Local<Array> arr= Local<Array>::Cast(args[2]);
   char * arrv[] = {};
 
-  for (int i = 0; i < arrc; i++) {
+  for (size_t i = 0; i < arrc; i++) {
 
     Local<Value> item = arr->Get(i);
     v8::String::Utf8Value array_string(item->ToString());
@@ -177,10 +172,9 @@ NAN_METHOD(run) {
   // last statement: http://stackoverflow.com/a/1788749/3580261
 
 
+  char * filepath = "example/multiply_2.py";
+  run(program_path, filepath, arrc , arrv);
 
-  run(pfilename, program_path , arrc , arrv);
-
-  // TODO: Clean-up
   NanReturnValue(NanNew(0));
 }
 
@@ -215,7 +209,10 @@ NAN_METHOD(setArgv) {
   // std::string param1 = std::string(*py_filename_string_param);
   // const char *py_filename_cstr = param1.c_str();
 
-  //pysetargv(arrc,arrv);
+  // char *arrv[] = {"program name", "arg1", "arg2"};
+  // int arrc = sizeof(arrv) / sizeof(char*) - 1;
+  //
+  // pysetargv(arrc,arrv);
 
   // TODO: Clean-up
   NanReturnValue(NanNew(0));

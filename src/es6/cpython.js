@@ -36,7 +36,7 @@ export class CPython extends EventEmitter {
   * @param {callback} [cb] - Optional callback
   */
   // TODO: actually implement callbacks
-  run(filename, callback) {
+  run(filename, fnargs) {
     var args = Array.prototype.slice.call(arguments);
 
     // //TODO: check if condition is valid at all (after first review: seems to be the case)
@@ -48,11 +48,10 @@ export class CPython extends EventEmitter {
     //   this.emit('error', err)
     //   return
     // }
-    var filepath = "/Users/rob/Desktop/node-cpython/example/multiply_2.py";
     /**
     * call simpleFile from below and pass args as string
     */
-    nanCPython.run(filename, filepath, args[1].length, args[1])
+    nanCPython.run(filename, args[1].length, args[1])
 
     // TODO: Check if chainability is actually usuful
     return this
