@@ -4,3 +4,5 @@ def multiply(a,b):
     for i in range(0, a):
         c = c + b
     return c
+
+print "hello from within multiply.py"

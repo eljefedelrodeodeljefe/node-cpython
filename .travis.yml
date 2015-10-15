@@ -1,17 +1,16 @@
 language: node_js
 node_js:
-  - "0.12.4"
-  - "0.11"
+  - "0.12"
   - "iojs-v1.8.1"
-  - "iojs-v2.1.0"
+  - "iojs-v2.3.0"
 matrix:
   allow_failures:
-    - "iojs-v2.1.0"
-    - "0.11"
-install:
+    - "iojs-v1.8.1"
+before_install:
   - npm install node-gyp -g
-  - node install.js
+install:
   - npm install
+  - node install.js
 before_script:
   - npm install gulpjs/gulp-cli#4.0 -g
 script:

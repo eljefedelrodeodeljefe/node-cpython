@@ -1,13 +1,17 @@
-var spawn = require('child_process').spawn;
-var log = require('util').log;
+'use strict'
+const spawn = require('child_process').spawn;
+const log = require('util').log;
+const os = require('os');
 
-var EventEmitter = require('events');
-var ee = new EventEmitter();
+const EventEmitter = require('events');
+const ee = new EventEmitter();
+const path = require('path');
 
-var colors = require('./bin/colors.js');
+const pathTo27 = 'deps/python/2.7'
+const pathTo3X = 'deps/python/3.X'
 
-
-
+let v27 = '2.7'
+const v3x = '3.X'
 
 /*
 * This is the install script which runs on 'npm pre-install'.
@@ -16,77 +20,63 @@ var colors = require('./bin/colors.js');
 *
 */
 
-var configureOpts = ["--prefix=" + process.cwd() + "/deps/2.7/build",
-                     "--exec-prefix=" + process.cwd() + "/deps/2.7/build",
-                     "--with-PACKAGE=no",
-                     "--without-doc-strings"];
+let configureOpts = [
+                    '--prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯ -> Tying to be real clever here
+                    '--exec-prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯
+                    // "--with-PACKAGE=no",
+                    '--without-doc-strings',
+                    '-q'
+                  ];
 
-var installTime = process.hrtime();
-var time = process.hrtime();
-var configure = spawn('./configure',configureOpts, {cwd: "deps/2.7/cpython"})
 
-configure.stdout.on('data', function (data) { console.log(colors + data); });
-configure.stderr.on('data', function (data) { console.log(colors+ 'ERR: ' + data); });
+let time = process.hrtime();
+let configure27 = spawn('./configure', configureOpts, {cwd: pathTo27, stdio: 'inherit'})
 
-configure.on('close', function (code) {
-  var diff = process.hrtime(time);
-  var prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-  console.log('\n\n\n' + colors + 'Configure: child process exited with code ' + code + '\n' + colors + 'after ' + prettyTime + '\n\n');
-  ee.emit('done:configure')
+configure27.on('close', function (code) {
+  v27 = false //  ¯\_(ツ)_/¯
+  let configure3X = spawn('./configure', configureOpts, {cwd: pathTo3X, stdio: 'inherit'})
+  configure3X.on('close', function (code) {
+
+    let diff = process.hrtime(time);
+    let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
+    console.log('\n\n' + 'Configure: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n\n');
+
+    ee.emit('done:configure')
+  })
 });
 
-
-
 ee.on('done:configure', function() {
-  var time = process.hrtime();
-  var make = spawn('make', {cwd: "deps/2.7/cpython"})
+  let time = process.hrtime();
 
-  make.stdout.on('data', function (data) { console.log(colors + data); });
-  make.stderr.on('data', function (data) { console.log(colors+ 'ERR: ' + data); });
+  let makeOpts = ['-j' + os.cpus().length, '--silent'] // run make in parrallel with max. cpus
+  let make27 = spawn('make', makeOpts, {cwd: pathTo27, stdio: 'inherit'})
 
-  make.on('close', function (code) {
-    var diff = process.hrtime(time);
-    var prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-    console.log('\n\n\n' + colors + 'Make: child process exited with code ' + code + '\n'+ colors + 'after ' + diff + '\n\n');
-    ee.emit('done:make')
+  make27.on('close', function (code) {
+    var make3X = spawn('make', makeOpts, {cwd: pathTo3X, stdio: 'inherit'})
+
+    make3X.on('close', function (code) {
+      let diff = process.hrtime(time);
+      let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
+      console.log('\n\n' + 'make: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n\n');
+
+      ee.emit('done:make')
+    })
   });
 })
-
 
 ee.on('done:make', function() {
-  var time = process.hrtime();
-  var makeInstall = spawn('make', ['install'], {cwd: "deps/2.7/cpython"})
+  let time = process.hrtime();
+  let installOpts = ['install','--silent']
 
-  makeInstall.stdout.on('data', function (data) { console.log(colors + data); });
-  makeInstall.stderr.on('data', function (data) { console.log(colors+ 'ERR: ' + data); });
+  let makeInstall27 = spawn('make', installOpts, {cwd: pathTo27, stdio: 'inherit'})
 
-  makeInstall.on('close', function (code) {
-    var diff = process.hrtime(time);
-    var prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-    console.log('\n\n\n' + colors + 'Make install: child process exited with code ' + code + '\n'+ colors + 'after ' + prettyTime + '\n\n');
-    ee.emit('done:makeInstall')
-  });
-})
+  makeInstall27.on('close', function (code) {
+    let makeInstall3X = spawn('make', installOpts, {cwd: pathTo3X, stdio: 'inherit'})
 
-
-ee.on('done:makeInstall', function() {
-  var installDiff = process.hrtime(installTime);
-  // pretty hrtime -> [$mm:$ss] mm:ss
-  var prettyTime = '[' + ('0' + ~~(installDiff[0] / 60)).slice(-2) + ':' + ( '0'+ installDiff[0] % 60).slice(-2) + '] mm:ss\n'
-  console.log('\n\n\n' + colors + 'Install took ' + prettyTime + '\n\n');
-  ee.emit('done:summarizeinstall')
-})
-
-ee.on('done:summarizeinstall', function() {
-  var time = process.hrtime();
-  var makeInstall = spawn('node-gyp', ['rebuild'])
-
-  makeInstall.stdout.on('data', function (data) { console.log(colors + data); });
-  makeInstall.stderr.on('data', function (data) { console.log(colors+ 'ERR: ' + data); });
-
-  makeInstall.on('close', function (code) {
-    var diff = process.hrtime(time);
-    var prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-    console.log('\n\n\n' + colors + 'Node-Gyp: child process exited with code ' + code + '\n'+ colors + 'after ' + prettyTime + '\n\n');
+    makeInstall3X.on('close', function (code) {
+      let diff = process.hrtime(time);
+      let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
+      console.log('\n\n' + 'make install: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n\n');
+    })
   });
 })

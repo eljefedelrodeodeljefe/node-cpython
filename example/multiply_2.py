@@ -1,2 +1,3 @@
 
-print "hello from within"
+import sys
+print sys.argv

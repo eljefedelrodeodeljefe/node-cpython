@@ -1,6 +1,6 @@
 {
   "name": "cpython",
-  "version": "0.4.2-rc1",
+  "version": "0.3.2-beta",
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "directories": {
@@ -11,22 +11,16 @@
     "commander": "^2.8.1",
     "glob": "^5.0.10",
     "minimist": "^1.1.1",
-    "nan": "^1.8.4"
+    "nan": "^2.1.0"
   },
   "devDependencies": {
-    "babel": "^5.1.13",
-    "chai": "^2.3.0",
-    "del": "^1.1.1",
-    "gulp": "gulpjs/gulp#4.0",
-    "gulp-babel": "^5.1.0",
-    "gulp-concat": "^2.5.2",
-    "gulp-git": "^1.2.1",
-    "gulp-jsdoc-to-markdown": "^1.0.2",
-    "gulp-mocha": "^2.0.1",
-    "gulp-util": "^3.0.4"
+    "tape": "^4.2.1"
   },
   "scripts": {
-    "test": "gulp mocha",
+    "clone": "git clone -b 2.7 --depth=1 https://github.com/python/cpython deps/python/2.7 && git clone -b 3.5 --depth=1 https://github.com/python/cpython deps/python/3.X",
+    "clean": "rm -rf deps/python/{2.7,3.X}/{Doc,Demo,.git,bzignore,.gitignore,.hgeol,.hgignore,.hgtouch,README}",
+    "deep-clean": "rm -rf deps/python/{2.7,3.X}",
+    "test": "",
     "pre-install": "",
     "install": "node install.js"
   },
