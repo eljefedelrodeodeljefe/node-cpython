@@ -11,12 +11,12 @@
     "commander": "^2.8.1",
     "glob": "^5.0.10",
     "minimist": "^1.1.1",
-    "nan": "^1.8.4"
+    "nan": "^2.1.0"
   },
   "devDependencies": {
     "babel": "^5.1.13",
-    "chai": "^2.3.0",
-    "del": "^1.1.1",
+    "chai": "^3.3.0",
+    "del": "^2.0.2",
     "gulp": "gulpjs/gulp#4.0",
     "gulp-babel": "^5.1.0",
     "gulp-concat": "^2.5.2",
