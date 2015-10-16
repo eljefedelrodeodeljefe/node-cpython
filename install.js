@@ -27,7 +27,7 @@ let configureOpts = [
                     '-q'
                   ];
 
-// TODO: do boh in a child process.
+// TODO: do both in a child process.
 let time = process.hrtime();
 let configure27 = spawn('./configure', configureOpts, {cwd: pathTo27, stdio: 'inherit'})
 
