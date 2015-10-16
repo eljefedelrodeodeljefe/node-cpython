@@ -1,20 +1,18 @@
 language: node_js
 node_js:
+  - "0.10"
   - "0.12"
-  - "iojs-v1.8.1"
-  - "iojs-v2.3.0"
+  - "4.2"
 matrix:
   allow_failures:
-    - "iojs-v1.8.1"
+    - "0.10"
 before_install:
   - npm install node-gyp -g
 install:
   - npm install
-  - node install.js
 before_script:
-  - npm install gulpjs/gulp-cli#4.0 -g
 script:
-  - gulp mocha
+  - npm test
 deploy:
   provider: npm
   email: devraindance@gmail.com
