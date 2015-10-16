@@ -19,7 +19,6 @@ const v3x = '3.X'
 * Most of the code here presents the users output and errors into the console and pretty-prints stuff.
 *
 */
-
 let configureOpts = [
                     '--prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯ -> Tying to be real clever here
                     '--exec-prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯
@@ -28,7 +27,7 @@ let configureOpts = [
                     '-q'
                   ];
 
-
+// TODO: do boh in a child process.
 let time = process.hrtime();
 let configure27 = spawn('./configure', configureOpts, {cwd: pathTo27, stdio: 'inherit'})
 
