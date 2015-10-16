@@ -1,2 +1,2 @@
 'use strict'
-module.exports = require('./src/node-cpython')
+module.exports = require('./lib/node-cpython')

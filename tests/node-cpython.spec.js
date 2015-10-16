@@ -1,13 +1,12 @@
 'use strict'
 var test = require('tape');
 
-test('timing test', function (t) {
+test('Can be required', function (t) {
     t.plan(2);
 
-    t.equal(typeof Date.now, 'function');
-    var start = Date.now();
+    let cpython = require('../')
+    t.ok(cpython, 'Instance of node-cpython class was created')
+    let cpython2 = require('../')
+    t.deepEqual(cpython, cpython2, '2 Intances should be exactly the same')
 
-    setTimeout(function () {
-        t.equal(Date.now() - start, 100);
-    }, 100);
 });
