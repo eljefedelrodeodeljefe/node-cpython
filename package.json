@@ -23,7 +23,7 @@
     "test": "node_modules/tape/bin/tape 'tests/**/*.spec.js'",
     "lint": "standard lib/**/*.js",
     "preinstall": "node --harmony install.js",
-    "install": ""
+    "install": "node-gyp rebuild"
   },
   "repository": {
     "type": "git",
