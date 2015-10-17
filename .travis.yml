@@ -6,6 +6,16 @@ os:
   - linux
   - osx
 
+matrix:
+  allow_failures:
+  fast_finish: true
+
+env:
+  global:
+  matrix:
+    # - export NODE_VERSION="0.12"
+    - export NODE_VERSION="4"
+
 addons:
   apt:
     sources:
@@ -14,13 +24,11 @@ addons:
       - gcc-4.7
       - g++-4.7
 
-node_js:
-  - "4.2"
-matrix:
-  allow_failures:
-  fast_finish: true
-
 before_install:
+  - git clone https://github.com/creationix/nvm.git ./.nvm
+  - source ./.nvm/nvm.sh
+  - nvm install $NODE_VERSION
+  - nvm use $NODE_VERSION
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CC="gcc-4.7";
       export CXX="g++-4.7";
