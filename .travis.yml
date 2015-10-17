@@ -1,4 +1,7 @@
 language: node_js
+compiler:
+  - gcc
+  - clang
 node_js:
   - "4.2"
 matrix:
