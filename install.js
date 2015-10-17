@@ -37,8 +37,8 @@ configure27.on('close', function (code) {
   configure3X.on('close', function (code) {
 
     let diff = process.hrtime(time);
-    let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-    console.log('\n\n' + 'Configure: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n\n');
+    let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss'
+    console.log('\n' + 'Configure: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n');
 
     ee.emit('done:configure')
   })
@@ -55,8 +55,8 @@ ee.on('done:configure', function() {
 
     make3X.on('close', function (code) {
       let diff = process.hrtime(time);
-      let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-      console.log('\n\n' + 'make: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n\n');
+      let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss'
+      console.log('\n' + 'make: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n');
 
       ee.emit('done:make')
     })
@@ -74,8 +74,8 @@ ee.on('done:make', function() {
 
     makeInstall3X.on('close', function (code) {
       let diff = process.hrtime(time);
-      let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss\n'
-      console.log('\n\n' + 'make install: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n\n');
+      let prettyTime = '[' + ('0' + ~~(diff[0] / 60)).slice(-2) + ':' + ( '0'+ diff[0] % 60).slice(-2) + '] mm:ss'
+      console.log('\n' + 'make install: child process exited with code ' + code + '\n' + 'after ' + prettyTime + '\n');
     })
   });
 })
