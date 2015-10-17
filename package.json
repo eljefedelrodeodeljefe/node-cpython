@@ -22,7 +22,8 @@
     "deep-clean": "rm -rf deps/python/{2.7,3.X}",
     "test": "node_modules/tape/bin/tape 'tests/**/*.spec.js'",
     "lint": "standard lib/**/*.js",
-    "install": "node install.js"
+    "preinstall": "node install.js",
+    "install": "node-gyp rebuild"
   },
   "repository": {
     "type": "git",
