@@ -1,18 +1,48 @@
-language: node_js
+language: cpp
+compiler: gcc
+sudo: false
+
 os:
   - linux
+  - osx
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.7
+      - g++-4.7
+
 compiler: clang
 node_js:
   - "4.2"
 matrix:
   allow_failures:
+  fast_finish: true
+
 before_install:
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then
+      export CC="gcc-4.7";
+      export CXX="g++-4.7";
+      export LINK="gcc-4.7";
+      export LINKXX="g++-4.7";
+    fi
+  - gcc --version
+  - g++ --version
   - npm install node-gyp -g
-install:
-  - npm install
+
 before_script:
 script:
+  - npm install
   - npm test
+
+cache:
+  directories:
+    - $HOME/.node-gyp
+    - $HOME/.npm
+    - node_modules
+
 deploy:
   provider: npm
   email: devraindance@gmail.com
