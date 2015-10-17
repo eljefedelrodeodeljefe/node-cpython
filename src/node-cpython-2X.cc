@@ -1,9 +1,4 @@
-#include <nan.h>
-
-
-
-using namespace v8;
-using namespace std;
+#include "node-cpython-2X.h"
 
 extern "C" {
   #include <Python.h>
@@ -83,6 +78,69 @@ extern "C" {
 
 }
 
+Nan::Persistent<v8::Function> NodeCPython2X::constructor;
+
+NodeCPython2X::NodeCPython2X(double value) : value_(value) {
+}
+
+NodeCPython2X::~NodeCPython2X() {
+}
+
+void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
+  Nan::HandleScope scope;
+
+  // Prepare constructor template
+  v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
+  tpl->SetClassName(Nan::New("NodeCPython2X").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+  // Prototype
+  Nan::SetPrototypeMethod(tpl, "value", GetValue);
+  Nan::SetPrototypeMethod(tpl, "plusOne", PlusOne);
+  Nan::SetPrototypeMethod(tpl, "multiply", Multiply);
+
+  constructor.Reset(tpl->GetFunction());
+  exports->Set(Nan::New("NodeCPython2X").ToLocalChecked(), tpl->GetFunction());
+}
+
+void NodeCPython2X::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  if (info.IsConstructCall()) {
+    // Invoked as constructor: `new NodeCPython2X(...)`
+    double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
+    NodeCPython2X* obj = new NodeCPython2X(value);
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
+  } else {
+    // Invoked as plain function `NodeCPython2X(...)`, turn into construct call.
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = { info[0] };
+    v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+    info.GetReturnValue().Set(cons->NewInstance(argc, argv));
+  }
+}
+
+void NodeCPython2X::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  info.GetReturnValue().Set(Nan::New(obj->value_));
+}
+
+void NodeCPython2X::PlusOne(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  obj->value_ += 1;
+  info.GetReturnValue().Set(Nan::New(obj->value_));
+}
+
+void NodeCPython2X::Multiply(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  double multiple = info[0]->IsUndefined() ? 1 : info[0]->NumberValue();
+
+  v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+
+  const int argc = 1;
+  v8::Local<v8::Value> argv[argc] = { Nan::New(obj->value_ * multiple) };
+
+  info.GetReturnValue().Set(cons->NewInstance(argc, argv));
+}
 
 // NAN_METHOD(simpleString) {
 //   NanScope();
@@ -232,15 +290,3 @@ extern "C" {
 //   NanReturnValue(NanNew(0));
 // }
 //
-void Init(Handle<Object> exports) {
-  // exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(simpleString)->GetFunction());
-  // exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(simpleFile)->GetFunction());
-  // exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(run)->GetFunction());
-  // exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(initialize)->GetFunction());
-  // exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(finalize)->GetFunction());
-  // exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(setArgv)->GetFunction());
-  // exports->Set(NanNew("setprogramname"), NanNew<FunctionTemplate>(setProgramName)->GetFunction());
-}
-
-
-NODE_MODULE(cpython, Init)
