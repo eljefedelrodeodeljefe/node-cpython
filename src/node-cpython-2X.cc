@@ -80,7 +80,7 @@ extern "C" {
 
 Nan::Persistent<v8::Function> NodeCPython2X::constructor;
 
-NodeCPython2X::NodeCPython2X(double value) : value_(value) {
+NodeCPython2X::NodeCPython2X() {
 }
 
 NodeCPython2X::~NodeCPython2X() {
@@ -97,7 +97,6 @@ void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
   // Prototype
   Nan::SetPrototypeMethod(tpl, "value", GetValue);
   Nan::SetPrototypeMethod(tpl, "plusOne", PlusOne);
-  Nan::SetPrototypeMethod(tpl, "multiply", Multiply);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("NodeCPython2X").ToLocalChecked(), tpl->GetFunction());
@@ -106,8 +105,7 @@ void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
 void NodeCPython2X::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if (info.IsConstructCall()) {
     // Invoked as constructor: `new NodeCPython2X(...)`
-    double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
-    NodeCPython2X* obj = new NodeCPython2X(value);
+    NodeCPython2X* obj = new NodeCPython2X();
     obj->Wrap(info.This());
     info.GetReturnValue().Set(info.This());
   } else {
@@ -121,25 +119,13 @@ void NodeCPython2X::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
 void NodeCPython2X::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
-  info.GetReturnValue().Set(Nan::New(obj->value_));
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
 void NodeCPython2X::PlusOne(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
-  obj->value_ += 1;
-  info.GetReturnValue().Set(Nan::New(obj->value_));
-}
-
-void NodeCPython2X::Multiply(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
-  double multiple = info[0]->IsUndefined() ? 1 : info[0]->NumberValue();
-
-  v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
-
-  const int argc = 1;
-  v8::Local<v8::Value> argv[argc] = { Nan::New(obj->value_ * multiple) };
-
-  info.GetReturnValue().Set(cons->NewInstance(argc, argv));
+  // obj->value_ += 1;
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
 // NAN_METHOD(simpleString) {
