@@ -22,8 +22,8 @@
     "deep-clean": "rm -rf deps/python/{2.7,3.X}",
     "test": "node_modules/tape/bin/tape 'tests/**/*.spec.js'",
     "lint": "standard lib/**/*.js",
-    "pre-install": "",
-    "install": "node install.js"
+    "pre-install": "node --harmony install.js",
+    "install": ""
   },
   "repository": {
     "type": "git",
