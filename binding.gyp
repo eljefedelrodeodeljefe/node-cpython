@@ -23,7 +23,7 @@
      "LDFLAGS" : "-Xlinker",
      "SYSLIBS" : "-lm",
      "MODLIBS" : "",
-     "ALLLIBS_2X" : "-lpython<(VERSION_2X) <(LIBPYTHON_2X) <(MODLIBS) <(LIBS) <(SYSLIBS)"
+     "ALLLIBS_2X" : "-lpython<(VERSION_2X) <(LIBPYTHON_2X) <(MODLIBS) <(LIBS) <(SYSLIBS)",
      "ALLLIBS_3X" : "-lpython<(VERSION_3X) <(LIBPYTHON_3X) <(MODLIBS) <(LIBS) <(SYSLIBS)"
     },
   "targets": [
