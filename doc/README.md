@@ -1,4 +1,4 @@
-# Node-CPython
+# node-cpython
 
 Native bindings to run python in its native interpreter.
 
@@ -20,7 +20,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | --- | --- |
 | .anyFile() | -  |
 | .simpleString(str, [flags], [cb]) | **yes** \* |
-| .simpleFile() | **yes** \* |
+| .simpleFile() | - |
 | .interactiveOne() | - |
 | .interactiveLoop() | - |
 | .simpleParseString() | - |
@@ -47,9 +47,7 @@ So in order to run scripts programmatically it seemed a good idea to use the the
 ### Technical Overview
 
 **Rquirements:**
-* Python 2.7 (for now)
-* Any Python for Gyp
-* Node 0.12+ / io.js 1.8.1
+* Node 4.0.0+
 
 ## Platform
 
@@ -58,7 +56,7 @@ This module is currently tested on:
 | Platform | Node | IO.js |
 | --- | --- | --- |
 | Mac OS X | - | **yes** |
-| Linux | - | - |
+| Linux | - | **yes** |
 | Windows | - | - |
 
 ## Roadmap

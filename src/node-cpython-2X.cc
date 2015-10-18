@@ -3,15 +3,6 @@
 extern "C" {
   #include <Python.h>
 
-  void simple_String(const char *str) {
-
-    // TODO: make it optional in JS and pass ProgramName down
-    //Py_SetProgramName(argv[0]);  /* optional but recommended */
-    Py_Initialize();
-    PyRun_SimpleString(str);
-    Py_Finalize();
-  }
-
   void simple_File(FILE *fp, const char *filename) {
 
     // TODO: make it optional in JS and pass ProgramName down
@@ -96,7 +87,11 @@ void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
 
   // Prototype
   Nan::SetPrototypeMethod(tpl, "value", GetValue);
-  Nan::SetPrototypeMethod(tpl, "plusOne", PlusOne);
+  Nan::SetPrototypeMethod(tpl, "simpleString", SimpleString);
+  Nan::SetPrototypeMethod(tpl, "_preInit", _PreInit);
+  Nan::SetPrototypeMethod(tpl, "_initialize", _Initialize);
+  Nan::SetPrototypeMethod(tpl, "_finalize", _Finalize);
+  Nan::SetPrototypeMethod(tpl, "_simpleString", _SimpleString);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("NodeCPython2X").ToLocalChecked(), tpl->GetFunction());
@@ -122,10 +117,52 @@ void NodeCPython2X::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
-void NodeCPython2X::PlusOne(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+void NodeCPython2X::SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
+  // Py_SetProgramName(argv[0]);  /* optional but recommended */
+Py_Initialize();
+PyRun_SimpleString("from time import time,ctime\n"
+                   "print 'Today is',ctime(time())\n");
+Py_Finalize();
   // info.GetReturnValue().Set(Nan::New(obj->value_));
+}
+void NodeCPython2X::_PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // obj->value_ += 1;
+  // program = Py_DecodeLocale(info[0], NULL);
+  // if (program == NULL) {
+  //     fprintf(stderr, "Fatal error: cannot decode argv[0]\n");
+  //     exit(1);
+  // }
+  // obj->value_ = program;
+  // info.GetReturnValue().Set(Nan::New(obj->program));
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
+}
+
+void NodeCPython2X::_Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // obj->value_ += 1;
+  // Py_SetProgramName(obj->program);  /* optional but recommended */
+  // Py_Initialize();
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
+  Py_Initialize();
+}
+
+void NodeCPython2X::_Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // obj->value_ += 1;
+  // Py_SetProgramName(program);  /* optional but recommended */
+  // Py_Initialize();
+  // PyMem_RawFree(obj->program);
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
+  Py_Finalize();
+}
+
+void NodeCPython2X::_SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = pyStr.c_str();
+  PyRun_SimpleString(str);
 }
 
 // NAN_METHOD(simpleString) {

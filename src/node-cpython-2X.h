@@ -13,8 +13,15 @@ class NodeCPython2X : public Nan::ObjectWrap {
 
   static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info);
-  static void PlusOne(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  
+  static void _PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void _Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void _Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info);
+
+  static void _SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static Nan::Persistent<v8::Function> constructor;
+  static wchar_t *program;
 };
 
 #endif
