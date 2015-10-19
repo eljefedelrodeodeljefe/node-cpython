@@ -1,6 +1,6 @@
 {
   "name": "cpython",
-  "version": "0.3.3-alpha.1",
+  "version": "0.3.4-alpha.1",
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "directories": {
@@ -24,7 +24,7 @@
     "deep-clean": "rm -rf deps/python/{2.7,3.X}",
     "test": "node_modules/tape/bin/tape 'tests/**/*.spec.js'",
     "lint": "standard lib/**/*.js",
-    "docs":"jsdoc2md lib/node-cpython.js > docs/API.md && node -e \"var fs = require('fs');fs.writeFile('README.md', fs.readFileSync('docs/README.md'));['docs/README.md', 'docs/API.md', 'docs/LICENSE.md'].forEach(function(el){fs.appendFileSync('README.md',fs.readFileSync(el))})\"",
+    "docs": "jsdoc2md lib/node-cpython.js > docs/API.md && node -e \"var fs = require('fs');fs.writeFile('README.md', fs.readFileSync('docs/README.md'));['docs/README.md', 'docs/API.md', 'docs/LICENSE.md'].forEach(function(el){fs.appendFileSync('README.md',fs.readFileSync(el))})\"",
     "preinstall": "node install.js",
     "install": "node-gyp rebuild"
   },
