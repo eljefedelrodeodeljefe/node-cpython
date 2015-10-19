@@ -37,7 +37,7 @@ Implements the CPython Python interpreter
 intitialze this module from init function rather than over constructor
 
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
-**Returns**: <code>Object</code> - returns itself; is chainable  
+**Returns**: <code>Object</code> - returns itself is chainable  
 
 | Param | Type | Description |
 | --- | --- | --- |
