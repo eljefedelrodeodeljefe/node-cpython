@@ -14,12 +14,17 @@
   "devDependencies": {
     "tape": "^4.2.1"
   },
+  "bin": {
+    "cpython": "./bin/cpython",
+    "node-cpython": "./bin/cpython"
+  },
   "scripts": {
     "clone": "git clone -b 2.7 --depth=1 https://github.com/python/cpython deps/python/2.7 && git clone -b 3.5 --depth=1 https://github.com/python/cpython deps/python/3.X",
     "clean": "rm -rf deps/python/{2.7,3.X}/{Doc,Demo,.git,bzignore,.gitignore,.hgeol,.hgignore,.hgtouch,README}",
     "deep-clean": "rm -rf deps/python/{2.7,3.X}",
     "test": "node_modules/tape/bin/tape 'tests/**/*.spec.js'",
     "lint": "standard lib/**/*.js",
+    "docs":"jsdoc2md lib/node-cpython.js > docs/API.md && node -e \"var fs = require('fs');fs.writeFile('README.md', fs.readFileSync('docs/README.md'));['docs/README.md', 'docs/API.md', 'docs/LICENSE.md'].forEach(function(el){fs.appendFileSync('README.md',fs.readFileSync(el))})\"",
     "preinstall": "node install.js",
     "install": "node-gyp rebuild"
   },
