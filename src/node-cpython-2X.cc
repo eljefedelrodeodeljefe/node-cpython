@@ -71,7 +71,7 @@ extern "C" {
 
 Nan::Persistent<v8::Function> NodeCPython2X::constructor;
 
-NodeCPython2X::NodeCPython2X() {
+NodeCPython2X::NodeCPython2X() : main() {
 }
 
 NodeCPython2X::~NodeCPython2X() {
@@ -87,11 +87,16 @@ void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
 
   // Prototype
   Nan::SetPrototypeMethod(tpl, "value", GetValue);
+
+  Nan::SetPrototypeMethod(tpl, "preInit", PreInit);
+  Nan::SetPrototypeMethod(tpl, "initialize", Initialize);
+  Nan::SetPrototypeMethod(tpl, "finalize", Finalize);
+
   Nan::SetPrototypeMethod(tpl, "simpleString", SimpleString);
-  Nan::SetPrototypeMethod(tpl, "_preInit", _PreInit);
-  Nan::SetPrototypeMethod(tpl, "_initialize", _Initialize);
-  Nan::SetPrototypeMethod(tpl, "_finalize", _Finalize);
-  Nan::SetPrototypeMethod(tpl, "_simpleString", _SimpleString);
+  Nan::SetPrototypeMethod(tpl, "runString", RunString);
+
+  Nan::SetPrototypeMethod(tpl, "addModule", AddModule);
+  Nan::SetPrototypeMethod(tpl, "getDict", GetDict);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("NodeCPython2X").ToLocalChecked(), tpl->GetFunction());
@@ -117,17 +122,8 @@ void NodeCPython2X::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
-void NodeCPython2X::SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
-  // obj->value_ += 1;
-  // Py_SetProgramName(argv[0]);  /* optional but recommended */
-Py_Initialize();
-PyRun_SimpleString("from time import time,ctime\n"
-                   "print 'Today is',ctime(time())\n");
-Py_Finalize();
-  // info.GetReturnValue().Set(Nan::New(obj->value_));
-}
-void NodeCPython2X::_PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+
+void NodeCPython2X::PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
   // program = Py_DecodeLocale(info[0], NULL);
@@ -140,7 +136,7 @@ void NodeCPython2X::_PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
-void NodeCPython2X::_Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+void NodeCPython2X::Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
   // Py_SetProgramName(obj->program);  /* optional but recommended */
@@ -149,7 +145,7 @@ void NodeCPython2X::_Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info
   Py_Initialize();
 }
 
-void NodeCPython2X::_Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+void NodeCPython2X::Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
   // Py_SetProgramName(program);  /* optional but recommended */
@@ -159,37 +155,36 @@ void NodeCPython2X::_Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) 
   Py_Finalize();
 }
 
-void NodeCPython2X::_SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+void NodeCPython2X::SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
   const char *str = pyStr.c_str();
   PyRun_SimpleString(str);
 }
 
-// NAN_METHOD(simpleString) {
-//   NanScope();
-//
-//   // TODO: Check whether this check is necessary and
-//   // if not redundant to JS check
-//   if (args.Length() != 1) {
-//     NanThrowTypeError("Function expects one argument");
-//     NanReturnUndefined();
-//   }
-//
-//   /*
-//   * This method takes the string from arguments and goes to
-//   * great length to convert from arguments to v8::String.. to
-//   * std::string to c-string, to eventually pass into cpython methods
-//   */
-//   v8::String::Utf8Value py_string_param(args[0]->ToString());
-//   std::string param = std::string(*py_string_param);
-//   const char *py_cstr = param.c_str();
-//
-//   simple_String(py_cstr);
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
+void NodeCPython2X::RunString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+
+  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = pyStr.c_str();
+
+  PyRun_String(str, Py_single_input, obj->d, obj->d);
+}
+
+void NodeCPython2X::AddModule(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+
+  obj->main = PyImport_AddModule("__main__");
+  info.GetReturnValue().Set(Nan::New(obj->main));
+}
+
+void NodeCPython2X::GetDict(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+
+  obj->d = PyModule_GetDict(obj->main);
+  info.GetReturnValue().Set(Nan::New(obj->d));
+}
+
+
 // NAN_METHOD(simpleFile) {
 //   NanScope();
 //
