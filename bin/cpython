@@ -1,26 +1,76 @@
 #!/usr/bin/env node
-
-var argv = process.argv
-console.log(argv);
+'use strict'
+let argv = process.argv
 
 parse(argv)
 
 function parse(arr) {
-  console.log(flags(arr));
+  // check if you should go into repl mode
+  argv.length === 2 ? pyRepl() : 0;
+
+  let f = flags(arr)
+
+  f.description ? description() : 0;
 }
 
 function flags(arr) {
-  var flags = []
+  let hasHelp = false
+  let flags = []
+
   arr.forEach(function(el) {
-    var arg = el.trim()
-    var f = arg.match(/(\-\-)\w+/g)
+    let arg = el.trim()
+    let f = arg.match(/(\-\-)\w+/g)
+    let h = arg.match(/(\-\-)help/g)
+
     if (f) {
+      // push match onto the stack
       flags = Array.prototype.concat(flags, f)
+      // additionally check whether description is required
+      if (h) hasHelp = true
     }
   })
-  return flags
+  return {
+    flags: flags,
+    description: hasHelp
+  }
+}
+
+function version() {
+
 }
 
 function description() {
+  let desc = "\n\
+    Usage: cpython [options] [file(s)]\n\
+    \n\
+    Native bindings to the Python interpreter.\n\
+    Run Python code with Node.js\n\
+    \n\
+    Options:\n\
+    \n\
+    \t-h, --help           output usage information\n\
+    \t-v, --version        output usage \n\
+    "
+  console.log(desc);
+}
 
+function pyRepl() {
+  process.stdin.setEncoding('utf8');
+
+  process.stdin.on('readable', function() {
+    let chunk = process.stdin.read();
+    if (chunk !== null) {
+      // TODO: implement pass-down to interactiveLoop
+      process.stdout.write(chunk);
+    }
+  });
+
+  process.stdin.on('end', function() {
+    process.stdout.write('-------\nPyREPL connection end.');
+  });
+
+  process.on('SIGINT', function() {
+    process.stdout.write('\n-------\nPyREPL closed.');
+    process.exit(0);
+  });
 }
