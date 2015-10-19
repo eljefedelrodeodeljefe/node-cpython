@@ -1,45 +1,26 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
+var argv = process.argv
+console.log(argv);
 
-var program = require('commander');
+parse(argv)
 
-program.command('compile [file]')
-  .description('Some help.')
-  .action(function(file) {
-    console.log('hello' + file)
-});
+function parse(arr) {
+  console.log(flags(arr));
+}
 
+function flags(arr) {
+  var flags = []
+  arr.forEach(function(el) {
+    var arg = el.trim()
+    var f = arg.match(/(\-\-)\w+/g)
+    if (f) {
+      flags = Array.prototype.concat(flags, f)
+    }
+  })
+  return flags
+}
 
+function description() {
 
-// custom help below<
-// program.on('--help', function(){
-//   console.log('  Examples:');
-//   console.log('');
-//   console.log('    $ custom-help --help');
-//   console.log('    $ custom-help -h');
-//   console.log('');
-// });
-
-/**
-* if invalid command is given...
-*/
-program
-  .command('')
-  .action(function(env){
-    console.log('Enter a Valid command');
-    // terminate(true);
-});
-/**
-* if no command is given ...
-*/
-// if (typeof cmdValue === 'undefined') {
-//    console.error('no command given!');
-//    process.exit(1);
-// }
-/**
-* TODO: FInd out what its functionality is
-*/
-program.parse(process.argv);
+}

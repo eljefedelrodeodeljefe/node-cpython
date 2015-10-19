@@ -14,6 +14,10 @@
   "devDependencies": {
     "tape": "^4.2.1"
   },
+  "bin": {
+    "cpython": "./bin/cpython",
+    "node-cpython": "./bin/cpython"
+  },
   "scripts": {
     "clone": "git clone -b 2.7 --depth=1 https://github.com/python/cpython deps/python/2.7 && git clone -b 3.5 --depth=1 https://github.com/python/cpython deps/python/3.X",
     "clean": "rm -rf deps/python/{2.7,3.X}/{Doc,Demo,.git,bzignore,.gitignore,.hgeol,.hgignore,.hgtouch,README}",
