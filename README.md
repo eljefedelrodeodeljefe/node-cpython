@@ -21,8 +21,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .anyFile() | -  |
 | .simpleString(str, [flags], [cb]) | **yes** \* |
 | .simpleFile() | - |
-| .interactiveOne() | - |
-| .interactiveLoop() | - |
+| .repl() | **yes** \* |
 | .simpleParseString() | - |
 | .simpleParseFile() | - |
 | .string() | - |
@@ -74,6 +73,8 @@ Please see [list of the implemented methods](#status) for now.
   * [.init(arguments)](#CPython+init) ⇒ <code>Object</code>
   * [.run(glob, [cb])](#CPython+run)
   * [.anyFile()](#CPython+anyFile)
+  * [.runString()](#CPython+runString)
+  * [.repl()](#CPython+repl)
   * [.simpleString(str, [flags], [cb])](#CPython+simpleString)
   * [.simpleFile(filepath, filename, [flags], [cb])](#CPython+simpleFile)
   * [.callForeignFunction(file, functioname)](#CPython+callForeignFunction) ⇒ <code>function</code>
@@ -143,6 +144,12 @@ cpython.run('[example/**\/*.py', function(result) { console.log(result) })
 ```
 <a name="CPython+anyFile"></a>
 ### cPython.anyFile()
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+<a name="CPython+runString"></a>
+### cPython.runString()
+**Kind**: instance method of <code>[CPython](#CPython)</code>  
+<a name="CPython+repl"></a>
+### cPython.repl()
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
 <a name="CPython+simpleString"></a>
 ### cPython.simpleString(str, [flags], [cb])

@@ -21,8 +21,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .anyFile() | -  |
 | .simpleString(str, [flags], [cb]) | **yes** \* |
 | .simpleFile() | - |
-| .interactiveOne() | - |
-| .interactiveLoop() | - |
+| .repl() | **yes** \* |
 | .simpleParseString() | - |
 | .simpleParseFile() | - |
 | .string() | - |
