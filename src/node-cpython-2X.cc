@@ -168,7 +168,6 @@ void NodeCPython2X::RunString(const Nan::FunctionCallbackInfo<v8::Value>& info) 
   const char *str = pyStr.c_str();
 
   PyRun_String(str, Py_single_input, obj->d, obj->d);
-  PyRun_String("a", Py_single_input, obj->d, obj->d);
 }
 
 void NodeCPython2X::AddModule(const Nan::FunctionCallbackInfo<v8::Value>& info) {
