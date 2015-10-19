@@ -4,7 +4,7 @@ Native bindings to run python in its native interpreter.
 
 This Library is in alpha status. **Do not use for fun or profit**
 
-[![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/node-cpython)
+[![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/node-cpython) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
 
 
 [![NPM](https://nodei.co/npm/cpython.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/cpython/)[![NPM](https://nodei.co/npm-dl/cpython.png?months=6&height=2)](https://nodei.co/npm/cpython/)
@@ -103,7 +103,7 @@ Implements the CPython Python interpreter
 intitialze this module from init function rather than over constructor
 
 **Kind**: instance method of <code>[CPython](#CPython)</code>  
-**Returns**: <code>Object</code> - returns itself; is chainable  
+**Returns**: <code>Object</code> - returns itself is chainable  
 
 | Param | Type | Description |
 | --- | --- | --- |
