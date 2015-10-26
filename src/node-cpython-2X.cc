@@ -3,14 +3,6 @@
 extern "C" {
   #include <Python.h>
 
-  void simple_File(FILE *fp, const char *filename) {
-
-    // TODO: make it optional in JS and pass ProgramName down
-    //Py_SetProgramName(argv[0]);  /* optional but recommended */
-    Py_Initialize();
-    PyRun_SimpleFile(fp, filename);
-    Py_Finalize();
-  }
 
   int run(char *filename, int arrc, char *arrv[]) {
 
@@ -35,37 +27,6 @@ extern "C" {
 
     return 0;
   }
-
-  int initialize() {
-
-    Py_Initialize();
-    return 0;
-  }
-
-
-  int finalize() {
-
-    Py_Finalize();
-    return 0;
-  }
-
-  // get "your own" argc and argv from above
-  int pysetargv(int arrc, char *arrv[]) {
-
-    PySys_SetArgvEx(arrc, arrv, 0);
-    return 0;
-  }
-
-  int setprogramname(const char *namestr) {
-
-
-    char *name= {};
-    strcpy(name, namestr);
-
-    Py_SetProgramName(name);
-    return 0;
-  }
-
 
 }
 
