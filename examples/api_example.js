@@ -28,7 +28,7 @@ rs.push(null);
 
 
 module.ffi
-  .require('multiply.py', { path: '.' }) // intitializes python
+  .require('multiply.py', { path: '/Users/Jefe/Documents/repos/node-cpython/examples' }) // intitializes python
   .init(rs /*, options {objectMode: true}*/)
   .run() // expects events from above
   .pipe(/*some transform*/) // add your own transform or any other stream here

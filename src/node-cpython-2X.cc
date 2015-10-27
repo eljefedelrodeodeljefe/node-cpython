@@ -52,12 +52,13 @@ void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
   Nan::SetPrototypeMethod(tpl, "preInit", PreInit);
   Nan::SetPrototypeMethod(tpl, "initialize", Initialize);
   Nan::SetPrototypeMethod(tpl, "finalize", Finalize);
-
-  Nan::SetPrototypeMethod(tpl, "simpleString", SimpleString);
-  Nan::SetPrototypeMethod(tpl, "runString", RunString);
+  Nan::SetPrototypeMethod(tpl, "setPath", SetPath);
 
   Nan::SetPrototypeMethod(tpl, "addModule", AddModule);
   Nan::SetPrototypeMethod(tpl, "getDict", GetDict);
+
+  Nan::SetPrototypeMethod(tpl, "simpleString", SimpleString);
+  Nan::SetPrototypeMethod(tpl, "runString", RunString);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("NodeCPython2X").ToLocalChecked(), tpl->GetFunction());
@@ -98,7 +99,7 @@ void NodeCPython2X::PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 }
 
 void NodeCPython2X::Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
   // Py_SetProgramName(obj->program);  /* optional but recommended */
   // Py_Initialize();
@@ -107,7 +108,7 @@ void NodeCPython2X::Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info)
 }
 
 void NodeCPython2X::Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
   // Py_SetProgramName(program);  /* optional but recommended */
   // Py_Initialize();
@@ -116,19 +117,11 @@ void NodeCPython2X::Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Py_Finalize();
 }
 
-void NodeCPython2X::SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
-  const char *str = pyStr.c_str();
-  PyRun_SimpleString(str);
-}
-
-void NodeCPython2X::RunString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
-
-  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
-  const char *str = pyStr.c_str();
-
-  PyRun_String(str, Py_single_input, obj->d, obj->d);
+void NodeCPython2X::SetPath(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  std::string argStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = argStr.c_str();
+  // Lorenzo did some magic below
+  PySys_SetPath(const_cast<char*>(str));
 }
 
 void NodeCPython2X::AddModule(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -143,6 +136,25 @@ void NodeCPython2X::GetDict(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
   obj->d = PyModule_GetDict(obj->main);
   info.GetReturnValue().Set(Nan::New(obj->d));
+}
+
+// =============================================================================
+// ================================== High Level ===============================
+// =============================================================================
+
+void NodeCPython2X::SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = pyStr.c_str();
+  PyRun_SimpleString(str);
+}
+
+void NodeCPython2X::RunString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+
+  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = pyStr.c_str();
+
+  PyRun_String(str, Py_single_input, obj->d, obj->d);
 }
 
 
@@ -216,30 +228,6 @@ void NodeCPython2X::GetDict(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 //   NanReturnValue(NanNew(0));
 // }
 //
-// //
-// //
-// NAN_METHOD(initialize) {
-//   NanScope();
-//
-//   initialize();
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// //
-// //
-// NAN_METHOD(finalize) {
-//   NanScope();
-//
-//   finalize();
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// //
-// //
 // NAN_METHOD(setArgv) {
 //   NanScope();
 //
