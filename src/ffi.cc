@@ -20,6 +20,7 @@ void FFI::Init(v8::Local<v8::Object> exports) {
 
   // Prototype
   Nan::SetPrototypeMethod(tpl, "require", Require);
+  Nan::SetPrototypeMethod(tpl, "run", Run);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("FFI").ToLocalChecked(), tpl->GetFunction());
@@ -119,5 +120,9 @@ void FFI::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
  * ```
  */
 void FFI::Require(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+
+}
+
+void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
 }

@@ -36,5 +36,4 @@ module.ffi
     console.log('Ended python context here.');
   })
 
-
 module.ffi(/*path to function*/)

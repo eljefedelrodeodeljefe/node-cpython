@@ -17,6 +17,7 @@ class FFI : public Nan::ObjectWrap {
   static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
   static void Require(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void Run(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
 
   static Nan::Persistent<v8::Function> constructor;
