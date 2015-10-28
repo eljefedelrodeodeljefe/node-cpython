@@ -34,3 +34,5 @@ build
 
 *.pyc
 *.pyo
+
+tests/smoke/node-buffertools
