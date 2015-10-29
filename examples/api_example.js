@@ -18,10 +18,10 @@ var Readable = require('stream').Readable;
 
 var rs = new Readable({ "objectMode": true });
 rs.push([1,2]);
-rs.push([2,3]);
-rs.push([3,4]);
-rs.push([4,5]);
-rs.push([5,6]);
+rs.push([20,3]);
+rs.push([3,40]);
+rs.push([4,50]);
+rs.push([55,66]);
 rs.push(null);
 
 
