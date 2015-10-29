@@ -132,52 +132,24 @@ const char* FFI::_ToCString(v8::Local<v8::Value> Str) {
 void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   PyObject *pName, *pModule, *pDict, *pFunc;
   PyObject *pArgs, *pValue;
-
-
+  // oddly the cast didn't didn't for when used with PyObject_GetAttrString
+  // Needed to do this by hand REVIEW
+  // TODO: check refactor potential for the 3 steps. See Nan Example
   v8::String::Utf8Value v8_str(info[1]->ToString());
   std::string cpp_str = std::string(*v8_str);
   const char *fnname = cpp_str.c_str();
 
   const char *filename =  FFI::_ToCString(info[0]);
 
-  int i; // for the loop
+  int i; // loop
+  // length already in specified in JS land
   const int arrc = info[2]->NumberValue();
-  printf("%d\n", arrc);
-  // the below is everything the naked
-  const char *arrv[2] = {};
-  // arrv[0] = ""; // name of you programm from command line; IGNORE
-  // arrv[1] = FFI::_ToCString(info[0]);
-  // arrv[2] = fnname;
-  arrv[0] = "3";
-  arrv[1] = "2";
-
-    // int arrc = info[0]->NumberValue();
-    //
-    // Local<Array> arr= Local<Array>::Cast(args[2]);
-    // char * arrv[] = {};
-    //
-    // for (size_t i = 0; i < arrc; i++) {
-    //
-    //   Local<Value> item = arr->Get(i);
-    //   v8::String::Utf8Value array_string(item->ToString());
-    //   std::string param = std::string(*array_string);
-    //
-    //   // first cast const char to char and then
-    //   arrv[i] = strdup((char *) param.c_str());
-    // }
-    // last statement: http://stackoverflow.com/a/1788749/3580261
-
-  // TODO: DEPRECRATE
-  // if (arrc < 3) {
-  //   fprintf(stderr,"Usage: call pythonfile funcname [args]\n");
-  //   return;
-  // }
 
 
   pName = PyString_FromString(filename);
   // Error checking of pName left out
   pModule = PyImport_Import(pName);
-  Py_DECREF(pName);
+  Py_DECREF(pName); // keep track of the refrences
 
   if (pModule != NULL) {
     pFunc = PyObject_GetAttrString(pModule, fnname);
@@ -186,7 +158,6 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     fprintf(stderr, "Failed to load \"%s\"\n", fnname);
     return;
   }
-
   // pFunc is a new reference
   if (pFunc && PyCallable_Check(pFunc)) {
 
@@ -201,20 +172,40 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   pArgs = PyTuple_New(arrc);
   v8::Local<v8::Array> arr= v8::Local<v8::Array>::Cast(info[3]);
 
+  // The below is taken from:
+  //
+  // int arrc = info[0]->NumberValue();
+  //
+  // Local<Array> arr= Local<Array>::Cast(args[2]);
+  // char * arrv[] = {};
+  //
+  // for (size_t i = 0; i < arrc; i++) {
+  //
+  //   Local<Value> item = arr->Get(i);
+  //   v8::String::Utf8Value array_string(item->ToString());
+  //   std::string param = std::string(*array_string);
+  //
+  //   // first cast const char to char and then
+  //   arrv[i] = strdup((char *) param.c_str());
+  // }
+  // last statement: http://stackoverflow.com/a/1788749/3580261
   for (i = 0; i < arrc; i++) {
     v8::Local<v8::Value> item = arr->Get(i);
 
     if (item->IsNumber()) {
-      pValue = PyInt_FromLong(item->NumberValue());
-    } else if (true) {
-      printf("%s\n", "world");
+      // REVIEW: because of deprecation warning from V8
+      pValue = PyInt_FromLong(item->NumberValue()); // passes double
+    } else if (item->IsString()) {
+
+      v8::String::Utf8Value v8_argstr(item->ToString());
+      std::string cpp_argstr = std::string(*v8_argstr);
+      const char *argstr = cpp_str.c_str();
+
+      pValue = PyString_FromString(argstr); // passes c-str.
+    } else if (item->IsBoolean()) {
+      // https://docs.python.org/2/c-api/bool.html
+      pValue = item->BooleanValue() ? Py_True : Py_False; // passes boolean object
     }
-    // REVIEW: because of deprecation warning from V8
-    // iterate through JS array.
-    // v8::String::Utf8Value v8_argstr(info[i+2]->ToString());
-    // std::string cpp_argstr = std::string(*v8_argstr);
-    // const char *argstr = cpp_str.c_str();
-    // printf("%s\n", arrv[i] );
 
 
     if (!pValue) {
@@ -231,11 +222,22 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   pValue = PyObject_CallObject(pFunc, pArgs);
   Py_DECREF(pArgs);
 
+  // do some type checking and send back return value to v8
   if (pValue != NULL) {
-    printf("Result of call: %ld\n", PyInt_AsLong(pValue));
+    printf("Result of call: %ld\n", PyInt_AsLong(pValue)); // TODO: cleanup
+
+    if (PyInt_Check(pValue)) {
+      // return a v8 local number castesd from and PyInt as long
+      info.GetReturnValue().Set(v8::Local<v8::Number>(Nan::New((double) PyInt_AsLong(pValue))));
+    } else if (PyString_Check(pValue)) {
+
+      // info.GetReturnValue().Set(v8::Local<v8::String>(Nan::New((char*) PyString_AsString(pValue))).ToLocalChecked());
+    } else if (PyBool_Check(pValue)) {
+      /* code */
+    }
+
     Py_DECREF(pValue);
-  }
-  else {
+  } else {
     Py_DECREF(pFunc);
     Py_DECREF(pModule);
     PyErr_Print();
@@ -243,7 +245,9 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     return;
   }
 
-    Py_XDECREF(pFunc);
-    Py_DECREF(pModule);
-
+  Py_XDECREF(pFunc);
+  Py_DECREF(pModule);
+  // context safely Ended
+  // Needs finalization from Py_Finalize.
+  // HINT: done outside of this scope from JS land
 }
