@@ -231,9 +231,10 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
       info.GetReturnValue().Set(v8::Local<v8::Number>(Nan::New((double) PyInt_AsLong(pValue))));
     } else if (PyString_Check(pValue)) {
 
-      // info.GetReturnValue().Set(v8::Local<v8::String>(Nan::New((char*) PyString_AsString(pValue))).ToLocalChecked());
+      info.GetReturnValue().Set(Nan::MaybeLocal<v8::String>(Nan::New((const char *) PyString_AsString(pValue))).ToLocalChecked());
+
     } else if (PyBool_Check(pValue)) {
-      /* code */
+      info.GetReturnValue().Set(v8::Local<v8::Boolean>(Nan::New(pValue == Py_True ? true : false)));
     }
 
     Py_DECREF(pValue);
