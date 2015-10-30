@@ -59,3 +59,12 @@ deploy:
   on:
     branch: master
     repo: eljefederodeodeljefe/node-cpython
+
+notifications:
+  webhooks:
+    branch: master
+    urls:
+      - https://webhooks.gitter.im/e/20bdfb25eb44f4600ce9
+    on_success: always
+    on_failure: always
+    on_start: false
