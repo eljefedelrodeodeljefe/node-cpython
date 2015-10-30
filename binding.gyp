@@ -33,7 +33,8 @@
       "target_name": "node-cpython-2X",
       "sources": [
         "src/addon.cc",
-        "src/node-cpython-2X.cc"
+        "src/node-cpython-2X.cc",
+        "src/ffi.cc"
         ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",

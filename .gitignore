@@ -31,3 +31,6 @@ dest
 *.o
 
 build
+
+*.pyc
+*.pyo
