@@ -4,29 +4,29 @@ extern "C" {
   #include <Python.h>
 
 
-  int run(char *filename, int arrc, char *arrv[]) {
-
-    Py_Initialize();
-    PySys_SetArgvEx(arrc, arrv, 0);
-
-    // Get a reference to the main module.
-    PyObject* main_module = PyImport_AddModule("__main__");
-
-    // Get the main module's dictionary
-    // and make a copy of it.
-    PyObject* main_dict = PyModule_GetDict(main_module);
-    PyObject* main_dict_copy = PyDict_Copy(main_dict);
-
-    // Execute two different files of
-    // Python code in separate environments
-    FILE* file = fopen("/Users/rob/Desktop/node-cpython/example/multiply_2.py", "r");
-    PyRun_File(file, filename, Py_file_input, main_dict, main_dict);
-    PyRun_SimpleString("import sys\n");
-
-    Py_Finalize();
-
-    return 0;
-  }
+  // int run(char *filename, int arrc, char *arrv[]) {
+  //
+  //   Py_Initialize();
+  //   PySys_SetArgvEx(arrc, arrv, 0);
+  //
+  //   // Get a reference to the main module.
+  //   PyObject* main_module = PyImport_AddModule("__main__");
+  //
+  //   // Get the main module's dictionary
+  //   // and make a copy of it.
+  //   PyObject* main_dict = PyModule_GetDict(main_module);
+  //   PyObject* main_dict_copy = PyDict_Copy(main_dict);
+  //
+  //   // Execute two different files of
+  //   // Python code in separate environments
+  //   FILE* file = fopen("/Users/rob/Desktop/node-cpython/example/multiply_2.py", "r");
+  //   PyRun_File(file, filename, Py_file_input, main_dict, main_dict);
+  //   PyRun_SimpleString("import sys\n");
+  //
+  //   Py_Finalize();
+  //
+  //   return 0;
+  // }
 
 }
 
@@ -80,13 +80,13 @@ void NodeCPython2X::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 }
 
 void NodeCPython2X::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
 
 void NodeCPython2X::PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
+  // NodeCPython2X* obj = ObjectWrap::Unwrap<NodeCPython2X>(info.Holder());
   // obj->value_ += 1;
   // program = Py_DecodeLocale(info[0], NULL);
   // if (program == NULL) {

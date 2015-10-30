@@ -5,9 +5,11 @@
 Nan::Persistent<v8::Function> FFI::constructor;
 
 FFI::FFI() {
+  
 }
 
 FFI::~FFI() {
+  
 }
 
 void FFI::Init(v8::Local<v8::Object> exports) {
@@ -44,7 +46,7 @@ void FFI::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 /**
  * Entry point for FFI calls. Logic will be as follows:
  *
- * This implementation follows the CPython cuntion call examples and leans on it.
+ * This implementation follows the CPython funtion call examples and leans on it.
  * Since this was written for command line usage we just emulate argv, and argc.
  * As a full example you would have the followong function body, however we implement
  * this in parts callable by JS. Starting point is import: which file from where:
@@ -130,7 +132,7 @@ const char* FFI::_ToCString(v8::Local<v8::Value> Str) {
 }
 
 void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  PyObject *pName, *pModule, *pDict, *pFunc;
+  PyObject *pName, *pModule, *pFunc;
   PyObject *pArgs, *pValue;
   // oddly the cast didn't didn't for when used with PyObject_GetAttrString
   // Needed to do this by hand REVIEW
@@ -143,7 +145,7 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
   int i; // loop
   // length already in specified in JS land
-  const int arrc = info[2]->NumberValue();
+  const int arrc = info[2]->Int32Value();
 
 
   pName = PyString_FromString(filename);
@@ -224,7 +226,6 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
   // do some type checking and send back return value to v8
   if (pValue != NULL) {
-    printf("Result of call: %ld\n", PyInt_AsLong(pValue)); // TODO: cleanup
 
     if (PyInt_Check(pValue)) {
       // return a v8 local number castesd from and PyInt as long
