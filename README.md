@@ -75,7 +75,7 @@ Please see [list of the implemented methods](#status) for now.
 
 * [Ncpy](#Ncpy)
   * [new Ncpy()](#new_Ncpy_new)
-  * [.init(arguments)](#Ncpy+init) ⇒ <code>Object</code>
+  * [.init(options)](#Ncpy+init) ⇒ <code>Object</code>
   * [.run(glob, [cb])](#Ncpy+run)
   * [.anyFile()](#Ncpy+anyFile)
   * [.runString()](#Ncpy+runString)
@@ -104,7 +104,7 @@ Please see [list of the implemented methods](#status) for now.
 Implements the Ncpy Python interpreter
 
 <a name="Ncpy+init"></a>
-### ncpy.init(arguments) ⇒ <code>Object</code>
+### ncpy.init(options) ⇒ <code>Object</code>
 intitialze this module from init function rather than over constructor
 
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
@@ -112,17 +112,17 @@ intitialze this module from init function rather than over constructor
 
 | Param | Type | Description |
 | --- | --- | --- |
-| arguments | <code>Object</code> | object where keys represent toggles of individual features or point to files |
+| options | <code>Object</code> | object where keys represent toggles of individual features or point to files |
 
 **Example**  
 ```js
-const cpython = require('node-cpython')
+const ncpy = require('node-cpython')
 
 let options = {
 	\/\* Options go in here \*\/
 }
 
-cpython.init(options)
+ncpy.init(options)
 \/\/ available options [here](https://github.com/eljefedelrodeodeljefe/node-cpython#options)
 ```
 <a name="Ncpy+run"></a>
@@ -141,7 +141,7 @@ below C-API. If you want to have more control, please use the below methods.
 **Example**  
 ```js
 'use strict'
-let cpython = require('cpython')
+const ncpy = require('node-cpython')
 
 cpython.on('error', function(err) {console.log(err)})
 
@@ -172,7 +172,7 @@ See also [Python docs](https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_Sim
 **Example**  
 ```js
 'use strict'
-let cpython = require('cpython')
+const ncpy = require('node-cpython')
 
 cpython.on('error', function(err) {console.log(err)})
 
@@ -197,7 +197,7 @@ See also [Python docs](https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_Sim
 **Example**  
 ```js
 'use strict'
-let cpython = require('cpython')
+const ncpy = require('node-cpython')
 
 cpython.on('error', function(err) {console.log(err)})
 
