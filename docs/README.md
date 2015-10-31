@@ -18,9 +18,10 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | Method | implemented |
 | --- | --- |
 | .anyFile() | -  |
-| .simpleString(str, [flags], [cb]) | **yes** \* |
+| .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
+| .simpleString(str, [flags], [cb]) | **yes** |
 | .simpleFile() | - |
-| .repl() | **yes** \* |
+| .repl() | **yes** |
 | .simpleParseString() | - |
 | .simpleParseFile() | - |
 | .string() | - |
@@ -28,8 +29,13 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .compileString() | - |
 | .evalCode() | - |
 | .evalFrame() | - |
-
-\* Will be extended, but not directly in JS user space. It will be optional to pass more than the required params so the functionality of the CPython-API will be implicitly usable. This includes closeits and compiler flags.
+|  |  |
+| **Stream API** | - |
+| ffi.require(py_file, [options]) | **yes** |
+| ffi.init(stream) | **yes** |
+| ffi.run(fn_name) | **yes** |
+| ffi.pipe(stream) | **yes** |
+| ffi.on(event) | **yes** |
 
 ## Introduction
 
@@ -51,11 +57,11 @@ So in order to run scripts programmatically it seemed a good idea to use the the
 
 This module is currently tested on:
 
-| Platform | Node | IO.js |
-| --- | --- | --- |
-| Mac OS X | - | **yes** |
-| Linux | - | **yes** |
-| Windows | - | - |
+| Platform | 0.12 | 3.0 | 4.0 | 5.0 |
+| --- | --- | --- | --- | ---|
+| Mac OS X | - | - | **yes**   **yes**| |
+| Linux | - | - | **yes** | **yes**  |
+| Windows | - | - | - | - |
 
 ## Roadmap
 
