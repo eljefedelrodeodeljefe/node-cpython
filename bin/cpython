@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 'use strict'
+const ncpy = require('../')
+let allowedFlags = [
+  '--example',
+  '--help'
+]
+
+
 let argv = process.argv
 
 parse(argv)
@@ -35,8 +42,23 @@ function flags(arr) {
   }
 }
 
-function version() {
+function version () {
 
+}
+
+function example () {
+  // hit "a = (1, 2, 3)"
+  //
+  //  or as smoke test...
+  //
+  // > a = 1
+  // > b = 2
+  // > a,b = b,a
+  // > a
+  // 2
+  // > b
+  // 1
+  // ncpy.repl()
 }
 
 function description() {
@@ -55,26 +77,8 @@ function description() {
   ].forEach(function (el) {
       console.log("\t" + el);
   })
-
 }
 
 function pyRepl() {
-  process.stdin.setEncoding('utf8');
-
-  process.stdin.on('readable', function() {
-    let chunk = process.stdin.read();
-    if (chunk !== null) {
-      // TODO: implement pass-down to interactiveLoop
-      process.stdout.write(chunk);
-    }
-  });
-
-  process.stdin.on('end', function() {
-    process.stdout.write('-------\nPyREPL connection end.');
-  });
-
-  process.on('SIGINT', function() {
-    process.stdout.write('\n-------\nPyREPL closed.');
-    process.exit(0);
-  });
+  ncpy.repl()
 }

@@ -1,19 +1,6 @@
 'use strict';
 var ncpy = require('../index');
 
-// hit "a = (1, 2, 3)"
-//
-//  or as smoke test...
-//
-// > a = 1
-// > b = 2
-// > a,b = b,a
-// > a
-// 2
-// > b
-// 1
-// module.repl()
-
 var Readable = require('stream').Readable;
 var SomeStream = new Readable({ "objectMode": true })
 
