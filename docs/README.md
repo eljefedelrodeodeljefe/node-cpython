@@ -12,7 +12,7 @@ This Library is in alpha status. **Do not use for fun or profit**
 
 Sometimes you want to use Python scripts or even whole libraries, but you don't want to rely on `child_process.exec()` or `child_process.spawn()`. This module initializes the standard Python interpreter and passes Py code to it.
 
-![](http://res.cloudinary.com/jefe-io/image/upload/v1446302782/ncpy_showcase_2_uvlp6b.gif tutorial)
+![](http://res.cloudinary.com/jefe-io/image/upload/v1446302782/ncpy_showcase_2_uvlp6b.gif)
 
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
