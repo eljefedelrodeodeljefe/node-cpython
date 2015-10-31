@@ -17,7 +17,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
-| .anyFile() | -  |
+| .anyFile() | - |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
 | .simpleString(str, [flags], [cb]) | **yes** |
 | .simpleFile() | - |
@@ -29,7 +29,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .compileString() | - |
 | .evalCode() | - |
 | .evalFrame() | - |
-|  |  |
+| - | - |
 | **Stream API** | - |
 | ffi.require(py_file, [options]) | **yes** |
 | ffi.init(stream) | **yes** |
@@ -59,7 +59,7 @@ This module is currently tested on:
 
 | Platform | 0.12 | 3.0 | 4.0 | 5.0 |
 | --- | --- | --- | --- | ---|
-| Mac OS X | - | - | **yes**   **yes**| |
+| Mac OS X | - | - | **yes** | **yes**|
 | Linux | - | - | **yes** | **yes**  |
 | Windows | - | - | - | - |
 
