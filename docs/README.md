@@ -17,18 +17,20 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
-| .anyFile() | - |
+| **Core** | - |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
-| .simpleString(str, [flags], [cb]) | **yes** |
-| .simpleFile() | - |
+| .run() | - |
 | .repl() | **yes** |
-| .simpleParseString() | - |
-| .simpleParseFile() | - |
-| .string() | - |
-| .file() | - |
-| .compileString() | - |
-| .evalCode() | - |
-| .evalFrame() | - |
+| .runString(string | **yes** |
+| .simpleString(string, [cb]) | **yes** |
+| .eval() | - |
+| - | - |
+| **Infrastructure** | - |
+| init() | - |
+| initialize() | **yes** |
+| finalize() | **yes** |
+| setProgramName() | - |
+| setArgv() | - |
 | - | - |
 | **Stream API** | - |
 | ffi.require(py_file, [options]) | **yes** |

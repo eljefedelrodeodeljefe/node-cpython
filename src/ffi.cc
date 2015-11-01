@@ -5,11 +5,11 @@
 Nan::Persistent<v8::Function> FFI::constructor;
 
 FFI::FFI() {
-  
+
 }
 
 FFI::~FFI() {
-  
+
 }
 
 void FFI::Init(v8::Local<v8::Object> exports) {
@@ -219,6 +219,7 @@ void FFI::Run(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     // pValue reference stolen here:
     PyTuple_SetItem(pArgs, i, pValue);
   }
+  // End of constructing args
 
 
   pValue = PyObject_CallObject(pFunc, pArgs);

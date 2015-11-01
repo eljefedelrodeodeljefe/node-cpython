@@ -17,18 +17,20 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
-| .anyFile() | - |
+| **Core** | - |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
-| .simpleString(str, [flags], [cb]) | **yes** |
-| .simpleFile() | - |
+| .run() | - |
 | .repl() | **yes** |
-| .simpleParseString() | - |
-| .simpleParseFile() | - |
-| .string() | - |
-| .file() | - |
-| .compileString() | - |
-| .evalCode() | - |
-| .evalFrame() | - |
+| .runString(string | **yes** |
+| .simpleString(string, [cb]) | **yes** |
+| .eval() | - |
+| - | - |
+| **Infrastructure** | - |
+| init() | - |
+| initialize() | **yes** |
+| finalize() | **yes** |
+| setProgramName() | - |
+| setArgv() | - |
 | - | - |
 | **Stream API** | - |
 | ffi.require(py_file, [options]) | **yes** |
@@ -76,28 +78,17 @@ Please see [list of the implemented methods](#status) for now.
 * [Ncpy](#Ncpy)
   * [new Ncpy()](#new_Ncpy_new)
   * [.init(options)](#Ncpy+init) ⇒ <code>Object</code>
-  * [.run(glob, [cb])](#Ncpy+run)
-  * [.anyFile()](#Ncpy+anyFile)
-  * [.runString()](#Ncpy+runString)
   * [.repl()](#Ncpy+repl)
+  * [.run(glob, [cb])](#Ncpy+run)
+  * [.runString(string)](#Ncpy+runString)
   * [.simpleString(str, [flags], [cb])](#Ncpy+simpleString)
-  * [.simpleFile(filepath, filename, [flags], [cb])](#Ncpy+simpleFile)
   * [.callForeignFunction(file, functioname)](#Ncpy+callForeignFunction) ⇒ <code>function</code>
   * [.ffi(file, functionname)](#Ncpy+ffi) ⇒ <code>Callback</code>
-  * [.interactiveOne()](#Ncpy+interactiveOne)
-  * [.interactiveLoop()](#Ncpy+interactiveLoop)
-  * [.simpleParseString()](#Ncpy+simpleParseString)
-  * [.simpleParseFile()](#Ncpy+simpleParseFile)
-  * [.string()](#Ncpy+string)
-  * [.file()](#Ncpy+file)
-  * [.compileString()](#Ncpy+compileString)
-  * [.evalCode()](#Ncpy+evalCode)
-  * [.evalFrame()](#Ncpy+evalFrame)
+  * [.eval()](#Ncpy+eval)
   * [.initialize()](#Ncpy+initialize)
   * [.finalize(callback)](#Ncpy+finalize)
   * [.setProgramName(Program)](#Ncpy+setProgramName)
   * [.setArgv(string)](#Ncpy+setArgv)
-  * [.pyCreateContext(python)](#Ncpy+pyCreateContext)
 
 <a name="new_Ncpy_new"></a>
 ### new Ncpy()
@@ -125,6 +116,12 @@ let options = {
 ncpy.init(options)
 \/\/ available options [here](https://github.com/eljefedelrodeodeljefe/node-cpython#options)
 ```
+<a name="Ncpy+repl"></a>
+### ncpy.repl()
+Starts a Python contexts, runs a newline delimited string of python from Node's
+`stdin`, listens for `SIGINT` and finalizes the Python context.
+
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
 <a name="Ncpy+run"></a>
 ### ncpy.run(glob, [cb])
 Executes any number of Python source code files.
@@ -147,15 +144,16 @@ cpython.on('error', function(err) {console.log(err)})
 
 cpython.run('[example/**\/*.py', function(result) { console.log(result) })
 ```
-<a name="Ncpy+anyFile"></a>
-### ncpy.anyFile()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
 <a name="Ncpy+runString"></a>
-### ncpy.runString()
+### ncpy.runString(string)
+Exuute a line of Python script
+
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+repl"></a>
-### ncpy.repl()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| string | <code>String</code> | a valid string of Python script |
+
 <a name="Ncpy+simpleString"></a>
 ### ncpy.simpleString(str, [flags], [cb])
 Executes the Python source code from command.
@@ -177,33 +175,6 @@ const ncpy = require('node-cpython')
 cpython.on('error', function(err) {console.log(err)})
 
 cpython.simpleString('from time import time,ctime\nprint 'Today is',ctime(time())\n')
-```
-<a name="Ncpy+simpleFile"></a>
-### ncpy.simpleFile(filepath, filename, [flags], [cb])
-Executes the Python source code from file.
-Similar to simpleString(), but the Python source code is read from a file
-instead of an in-memory string. filename should be the name of the file.
-See also [Python docs](https://docs.python.org/2/c-api/veryhigh.html#c.PyRun_SimpleFileExFlags) for Reference
-
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| filepath | <code>string</code> |  | String of filepath |
-| filename | <code>string</code> |  | String of filename |
-| [flags] | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | <code>null</code> | Compiler flag or array of flags for CPython |
-| [cb] | <code>callback</code> |  | Optional callback |
-
-**Example**  
-```js
-'use strict'
-const ncpy = require('node-cpython')
-
-cpython.on('error', function(err) {console.log(err)})
-
-cpython.simpleFile('example/multiply.py', 'multiply.py')
-// passing the filename seems to be a necessity of the C-API
-// TODO: this will only last very shortly and be made optional
 ```
 <a name="Ncpy+callForeignFunction"></a>
 ### ncpy.callForeignFunction(file, functioname) ⇒ <code>function</code>
@@ -267,32 +238,8 @@ ncpy.ffi
     console.log('ncpy -> Ending python context here.');
   })
 ```
-<a name="Ncpy+interactiveOne"></a>
-### ncpy.interactiveOne()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+interactiveLoop"></a>
-### ncpy.interactiveLoop()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+simpleParseString"></a>
-### ncpy.simpleParseString()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+simpleParseFile"></a>
-### ncpy.simpleParseFile()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+string"></a>
-### ncpy.string()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+file"></a>
-### ncpy.file()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+compileString"></a>
-### ncpy.compileString()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+evalCode"></a>
-### ncpy.evalCode()
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-<a name="Ncpy+evalFrame"></a>
-### ncpy.evalFrame()
+<a name="Ncpy+eval"></a>
+### ncpy.eval()
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
 <a name="Ncpy+initialize"></a>
 ### ncpy.initialize()
@@ -328,16 +275,6 @@ set low level python argv
 | Param | Type | Description |
 | --- | --- | --- |
 | string | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | or an array of strings as argv argc is auto computed by the arrays length |
-
-<a name="Ncpy+pyCreateContext"></a>
-### ncpy.pyCreateContext(python)
-Create a context in memory to run the python script and injects a python function to run in.
-
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| python | <code>callback</code> | function to run in the memory |
 
 ## License
 
