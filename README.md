@@ -84,7 +84,6 @@ Please see [list of the implemented methods](#status) for now.
   * [.runSync(glob, Argv, [cb])](#Ncpy+runSync)
   * [.runString(string)](#Ncpy+runString)
   * [.simpleString(str, [flags], [cb])](#Ncpy+simpleString)
-  * [.callForeignFunction(file, functioname)](#Ncpy+callForeignFunction) ⇒ <code>function</code>
   * [.ffi(file, functionname)](#Ncpy+ffi) ⇒ <code>Callback</code>
   * [.eval()](#Ncpy+eval)
   * [.initialize()](#Ncpy+initialize)
@@ -191,21 +190,9 @@ cpython.on('error', function(err) {console.log(err)})
 
 cpython.simpleString('from time import time,ctime\nprint 'Today is',ctime(time())\n')
 ```
-<a name="Ncpy+callForeignFunction"></a>
-### ncpy.callForeignFunction(file, functioname) ⇒ <code>function</code>
-[callForeignFunction description]
-
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-**Returns**: <code>function</code> - [description]  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| file | <code>string</code> | [description] |
-| functioname | <code>string</code> | [description] |
-
 <a name="Ncpy+ffi"></a>
 ### ncpy.ffi(file, functionname) ⇒ <code>Callback</code>
-The ffi method serves as entry point fo genreally executing Python functions
+The ffi method serves as entry point for generally executing Python functions
 from .py-files. Important to note is, that is branching in two modes, depending
 how many arguments get passed. If there are arguments it makes a singular call
 to the script, you open and close a whole Python memory contexts for it.
