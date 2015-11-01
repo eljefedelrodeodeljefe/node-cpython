@@ -6,7 +6,8 @@
   * [new Ncpy()](#new_Ncpy_new)
   * [.init(options)](#Ncpy+init) ⇒ <code>Object</code>
   * [.repl()](#Ncpy+repl)
-  * [.run(glob, [cb])](#Ncpy+run)
+  * [.run(glob, Argv, [cb])](#Ncpy+run)
+  * [.runSync(glob, Argv, [cb])](#Ncpy+runSync)
   * [.runString(string)](#Ncpy+runString)
   * [.simpleString(str, [flags], [cb])](#Ncpy+simpleString)
   * [.callForeignFunction(file, functioname)](#Ncpy+callForeignFunction) ⇒ <code>function</code>
@@ -50,7 +51,7 @@ Starts a Python contexts, runs a newline delimited string of python from Node's
 
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
 <a name="Ncpy+run"></a>
-### ncpy.run(glob, [cb])
+### ncpy.run(glob, Argv, [cb])
 Executes any number of Python source code files.
 This is JS userland API and automates and abstracts many choices of the
 below C-API. If you want to have more control, please use the below methods.
@@ -59,18 +60,31 @@ below C-API. If you want to have more control, please use the below methods.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| glob | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | a glob of valid .py files |
-| [cb] | <code>callback</code> | Optional callback |
+| glob | <code>String</code> &#124; <code>Array.&lt;String&gt;</code> | a glob of valid .py files |
+| Argv | <code>Array</code> | global arguments array |
+| [cb] | <code>Callback</code> | Optional callback |
 
 **Example**  
 ```js
 'use strict'
 const ncpy = require('node-cpython')
 
-cpython.on('error', function(err) {console.log(err)})
+ncpy.on('error', function(err) {console.log(err)})
 
-cpython.run('[example/**\/*.py', function(result) { console.log(result) })
+ncpy.run('[example/**\/*.py',[2, 10, 'someOtherArg'], function(err) {
+	console.log(err)
+})
 ```
+<a name="Ncpy+runSync"></a>
+### ncpy.runSync(glob, Argv, [cb])
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| glob | <code>String</code> &#124; <code>Array.&lt;String&gt;</code> | a glob of valid .py files |
+| Argv | <code>Array</code> | global arguments array |
+| [cb] | <code>Callback</code> | Optional callback |
+
 <a name="Ncpy+runString"></a>
 ### ncpy.runString(string)
 Exuute a line of Python script
