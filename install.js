@@ -1,7 +1,7 @@
 'use strict'
 const spawn = require('child_process').spawn;
 const log = require('util').log;
-const os = require('os');
+const os = require('os').type();
 
 const EventEmitter = require('events');
 const ee = new EventEmitter();
@@ -19,6 +19,8 @@ const v3x = '3.X'
 * Most of the code here presents the users output and errors into the console and pretty-prints stuff.
 *
 */
+let windowsCMD = ['/S', '/C']
+
 let configureOpts = [
                     '--prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯ -> Tying to be real clever here
                     '--exec-prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯
@@ -29,7 +31,16 @@ let configureOpts = [
 
 // TODO: do both in a child process.
 let time = process.hrtime();
-let configure27 = spawn('./configure', configureOpts, {cwd: pathTo27, stdio: 'inherit'})
+
+let configure27
+if (os === 'Windows_NT') {
+  let winArgs = []
+  winArgs.push('./configure')
+  winArgs.concat(windowsCMD, configureOpts)
+  configure27 = spawn('CMD', winArgs, {cwd: pathTo27, stdio: 'inherit'})
+} else {
+  configure27 = spawn('./configure', configureOpts, {cwd: pathTo27, stdio: 'inherit'})
+}
 
 configure27.on('close', function (code) {
   v27 = false //  ¯\_(ツ)_/¯
@@ -48,10 +59,27 @@ ee.on('done:configure', function() {
   let time = process.hrtime();
 
   let makeOpts = ['-j' + os.cpus().length, '--silent'] // run make in parrallel with max. cpus
-  let make27 = spawn('make', makeOpts, {cwd: pathTo27, stdio: 'inherit'})
+
+  let make27
+  if (os === 'Windows_NT') {
+    let winArgs = []
+    winArgs.push('make')
+    winArgs.concat(windowsCMD, makeOpts)
+    make27 = spawn('CMD', winArgs, {cwd: pathTo27, stdio: 'inherit'})
+  } else {
+    make27 = spawn('make', makeOpts, {cwd: pathTo27, stdio: 'inherit'})
+  }
 
   make27.on('close', function (code) {
-    var make3X = spawn('make', makeOpts, {cwd: pathTo3X, stdio: 'inherit'})
+    let make3X
+    if (os === 'Windows_NT') {
+      let winArgs = []
+      winArgs.push('make')
+      winArgs.concat(windowsCMD, makeOpts)
+      make3X = spawn('CMD', winArgs, {cwd: pathTo3X, stdio: 'inherit'})
+    } else {
+      make3X = spawn('make', makeOpts, {cwd: pathTo3X, stdio: 'inherit'})
+    }
 
     make3X.on('close', function (code) {
       let diff = process.hrtime(time);
@@ -67,10 +95,26 @@ ee.on('done:make', function() {
   let time = process.hrtime();
   let installOpts = ['install','--silent']
 
-  let makeInstall27 = spawn('make', installOpts, {cwd: pathTo27, stdio: 'inherit'})
+  let makeInstall27
+  if (os === 'Windows_NT') {
+    let winArgs = []
+    winArgs.push('make')
+    winArgs.concat(windowsCMD, installOpts)
+    makeInstall27 = spawn('CMD', winArgs, {cwd: pathTo27, stdio: 'inherit'})
+  } else {
+    makeInstall27 = spawn('make', installOpts, {cwd: pathTo27, stdio: 'inherit'})
+  }
 
   makeInstall27.on('close', function (code) {
-    let makeInstall3X = spawn('make', installOpts, {cwd: pathTo3X, stdio: 'inherit'})
+    let makeInstall3X
+    if (os === 'Windows_NT') {
+      let winArgs = []
+      winArgs.push('make')
+      winArgs.concat(windowsCMD, installOpts)
+      makeInstall3X = spawn('CMD', winArgs, {cwd: pathTo3X, stdio: 'inherit'})
+    } else {
+      makeInstall3X = spawn('make', installOpts, {cwd: pathTo3X, stdio: 'inherit'})
+    }
 
     makeInstall3X.on('close', function (code) {
       let diff = process.hrtime(time);
