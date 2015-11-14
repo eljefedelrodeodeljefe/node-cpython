@@ -13,7 +13,7 @@ SomeStream.push(null)
 
 ncpy.ffi
   // load the python script and intitialize the python interpreter
-  .require('multiplication.py', { path: './examples' })
+  .require('py/multiplication.py', { path: './examples' })
   // this expects a stream (in { objectMode: true })
   .init(SomeStream)
   // Tell `ncpy` what function to excute.
@@ -25,7 +25,7 @@ ncpy.ffi
   })
 
 
-ncpy.ffi('multiplication.py', 'multiply', [ 20, 5], function (err, res) {
-  console.log('ncpy -> easy call to multiply, here');
-  console.log('ncpy -> ' + res + '\n');
+ncpy.ffi('examples/py/multiplication.py', 'multiply', [20, 5], function (err, res) {
+  // console.log('ncpy -> easy call to multiply, here');
+  console.log('ncpy -> ' + res);
 })
