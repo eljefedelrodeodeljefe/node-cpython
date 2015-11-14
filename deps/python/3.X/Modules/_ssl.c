@@ -1067,25 +1067,23 @@ _get_aia_uri(X509 *certificate, int nid) {
 static PyObject *
 _get_crl_dp(X509 *certificate) {
     STACK_OF(DIST_POINT) *dps;
-    int i, j, result;
-    PyObject *lst;
+    int i, j;
+    PyObject *lst, *res = NULL;
 
 #if OPENSSL_VERSION_NUMBER < 0x10001000L
-    dps = X509_get_ext_d2i(certificate, NID_crl_distribution_points,
-                           NULL, NULL);
+    dps = X509_get_ext_d2i(certificate, NID_crl_distribution_points, NULL, NULL);
 #else
     /* Calls x509v3_cache_extensions and sets up crldp */
     X509_check_ca(certificate);
     dps = certificate->crldp;
 #endif
 
-    if (dps == NULL) {
+    if (dps == NULL)
         return Py_None;
-    }
 
-    if ((lst = PyList_New(0)) == NULL) {
-        return NULL;
-    }
+    lst = PyList_New(0);
+    if (lst == NULL)
+        goto done;
 
     for (i=0; i < sk_DIST_POINT_num(dps); i++) {
         DIST_POINT *dp;
@@ -1098,6 +1096,7 @@ _get_crl_dp(X509 *certificate) {
             GENERAL_NAME *gn;
             ASN1_IA5STRING *uri;
             PyObject *ouri;
+            int err;
 
             gn = sk_GENERAL_NAME_value(gns, j);
             if (gn->type != GEN_URI) {
@@ -1106,28 +1105,25 @@ _get_crl_dp(X509 *certificate) {
             uri = gn->d.uniformResourceIdentifier;
             ouri = PyUnicode_FromStringAndSize((char *)uri->data,
                                                uri->length);
-            if (ouri == NULL) {
-                Py_DECREF(lst);
-                return NULL;
-            }
-            result = PyList_Append(lst, ouri);
+            if (ouri == NULL)
+                goto done;
+
+            err = PyList_Append(lst, ouri);
             Py_DECREF(ouri);
-            if (result < 0) {
-                Py_DECREF(lst);
-                return NULL;
-            }
+            if (err < 0)
+                goto done;
         }
     }
-    /* convert to tuple or None */
-    if (PyList_Size(lst) == 0) {
-        Py_DECREF(lst);
-        return Py_None;
-    } else {
-        PyObject *tup;
-        tup = PyList_AsTuple(lst);
-        Py_DECREF(lst);
-        return tup;
-    }
+
+    /* Convert to tuple. */
+    res = (PyList_GET_SIZE(lst) > 0) ? PyList_AsTuple(lst) : Py_None;
+
+  done:
+    Py_XDECREF(lst);
+#if OPENSSL_VERSION_NUMBER < 0x10001000L
+    sk_DIST_POINT_free(dps);
+#endif
+    return res;
 }
 
 static PyObject *
@@ -2280,6 +2276,8 @@ _ssl__SSLContext_impl(PyTypeObject *type, int proto_version)
     options = SSL_OP_ALL & ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS;
     if (proto_version != PY_SSL_VERSION_SSL2)
         options |= SSL_OP_NO_SSLv2;
+    if (proto_version != PY_SSL_VERSION_SSL3)
+        options |= SSL_OP_NO_SSLv3;
     SSL_CTX_set_options(self->ctx, options);
 
 #ifndef OPENSSL_NO_ECDH
@@ -2996,7 +2994,7 @@ _ssl__SSLContext_load_verify_locations_impl(PySSLContext *self,
             cadata_ascii = PyUnicode_AsASCIIString(cadata);
             if (cadata_ascii == NULL) {
                 PyErr_SetString(PyExc_TypeError,
-                                "cadata should be a ASCII string or a "
+                                "cadata should be an ASCII string or a "
                                 "bytes-like object");
                 goto error;
             }
@@ -3273,7 +3271,7 @@ _servername_callback(SSL *s, int *al, void *args)
     ssl = SSL_get_app_data(s);
     assert(PySSLSocket_Check(ssl));
 
-    /* The servername callback expects a argument that represents the current
+    /* The servername callback expects an argument that represents the current
      * SSL connection and that has a .context attribute that can be changed to
      * identify the requested hostname. Since the official API is the Python
      * level API we want to pass the callback a Python level object rather than

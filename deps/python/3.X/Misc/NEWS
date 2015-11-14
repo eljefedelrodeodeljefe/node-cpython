@@ -11,6 +11,31 @@ Release date: TBA
 Core and Builtins
 -----------------
 
+- Issue #25388: Fixed tokenizer crash when processing undecodable source code
+  with a null byte.
+
+- Issue #25462: The hash of the key now is calculated only once in most
+  operations in C implementation of OrderedDict.
+
+- Issue #22995: Default implementation of __reduce__ and __reduce_ex__ now
+  rejects builtin types with not defined __new__.
+
+- Issue #25555: Fix parser and AST: fill lineno and col_offset of "arg" node
+  when compiling AST from Python objects.
+
+- Issue #24802: Avoid buffer overreads when int(), float(), compile(), exec()
+  and eval() are passed bytes-like objects.  These objects are not
+  necessarily terminated by a null byte, but the functions assumed they were.
+
+- Issue #24726: Fixed a crash and leaking NULL in repr() of OrderedDict that
+  was mutated by direct calls of dict methods.
+
+- Issue #25449: Iterating OrderedDict with keys with unstable hash now raises
+  KeyError in C implementations as well as in Python implementation.
+
+- Issue #25395: Fixed crash when highly nested OrderedDict structures were
+  garbage collected.
+
 - Issue #25274: sys.setrecursionlimit() now raises a RecursionError if the new
   recursion limit is too low depending at the current recursion depth. Modify
   also the "lower-water mark" formula to make it monotonic. This mark is used
@@ -44,6 +69,50 @@ Core and Builtins
 
 Library
 -------
+
+- Issue #25590: In the Readline completer, only call getattr() once per
+  attribute.
+
+- Issue #25498: Fix a crash when garbage-collecting ctypes objects created
+  by wrapping a memoryview.  This was a regression made in 3.5a1.  Based
+  on patch by Eryksun.
+
+- Issue #25584: Added "escape" to the __all__ list in the glob module.
+
+- Issue #25584: Fixed recursive glob() with patterns starting with '\*\*'.
+
+- Issue #25446: Fix regression in smtplib's AUTH LOGIN support.
+
+- Issue #18010: Fix the pydoc web server's module search function to handle
+  exceptions from importing packages.
+
+- Issue #25554: Got rid of circular references in regular expression parsing.
+
+- Issue #25510: fileinput.FileInput.readline() now returns b'' instead of ''
+  at the end if the FileInput was opened with binary mode.
+  Patch by Ryosuke Ito.
+
+- Issue #25503: Fixed inspect.getdoc() for inherited docstrings of properties.
+  Original patch by John Mark Vandenberg.
+
+- Issue #25515: Always use os.urandom as a source of randomness in uuid.uuid4.
+
+- Issue #21827: Fixed textwrap.dedent() for the case when largest common
+  whitespace is a substring of smallest leading whitespace.
+  Based on patch by Robert Li.
+
+- Issue #25447: The lru_cache() wrapper objects now can be copied and pickled
+  (by returning the original object unchanged).
+
+- Issue #25390: typing: Don't crash on Union[str, Pattern].
+
+- Issue #25441: asyncio: Raise error from drain() when socket is closed.
+
+- Issue #25410: Cleaned up and fixed minor bugs in C implementation of
+  OrderedDict.
+
+- Issue #25411: Improved Unicode support in SMTPHandler through better use of
+  the email package. Thanks to user simon04 for the patch.
 
 - Issue #25407: Remove mentions of the formatter module being removed in
   Python 3.6.
@@ -176,6 +245,14 @@ Library
 - Issue #24881: Fixed setting binary mode in Python implementation of FileIO
   on Windows and Cygwin.  Patch from Akira Li.
 
+- Issue #25530: Disable the vulnerable SSLv3 protocol by default when creating
+  ssl.SSLContext.
+
+- Issue #25569: Fix memory leak in SSLSocket.getpeercert().
+
+- Issue #25471: Sockets returned from accept() shouldn't appear to be
+  nonblocking.
+
 - Issue #25319: When threading.Event is reinitialized, the underlying condition
   should use a regular lock rather than a recursive lock.
 
@@ -301,12 +378,14 @@ Documentation
 Tests
 -----
 
-- Issue #25099: Make test_compileall not fail when a entry on sys.path cannot
+- Issue #25449: Added tests for OrderedDict subclasses.
+
+- Issue #25099: Make test_compileall not fail when an entry on sys.path cannot
   be written to (commonly seen in administrative installs on Windows).
 
 - Issue #23919: Prevents assert dialogs appearing in the test suite.
 
-- PCbuild\rt.bat now accepts an unlimited number of arguments to pass along
+- ``PCbuild\rt.bat`` now accepts an unlimited number of arguments to pass along
   to regrtest.py.  Previously there was a limit of 9.
 
 Build
@@ -322,6 +401,8 @@ Build
 
 Windows
 -------
+
+- Issue #25450: Updates shortcuts to start Python in installation directory.
 
 - Issue #25164: Changes default all-users install directory to match per-user
   directory.
@@ -355,6 +436,12 @@ Windows
   UAC virtualization.
 
 - Issue #25022: Removed very outdated PC/example_nt/ directory.
+
+Tools/Demos
+-----------
+
+- Issue #25440: Fix output of python-config --extension-suffix.
+
 
 What's New in Python 3.5.0 final?
 =================================
@@ -1098,7 +1185,7 @@ Library
 - Issue #23703: Fix a regression in urljoin() introduced in 901e4e52b20a.
   Patch by Demian Brecht.
 
-- Issue #4254: Adds _curses.update_lines_cols() Patch by Arnon Yaari
+- Issue #4254: Adds _curses.update_lines_cols().  Patch by Arnon Yaari
 
 - Issue #19933: Provide default argument for ndigits in round. Patch by
   Vajrasky Kok.
@@ -1590,7 +1677,7 @@ Build
 C API
 -----
 
-- Issue #20204: Deprecation warning is now raised for builtin type without the
+- Issue #20204: Deprecation warning is now raised for builtin types without the
   __module__ attribute.
 
 Windows
@@ -1819,7 +1906,7 @@ Core and Builtins
   and does not require to carry long the spark.py parser-generator library;
   spark.py was removed from the source base.
 
-- Issue #12546: Allow \x00 to be used as a fill character when using str, int,
+- Issue #12546: Allow ``\x00`` to be used as a fill character when using str, int,
   float, and complex __format__ methods.
 
 - Issue #20480: Add ipaddress.reverse_pointer. Patch by Leon Weber.
@@ -1950,7 +2037,7 @@ Library
 - Issue #23132: Improve performance and introspection support of comparison
   methods created by functool.total_ordering.
 
-- Issue #19776: Add a expanduser() method on Path objects.
+- Issue #19776: Add an expanduser() method on Path objects.
 
 - Issue #23112: Fix SimpleHTTPServer to correctly carry the query string and
   fragment when it redirects to add a trailing slash.
@@ -2443,7 +2530,7 @@ Library
 
 - Issue #20170: Convert posixmodule to use Argument Clinic.
 
-- Issue #21539: Add a *exists_ok* argument to `Pathlib.mkdir()` to mimic
+- Issue #21539: Add an *exists_ok* argument to `Pathlib.mkdir()` to mimic
   `mkdir -p` and `os.makedirs()` functionality.  When true, ignore
   FileExistsErrors.  Patch by Berker Peksag.
 
@@ -2499,7 +2586,7 @@ Library
   Patch by Tom Flanagan.
 
 - Issue #19884: readline: Disable the meta modifier key if stdout is not
-  a terminal to not write the ANSI sequence "\033[1034h" into stdout. This
+  a terminal to not write the ANSI sequence ``"\033[1034h"`` into stdout. This
   sequence is used on some terminal (ex: TERM=xterm-256color") to enable
   support of 8 bit characters.
 
@@ -2661,7 +2748,7 @@ Library
 - Issue #3015: _tkinter.create() now creates tkapp object with wantobject=1 by
   default.
 
-- Issue #10203: sqlite3.Row now truly supports sequence protocol.  In particulr
+- Issue #10203: sqlite3.Row now truly supports sequence protocol.  In particular
   it supports reverse() and negative indices.  Original patch by Claudiu Popa.
 
 - Issue #18807: If copying (no symlinks) specified for a venv, then the python
@@ -2702,7 +2789,7 @@ Library
 - Issue #21486: Optimize parsing of netmasks in ipaddress.IPv4Network and
   ipaddress.IPv6Network.
 
-- Issue #13916: Disallowed the surrogatepass error handler for non UTF-*
+- Issue #13916: Disallowed the surrogatepass error handler for non UTF-\*
   encodings.
 
 - Issue #20998: Fixed re.fullmatch() of repeated single character pattern
@@ -3032,7 +3119,7 @@ IDLE
   Changes are written to HOME/.idlerc/config-extensions.cfg.
   Original patch by Tal Einat.
 
-- Issue #16233: A module browser (File : Class Browser, Alt+C) requires a
+- Issue #16233: A module browser (File : Class Browser, Alt+C) requires an
   editor window with a filename.  When Class Browser is requested otherwise,
   from a shell, output window, or 'Untitled' editor, Idle no longer displays
   an error box.  It now pops up an Open Module box (Alt+M). If a valid name
@@ -4875,7 +4962,7 @@ Build
   upgrade pip by default, using the bundled pip provided by the new ensurepip
   module.  A new configure option, --with-ensurepip[=upgrade|install|no], is
   available to override the default ensurepip "--upgrade" option.  The option
-  can also be set with "make [alt]install ENSUREPIP=[upgrade|install\no]".
+  can also be set with "make [alt]install ENSUREPIP=[upgrade|install|no]".
 
 - Issue #19551: PEP 453 - the OS X installer now installs pip by default.
 
@@ -5044,7 +5131,7 @@ Library
 - Issue #10712: 2to3 has a new "asserts" fixer that replaces deprecated names
   of unittest methods (e.g. failUnlessEqual -> assertEqual).
 
-- Issue #18037: 2to3 now escapes '\u' and '\U' in native strings.
+- Issue #18037: 2to3 now escapes ``'\u'`` and ``'\U'`` in native strings.
 
 - Issue #17839: base64.decodebytes and base64.encodebytes now accept any
   object that exports a 1 dimensional array of bytes (this means the same
@@ -5711,7 +5798,7 @@ Core and Builtins
 - Issue #5308: Raise ValueError when marshalling too large object (a sequence
   with size >= 2**31), instead of producing illegal marshal data.
 
-- Issue #12983: Bytes literals with invalid \x escape now raise a SyntaxError
+- Issue #12983: Bytes literals with invalid ``\x`` escape now raise a SyntaxError
   and a full traceback including line number.
 
 - Issue #16967: In function definition, evaluate positional defaults before
@@ -6082,7 +6169,7 @@ Library
   loaded X.509 certs, X.509 CA certs and CRLs.
 
 - Issue #18167: cgi.FieldStorage no longer fails to handle multipart/form-data
-  when \r\n appears at end of 65535 bytes without other newlines.
+  when ``\r\n`` appears at end of 65535 bytes without other newlines.
 
 - Issue #18076: Introduce importlib.util.decode_source().
 
@@ -6314,7 +6401,7 @@ Library
 - Issue #17016: Get rid of possible pointer wraparounds and integer overflows
   in the re module.  Patch by Nickolai Zeldovich.
 
-- Issue #16658: add missing return to HTTPConnection.send()
+- Issue #16658: add missing return to HTTPConnection.send().
   Patch by Jeff Knupp.
 
 - Issue #9556: the logging package now allows specifying a time-of-day for a
@@ -6695,8 +6782,9 @@ Library
 
 - Issue #16900: Issue a ResourceWarning when an ssl socket is left unclosed.
 
-- Issue #13899: \A, \Z, and \B now correctly match the A, Z, and B literals
-  when used inside character classes (e.g. '[\A]').  Patch by Matthew Barnett.
+- Issue #13899: ``\A``, ``\Z``, and ``\B`` now correctly match the A, Z,
+  and B literals when used inside character classes (e.g. ``'[\A]'``).
+  Patch by Matthew Barnett.
 
 - Issue #15545: Fix regression in sqlite3's iterdump method where it was
   failing if the connection used a row factory (such as sqlite3.Row) that
@@ -6911,7 +6999,7 @@ Library
 - Issue #16431: Use the type information when constructing a Decimal subtype
   from a Decimal argument.
 
-- Issue #15641: Clean up deprecated classes from importlib
+- Issue #15641: Clean up deprecated classes from importlib.
   Patch by Taras Lyapun.
 
 - Issue #16350: zlib.decompressobj().decompress() now accumulates data from
@@ -7180,7 +7268,7 @@ IDLE
 - Issue #16511: Use default IDLE width and height if config param is not valid.
   Patch Serhiy Storchaka.
 
-- Issue #1207589: Add Cut/Copy/Paste items to IDLE right click Context Menu
+- Issue #1207589: Add Cut/Copy/Paste items to IDLE right click Context Menu.
   Patch by Todd Rovito.
 
 - Issue #16123: IDLE - deprecate running without a subprocess.
@@ -7693,7 +7781,7 @@ Tools/Demos
 - Issue #16549: Make json.tool work again on Python 3 and add tests.
   Initial patch by Berker Peksag and Serhiy Storchaka.
 
-- Issue #13301: use ast.literal_eval() instead of eval() in Tools/i18n/msgfmt.py
+- Issue #13301: use ast.literal_eval() instead of eval() in Tools/i18n/msgfmt.py.
   Patch by Serhiy Storchaka.
 
 Windows

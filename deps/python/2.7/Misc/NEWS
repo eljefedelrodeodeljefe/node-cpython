@@ -10,6 +10,15 @@ What's New in Python 2.7.11?
 Core and Builtins
 -----------------
 
+- Issue #25388: Fixed tokenizer hang when processing undecodable source code
+  with a null byte.
+
+- Issue #22995: Default implementation of __reduce__ and __reduce_ex__ now
+  rejects builtin types with not defined __new__.
+
+- Issue #7267: format(int, 'c') now raises OverflowError when the argument is
+  not in range(0, 256).
+
 - Issue #24806: Prevent builtin types that are not allowed to be subclassed from
   being subclassed through multiple inheritance.
 
@@ -45,6 +54,33 @@ Core and Builtins
 
 Library
 -------
+
+- Issue #25590: In the Readline completer, only call getattr() once per
+  attribute.
+
+- Issue #25530: Disable the vulnerable SSLv3 protocol by default when creating
+  ssl.SSLContext.
+
+- Issue #25569: Fix memory leak in SSLSocket.getpeercert().
+
+- Issue #7759: Fixed the mhlib module on filesystems that doesn't support
+  link counting for directories.
+
+- Issue #892902: Fixed pickling recursive objects.
+
+- Issue #18010: Fix the pydoc GUI's search function to handle exceptions
+  from importing packages.
+
+- Issue #25515: Always use os.urandom as a source of randomness in uuid.uuid4.
+
+- Issue #21827: Fixed textwrap.dedent() for the case when largest common
+  whitespace is a substring of smallest leading whitespace.
+  Based on patch by Robert Li.
+
+- Issue #21709: Fix the logging module to not depend upon __file__ being set
+  properly to get the filename of its caller from the stack.  This allows it
+  to work if run in a frozen or embedded environment where the module's
+  .__file__ attribute does not match its code object's .co_filename.
 
 - Issue #25319: When threading.Event is reinitialized, the underlying condition
   should use a regular lock rather than a recursive lock.
@@ -925,7 +961,7 @@ IDLE
   Changes are written to HOME/.idlerc/config-extensions.cfg.
   Original patch by Tal Einat.
 
-- Issue #16233: A module browser (File : Class Browser, Alt+C) requires a
+- Issue #16233: A module browser (File : Class Browser, Alt+C) requires an
   editor window with a filename.  When Class Browser is requested otherwise,
   from a shell, output window, or 'Untitled' editor, Idle no longer displays
   an error box.  It now pops up an Open Module box (Alt+M). If a valid name
@@ -3057,7 +3093,7 @@ IDLE
 - Issue #16504: IDLE now catches SyntaxErrors raised by tokenizer. Patch by
   Roger Serwy.
 
-- Issue #1207589: Add Cut/Copy/Paste items to IDLE right click Context Menu
+- Issue #1207589: Add Cut/Copy/Paste items to IDLE right click Context Menu.
   Patch by Todd Rovito.
 
 - Issue #13052: Fix IDLE crashing when replace string in Search/Replace dialog
@@ -3253,7 +3289,7 @@ Tools/Demos
 
 - Issue #16476: Fix json.tool to avoid including trailing whitespace.
 
-- Issue #13301: use ast.literal_eval() instead of eval() in Tools/i18n/msgfmt.py
+- Issue #13301: use ast.literal_eval() instead of eval() in Tools/i18n/msgfmt.py.
   Patch by Serhiy Storchaka.
 
 Documentation

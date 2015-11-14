@@ -651,7 +651,7 @@ deque_clear(dequeobject *deque)
     Py_ssize_t n;
     PyObject *item;
 
-    if (Py_SIZE(deque) == 0)
+    if (deque->len == 0)
         return;
 
     /* During the process of clearing a deque, decrefs can cause the
@@ -1086,7 +1086,7 @@ deque_init(dequeobject *deque, PyObject *args, PyObject *kwdargs)
         }
     }
     deque->maxlen = maxlen;
-    if (Py_SIZE(deque) > 0)
+    if (deque->len > 0)
         deque_clear(deque);
     if (iterable != NULL) {
         PyObject *rv = deque_extend(deque, iterable);
