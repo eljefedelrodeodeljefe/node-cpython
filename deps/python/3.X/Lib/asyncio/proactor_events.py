@@ -41,7 +41,8 @@ class _ProactorBasePipeTransport(transports._FlowControlMixin,
         self._loop.call_soon(self._protocol.connection_made, self)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(waiter._set_result_unless_cancelled, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled,
+                                 waiter, None)
 
     def __repr__(self):
         info = [self.__class__.__name__]
@@ -64,6 +65,9 @@ class _ProactorBasePipeTransport(transports._FlowControlMixin,
 
     def _set_extra(self, sock):
         self._extra['pipe'] = sock
+
+    def is_closing(self):
+        return self._closing
 
     def close(self):
         if self._closing:

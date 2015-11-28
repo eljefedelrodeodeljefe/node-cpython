@@ -19,8 +19,9 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | --- | --- |
 | **Core** | - |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
-| .run() | - |
 | .repl() | **yes** |
+| .run() | - |
+| .runSync() | - |
 | .runString(string | **yes** |
 | .simpleString(string, [cb]) | **yes** |
 | .eval() | - |

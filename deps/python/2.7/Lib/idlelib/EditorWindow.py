@@ -184,6 +184,7 @@ class EditorWindow(object):
                 'name': 'text',
                 'padx': 5,
                 'wrap': 'none',
+                'highlightthickness': 0,
                 'width': self.width,
                 'height': idleConf.GetOption('main', 'EditorWindow', 'height', type='int')}
         if TkVersion >= 8.5:
@@ -410,6 +411,7 @@ class EditorWindow(object):
 
     def set_status_bar(self):
         self.status_bar = self.MultiStatusBar(self.top)
+        sep = Frame(self.top, height=1, borderwidth=1, background='grey75')
         if sys.platform == "darwin":
             # Insert some padding to avoid obscuring some of the statusbar
             # by the resize widget.
@@ -417,6 +419,7 @@ class EditorWindow(object):
         self.status_bar.set_label('column', 'Col: ?', side=RIGHT)
         self.status_bar.set_label('line', 'Ln: ?', side=RIGHT)
         self.status_bar.pack(side=BOTTOM, fill=X)
+        sep.pack(side=BOTTOM, fill=X)
         self.text.bind("<<set-line-and-column>>", self.set_line_and_column)
         self.text.event_add("<<set-line-and-column>>",
                             "<KeyRelease>", "<ButtonRelease>")
@@ -754,7 +757,7 @@ class EditorWindow(object):
         # Called from self.filename_change_hook and from configDialog.py
         self._rmcolorizer()
         self._addcolorizer()
-        theme = idleConf.GetOption('main','Theme','name')
+        theme = idleConf.CurrentTheme()
         normal_colors = idleConf.GetHighlight(theme, 'normal')
         cursor_color = idleConf.GetHighlight(theme, 'cursor', fgBg='fg')
         select_colors = idleConf.GetHighlight(theme, 'hilite')
@@ -887,8 +890,10 @@ class EditorWindow(object):
         except IOError as err:
             if not getattr(self.root, "recentfilelist_error_displayed", False):
                 self.root.recentfilelist_error_displayed = True
-                tkMessageBox.showerror(title='IDLE Error',
-                    message='Unable to update Recent Files list:\n%s'
+                tkMessageBox.showwarning(title='IDLE Warning',
+                    message="Cannot update File menu Recent Files list. "
+                            "Your operating system says:\n%s\n"
+                            "Select OK and IDLE will continue without updating."
                         % str(err),
                     parent=self.text)
         # for each edit window instance, construct the recent files menu

@@ -556,6 +556,9 @@ class _SelectorTransport(transports._FlowControlMixin,
     def abort(self):
         self._force_close(None)
 
+    def is_closing(self):
+        return self._closing
+
     def close(self):
         if self._closing:
             return
@@ -633,7 +636,8 @@ class _SelectorSocketTransport(_SelectorTransport):
                              self._sock_fd, self._read_ready)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(waiter._set_result_unless_cancelled, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled,
+                                 waiter, None)
 
     def pause_reading(self):
         if self._closing:
@@ -987,7 +991,8 @@ class _SelectorDatagramTransport(_SelectorTransport):
                              self._sock_fd, self._read_ready)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(waiter._set_result_unless_cancelled, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled,
+                                 waiter, None)
 
     def get_write_buffer_size(self):
         return sum(len(data) for data, _ in self._buffer)

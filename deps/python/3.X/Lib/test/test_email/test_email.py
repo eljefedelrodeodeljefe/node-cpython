@@ -3052,7 +3052,7 @@ class TestMiscellaneous(TestEmailBase):
         # issue 1690608.  email.utils.formataddr() should be rfc2047 aware.
         name = "H\u00e4ns W\u00fcrst"
         addr = 'person@dom.ain'
-        # A object without a header_encode method:
+        # An object without a header_encode method:
         bad_charset = object()
         self.assertRaises(AttributeError, utils.formataddr, (name, addr),
             bad_charset)
@@ -3179,7 +3179,7 @@ Foo
                 self.msgids = []
                 append = self.msgids.append
                 make_msgid = utils.make_msgid
-                clock = time.clock
+                clock = time.monotonic
                 tfin = clock() + 3.0
                 while clock() < tfin:
                     append(make_msgid(domain='testdomain-string'))

@@ -19,8 +19,9 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | --- | --- |
 | **Core** | - |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
-| .run() | - |
 | .repl() | **yes** |
+| .run() | - |
+| .runSync() | - |
 | .runString(string | **yes** |
 | .simpleString(string, [cb]) | **yes** |
 | .eval() | - |
@@ -79,10 +80,10 @@ Please see [list of the implemented methods](#status) for now.
   * [new Ncpy()](#new_Ncpy_new)
   * [.init(options)](#Ncpy+init) ⇒ <code>Object</code>
   * [.repl()](#Ncpy+repl)
-  * [.run(glob, [cb])](#Ncpy+run)
+  * [.run(glob, Argv, [cb])](#Ncpy+run)
+  * [.runSync(glob, Argv, [cb])](#Ncpy+runSync)
   * [.runString(string)](#Ncpy+runString)
   * [.simpleString(str, [flags], [cb])](#Ncpy+simpleString)
-  * [.callForeignFunction(file, functioname)](#Ncpy+callForeignFunction) ⇒ <code>function</code>
   * [.ffi(file, functionname)](#Ncpy+ffi) ⇒ <code>Callback</code>
   * [.eval()](#Ncpy+eval)
   * [.initialize()](#Ncpy+initialize)
@@ -123,7 +124,7 @@ Starts a Python contexts, runs a newline delimited string of python from Node's
 
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
 <a name="Ncpy+run"></a>
-### ncpy.run(glob, [cb])
+### ncpy.run(glob, Argv, [cb])
 Executes any number of Python source code files.
 This is JS userland API and automates and abstracts many choices of the
 below C-API. If you want to have more control, please use the below methods.
@@ -132,18 +133,31 @@ below C-API. If you want to have more control, please use the below methods.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| glob | <code>string</code> &#124; <code>Array.&lt;string&gt;</code> | a glob of valid .py files |
-| [cb] | <code>callback</code> | Optional callback |
+| glob | <code>String</code> &#124; <code>Array.&lt;String&gt;</code> | a glob of valid .py files |
+| Argv | <code>Array</code> | global arguments array |
+| [cb] | <code>Callback</code> | Optional callback |
 
 **Example**  
 ```js
 'use strict'
 const ncpy = require('node-cpython')
 
-cpython.on('error', function(err) {console.log(err)})
+ncpy.on('error', function(err) {console.log(err)})
 
-cpython.run('[example/**\/*.py', function(result) { console.log(result) })
+ncpy.run('[example/**\/*.py',[2, 10, 'someOtherArg'], function(err) {
+	console.log(err)
+})
 ```
+<a name="Ncpy+runSync"></a>
+### ncpy.runSync(glob, Argv, [cb])
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| glob | <code>String</code> &#124; <code>Array.&lt;String&gt;</code> | a glob of valid .py files |
+| Argv | <code>Array</code> | global arguments array |
+| [cb] | <code>Callback</code> | Optional callback |
+
 <a name="Ncpy+runString"></a>
 ### ncpy.runString(string)
 Exuute a line of Python script
@@ -176,21 +190,9 @@ cpython.on('error', function(err) {console.log(err)})
 
 cpython.simpleString('from time import time,ctime\nprint 'Today is',ctime(time())\n')
 ```
-<a name="Ncpy+callForeignFunction"></a>
-### ncpy.callForeignFunction(file, functioname) ⇒ <code>function</code>
-[callForeignFunction description]
-
-**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
-**Returns**: <code>function</code> - [description]  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| file | <code>string</code> | [description] |
-| functioname | <code>string</code> | [description] |
-
 <a name="Ncpy+ffi"></a>
 ### ncpy.ffi(file, functionname) ⇒ <code>Callback</code>
-The ffi method serves as entry point fo genreally executing Python functions
+The ffi method serves as entry point for generally executing Python functions
 from .py-files. Important to note is, that is branching in two modes, depending
 how many arguments get passed. If there are arguments it makes a singular call
 to the script, you open and close a whole Python memory contexts for it.

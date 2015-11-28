@@ -304,6 +304,9 @@ class _SSLProtocolTransport(transports._FlowControlMixin,
         """Get optional transport information."""
         return self._ssl_protocol._get_extra_info(name, default)
 
+    def is_closing(self):
+        return self._closed
+
     def close(self):
         """Close the transport.
 
@@ -349,7 +352,7 @@ class _SSLProtocolTransport(transports._FlowControlMixin,
         high-water limit.  Neither value can be negative.
 
         The defaults are implementation-specific.  If only the
-        high-water limit is given, the low-water limit defaults to a
+        high-water limit is given, the low-water limit defaults to an
         implementation-specific value less than or equal to the
         high-water limit.  Setting high to zero forces low to zero as
         well, and causes pause_writing() to be called whenever the

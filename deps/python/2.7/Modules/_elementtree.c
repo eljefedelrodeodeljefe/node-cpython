@@ -337,9 +337,9 @@ element_new(PyObject* tag, PyObject* attrib)
 }
 
 LOCAL(int)
-element_resize(ElementObject* self, int extra)
+element_resize(ElementObject* self, Py_ssize_t extra)
 {
-    int size;
+    Py_ssize_t size;
     PyObject* *children;
 
     /* make sure self->children can hold the given number of extra
@@ -359,6 +359,13 @@ element_resize(ElementObject* self, int extra)
          * be safe.
          */
         size = size ? size : 1;
+        if ((size_t)size > PY_SSIZE_T_MAX/sizeof(PyObject*))
+            goto nomemory;
+        if (size > INT_MAX) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "too many children");
+            return -1;
+        }
         if (self->extra->children != self->extra->_children) {
             /* Coverity CID #182 size_error: Allocating 1 bytes to pointer
              * "children", which needs at least 4 bytes. Although it's a 
@@ -1253,18 +1260,19 @@ element_set(ElementObject* self, PyObject* args)
 }
 
 static int
-element_setitem(PyObject* self_, Py_ssize_t index, PyObject* item)
+element_setitem(PyObject* self_, Py_ssize_t index_, PyObject* item)
 {
     ElementObject* self = (ElementObject*) self_;
-    int i;
+    int i, index;
     PyObject* old;
 
-    if (!self->extra || index < 0 || index >= self->extra->length) {
+    if (!self->extra || index_ < 0 || index_ >= self->extra->length) {
         PyErr_SetString(
             PyExc_IndexError,
             "child assignment index out of range");
         return -1;
     }
+    index = (int)index_;
 
     old = self->extra->children[index];
 
@@ -1373,6 +1381,7 @@ element_ass_subscr(PyObject* self_, PyObject* item, PyObject* value)
                 &start, &stop, &step, &slicelen) < 0) {
             return -1;
         }
+        assert(slicelen <= self->extra->length);
 
         if (value == NULL)
             newlen = 0;
@@ -1390,15 +1399,17 @@ element_ass_subscr(PyObject* self_, PyObject* item, PyObject* value)
 
         if (step !=  1 && newlen != slicelen)
         {
+            Py_XDECREF(seq);
             PyErr_Format(PyExc_ValueError,
 #if (PY_VERSION_HEX < 0x02050000)
                 "attempt to assign sequence of size %d "
                 "to extended slice of size %d",
+                (int)newlen, (int)slicelen
 #else
                 "attempt to assign sequence of size %zd "
                 "to extended slice of size %zd",
-#endif
                 newlen, slicelen
+#endif
                 );
             return -1;
         }
@@ -1407,12 +1418,12 @@ element_ass_subscr(PyObject* self_, PyObject* item, PyObject* value)
         /* Resize before creating the recycle bin, to prevent refleaks. */
         if (newlen > slicelen) {
             if (element_resize(self, newlen - slicelen) < 0) {
-                if (seq) {
-                    Py_DECREF(seq);
-                }
+                Py_XDECREF(seq);
                 return -1;
             }
         }
+        assert(newlen - slicelen <= INT_MAX - self->extra->length);
+        assert(newlen - slicelen >= -self->extra->length);
 
         if (slicelen > 0) {
             /* to avoid recursive calls to this method (via decref), move
@@ -1420,9 +1431,7 @@ element_ass_subscr(PyObject* self_, PyObject* item, PyObject* value)
                we're done modifying the element */
             recycle = PyList_New(slicelen);
             if (!recycle) {
-                if (seq) {
-                    Py_DECREF(seq);
-                }
+                Py_XDECREF(seq);
                 return -1;
             }
             for (cur = start, i = 0; i < slicelen;
@@ -1448,11 +1457,9 @@ element_ass_subscr(PyObject* self_, PyObject* item, PyObject* value)
             self->extra->children[cur] = element;
         }
 
-        self->extra->length += newlen - slicelen;
+        self->extra->length += (int)(newlen - slicelen);
 
-        if (seq) {
-            Py_DECREF(seq);
-        }
+        Py_XDECREF(seq);
 
         /* discard the recycle bin, and everything in it */
         Py_XDECREF(recycle);
@@ -2708,8 +2715,14 @@ xmlparser_parse(XMLParserObject* self, PyObject* args)
             break;
         }
 
+        if (PyString_GET_SIZE(buffer) > INT_MAX) {
+            Py_DECREF(buffer);
+            Py_DECREF(reader);
+            PyErr_SetString(PyExc_OverflowError, "size does not fit in an int");
+            return NULL;
+        }
         res = expat_parse(
-            self, PyString_AS_STRING(buffer), PyString_GET_SIZE(buffer), 0
+            self, PyString_AS_STRING(buffer), (int)PyString_GET_SIZE(buffer), 0
             );
 
         Py_DECREF(buffer);

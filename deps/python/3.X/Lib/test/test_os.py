@@ -1040,6 +1040,9 @@ class MakedirTests(unittest.TestCase):
         os.makedirs(path, mode=mode, exist_ok=True)
         os.umask(old_mask)
 
+        # Issue #25583: A drive root could raise PermissionError on Windows
+        os.makedirs(os.path.abspath('/'), exist_ok=True)
+
     def test_exist_ok_s_isgid_directory(self):
         path = os.path.join(support.TESTFN, 'dir1')
         S_ISGID = stat.S_ISGID
@@ -1449,7 +1452,7 @@ class TestInvalidFD(unittest.TestCase):
         except OSError as e:
             self.assertEqual(e.errno, errno.EBADF)
         else:
-            self.fail("%r didn't raise a OSError with a bad file descriptor"
+            self.fail("%r didn't raise an OSError with a bad file descriptor"
                       % f)
 
     @unittest.skipUnless(hasattr(os, 'isatty'), 'test needs os.isatty()')

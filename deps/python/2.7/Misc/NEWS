@@ -2,13 +2,82 @@
 Python News
 +++++++++++
 
-What's New in Python 2.7.11?
+What's New in Python 2.7.12?
 ============================
 
 *Release date: XXXX-XX-XX*
 
 Core and Builtins
 -----------------
+
+- Issue #24097: Fixed crash in object.__reduce__() if slot name is freed inside
+  __getattr__.
+
+- Issue #24731: Fixed crash on converting objects with special methods
+  __str__, __trunc__, and __float__ returning instances of subclasses of
+  str, long, and float to subclasses of str, long, and float correspondingly.
+
+Library
+-------
+
+- Issue #25742: :func:`locale.setlocale` now accepts a Unicode string for
+  its second parameter.
+
+- Issue #10131: Fixed deep copying of minidom documents.  Based on patch
+  by Marian Ganisin.
+
+- Issue #25725: Fixed a reference leak in cPickle.loads() when unpickling
+  invalid data including tuple instructions.
+
+- Issue #25663: In the Readline completer, avoid listing duplicate global
+  names, and search the global namespace before searching builtins.
+
+- Issue #25688: Fixed file leak in ElementTree.iterparse() raising an error.
+
+- Issue #23914: Fixed SystemError raised by CPickle unpickler on broken data.
+
+Tests
+-----
+
+- Issue #25616: Tests for OrderedDict are extracted from test_collections
+  into separate file test_ordered_dict.
+
+
+What's New in Python 2.7.11?
+============================
+
+*Release date: 2015-12-05*
+
+Core and Builtins
+-----------------
+
+Library
+-------
+
+- Issue #25624: ZipFile now always writes a ZIP_STORED header for directory
+  entries.  Patch by Dingyuan Wang.
+
+
+What's New in Python 2.7.11 release candidate 1?
+================================================
+
+*Release date: 2015-11-21*
+
+Core and Builtins
+-----------------
+
+- Issue #25678: Avoid buffer overreads when int(), long(), float(), and
+  compile() are passed buffer objects.  These objects are not necessarily
+  terminated by a null byte, but the functions assumed they were.
+
+- Issue #25388: Fixed tokenizer hang when processing undecodable source code
+  with a null byte.
+
+- Issue #22995: Default implementation of __reduce__ and __reduce_ex__ now
+  rejects builtin types with not defined __new__.
+
+- Issue #7267: format(int, 'c') now raises OverflowError when the argument is
+  not in range(0, 256).
 
 - Issue #24806: Prevent builtin types that are not allowed to be subclassed from
   being subclassed through multiple inheritance.
@@ -45,6 +114,40 @@ Core and Builtins
 
 Library
 -------
+
+- Issue #10128: backport issue #10845's mitigation of incompatibilities between
+  the multiprocessing module and directory and zipfile execution.
+  Multiprocessing on Windows will now automatically skip rerunning __main__ in
+  spawned processes, rather than failing with AssertionError.
+
+- Issue #25578: Fix (another) memory leak in SSLSocket.getpeercer().
+
+- Issue #25590: In the Readline completer, only call getattr() once per
+  attribute.
+
+- Issue #25530: Disable the vulnerable SSLv3 protocol by default when creating
+  ssl.SSLContext.
+
+- Issue #25569: Fix memory leak in SSLSocket.getpeercert().
+
+- Issue #7759: Fixed the mhlib module on filesystems that doesn't support
+  link counting for directories.
+
+- Issue #892902: Fixed pickling recursive objects.
+
+- Issue #18010: Fix the pydoc GUI's search function to handle exceptions
+  from importing packages.
+
+- Issue #25515: Always use os.urandom as a source of randomness in uuid.uuid4.
+
+- Issue #21827: Fixed textwrap.dedent() for the case when largest common
+  whitespace is a substring of smallest leading whitespace.
+  Based on patch by Robert Li.
+
+- Issue #21709: Fix the logging module to not depend upon __file__ being set
+  properly to get the filename of its caller from the stack.  This allows it
+  to work if run in a frozen or embedded environment where the module's
+  .__file__ attribute does not match its code object's .co_filename.
 
 - Issue #25319: When threading.Event is reinitialized, the underlying condition
   should use a regular lock rather than a recursive lock.
@@ -183,27 +286,53 @@ Library
 IDLE
 ----
 
+- Issue 15348: Stop the debugger engine (normally in a user process)
+  before closing the debugger window (running in the IDLE process).
+  This prevents the RuntimeErrors that were being caught and ignored.
+
+- Issue #24455: Prevent IDLE from hanging when a) closing the shell while the
+  debugger is active (15347); b) closing the debugger with the [X] button
+  (15348); and c) activating the debugger when already active (24455).
+  The patch by Mark Roseman does this by making two changes.
+  1. Suspend and resume the gui.interaction method with the tcl vwait
+  mechanism intended for this purpose (instead of root.mainloop & .quit).
+  2. In gui.run, allow any existing interaction to terminate first.
+
+- Change 'The program' to 'Your program' in an IDLE 'kill program?' message
+  to make it clearer that the program referred to is the currently running
+  user program, not IDLE itself.
+
+- Issue #24750: Improve the appearance of the IDLE editor window status bar.
+  Patch by Mark Roseman.
+
+- Issue #25313: Change the handling of new built-in text color themes to better
+  address the compatibility problem introduced by the addition of IDLE Dark.
+  Consistently use the revised idleConf.CurrentTheme everywhere in idlelib.
+
+- Issue #24782: Extension configuration is now a tab in the IDLE Preferences
+  dialog rather than a separate dialog.   The former tabs are now a sorted
+  list.  Patch by Mark Roseman.
+
+- Issue #22726: Re-activate the config dialog help button with some content
+  about the other buttons and the new IDLE Dark theme.
+
 - Issue #24820: IDLE now has an 'IDLE Dark' built-in text color theme.
   It is more or less IDLE Classic inverted, with a cobalt blue background.
   Strings, comments, keywords, ... are still green, red, orange, ... .
-  Selecting it displays the following warning and solution.
-  "IDLE Dark is new in October, 2015.  Trying to run earlier versions
-  of IDLE with it selected will disable colorizing, or worse.
-  If you might ever run an earlier release of IDLE, then before
-  exiting this version, either switch to another theme or hit the
-  'Save as New Custom Theme' button.  The latter requires a new name,
-  such as 'Custom Dark', but the custom theme will work with any IDLE
-  release, and can be modified."
+  To use it with IDLEs released before November 2015, hit the
+  'Save as New Custom Theme' button and enter a new name,
+  such as 'Custom Dark'.  The custom theme will work with any IDLE
+  release, and can be modified.
 
 - Issue #25224: README.txt is now an idlelib index for IDLE developers and
-  curious users.  The previous user content is now in the IDLE doc and is
-  redundant.  IDLE now means 'Integrated Development and Learning Environment'.
+  curious users.  The previous user content is now in the IDLE doc chapter.
+  'IDLE' now means 'Integrated Development and Learning Environment'.
 
 - Issue #24820: Users can now set breakpoint colors in
   Settings -> Custom Highlighting.  Original patch by Mark Roseman.
 
 - Issue #24972: Inactive selection background now matches active selection
-  background, as configured by user, on all systems.  Found items are now
+  background, as configured by users, on all systems.  Found items are now
   always highlighted on Windows.  Initial patch by Mark Roseman.
 
 - Issue #24570: Idle: make calltip and completion boxes appear on Macs
@@ -248,9 +377,6 @@ IDLE
   The now unused EditorWindow.HelpDialog class and helt.txt file are deprecated.
 
 - Issue #24199: Deprecate unused idlelib.idlever with possible removal in 3.6.
-
-- Issue #24782: In Idle extension config dialog, replace tabs with sorted list.
-  Patch by Mark Roseman.
 
 - Issue #24790: Remove extraneous code (which also create 2 & 3 conflicts).
 
@@ -925,7 +1051,7 @@ IDLE
   Changes are written to HOME/.idlerc/config-extensions.cfg.
   Original patch by Tal Einat.
 
-- Issue #16233: A module browser (File : Class Browser, Alt+C) requires a
+- Issue #16233: A module browser (File : Class Browser, Alt+C) requires an
   editor window with a filename.  When Class Browser is requested otherwise,
   from a shell, output window, or 'Untitled' editor, Idle no longer displays
   an error box.  It now pops up an Open Module box (Alt+M). If a valid name
@@ -3057,7 +3183,7 @@ IDLE
 - Issue #16504: IDLE now catches SyntaxErrors raised by tokenizer. Patch by
   Roger Serwy.
 
-- Issue #1207589: Add Cut/Copy/Paste items to IDLE right click Context Menu
+- Issue #1207589: Add Cut/Copy/Paste items to IDLE right click Context Menu.
   Patch by Todd Rovito.
 
 - Issue #13052: Fix IDLE crashing when replace string in Search/Replace dialog
@@ -3253,7 +3379,7 @@ Tools/Demos
 
 - Issue #16476: Fix json.tool to avoid including trailing whitespace.
 
-- Issue #13301: use ast.literal_eval() instead of eval() in Tools/i18n/msgfmt.py
+- Issue #13301: use ast.literal_eval() instead of eval() in Tools/i18n/msgfmt.py.
   Patch by Serhiy Storchaka.
 
 Documentation

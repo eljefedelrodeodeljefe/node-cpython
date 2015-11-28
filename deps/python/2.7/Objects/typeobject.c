@@ -3214,6 +3214,13 @@ reduce_2(PyObject *obj)
     if (cls == NULL)
         return NULL;
 
+    if (PyType_Check(cls) && ((PyTypeObject *)cls)->tp_new == NULL) {
+        PyErr_Format(PyExc_TypeError,
+                     "can't pickle %s objects",
+                     ((PyTypeObject *)cls)->tp_name);
+        return NULL;
+    }
+
     getnewargs = PyObject_GetAttrString(obj, "__getnewargs__");
     if (getnewargs != NULL) {
         args = PyObject_CallObject(getnewargs, NULL);
@@ -3262,12 +3269,16 @@ reduce_2(PyObject *obj)
             for (i = 0; i < PyList_GET_SIZE(names); i++) {
                 PyObject *name, *value;
                 name = PyList_GET_ITEM(names, i);
+                Py_INCREF(name);
                 value = PyObject_GetAttr(obj, name);
-                if (value == NULL)
+                if (value == NULL) {
+                    Py_DECREF(name);
                     PyErr_Clear();
+                }
                 else {
                     int err = PyDict_SetItem(slots, name,
                                              value);
+                    Py_DECREF(name);
                     Py_DECREF(value);
                     if (err)
                         goto end;

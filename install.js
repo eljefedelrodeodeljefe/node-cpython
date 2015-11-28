@@ -20,12 +20,12 @@ const v3x = '3.X'
 *
 */
 let configureOpts = [
-                    '--prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯ -> Tying to be real clever here
-                    '--exec-prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯
-                    // "--with-PACKAGE=no",
-                    '--without-doc-strings',
-                    '-q'
-                  ];
+  '--prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯ -> Tying to be real clever here
+  '--exec-prefix=' + process.cwd() + '/deps/python/'+ (v27 ? v27 : v3x) + '/build', // Fancy me  ¯\_(ツ)_/¯
+  // "--with-PACKAGE=no",
+  '--without-doc-strings',
+  '-q'
+]
 
 // TODO: do both in a child process.
 let time = process.hrtime();

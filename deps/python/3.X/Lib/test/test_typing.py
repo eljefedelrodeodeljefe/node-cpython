@@ -1,11 +1,7 @@
-from collections import namedtuple
+import pickle
 import re
 import sys
 from unittest import TestCase, main
-try:
-    from unittest import mock
-except ImportError:
-    import mock  # 3rd party install, for PY3.2.
 
 from typing import Any
 from typing import TypeVar, AnyStr
@@ -317,6 +313,10 @@ class UnionTests(TestCase):
         with self.assertRaises(TypeError):
             isinstance(42, Union[int, str])
 
+    def test_union_str_pattern(self):
+        # Shouldn't crash; see http://bugs.python.org/issue25390
+        A = Union[str, Pattern]
+
 
 class TypeVarUnionTests(TestCase):
 
@@ -578,6 +578,36 @@ class GenericTests(TestCase):
                          __name__ + '.' + 'SimpleMapping[~XK, ~XV]')
         self.assertEqual(repr(MySimpleMapping),
                          __name__ + '.' + 'MySimpleMapping[~XK, ~XV]')
+
+    def test_dict(self):
+        T = TypeVar('T')
+        class B(Generic[T]):
+            pass
+        b = B()
+        b.foo = 42
+        self.assertEqual(b.__dict__, {'foo': 42})
+        class C(B[int]):
+            pass
+        c = C()
+        c.bar = 'abc'
+        self.assertEqual(c.__dict__, {'bar': 'abc'})
+
+    def test_pickle(self):
+        T = TypeVar('T')
+        class B(Generic[T]):
+            pass
+        global C  # pickle wants to reference the class by name
+        class C(B[int]):
+            pass
+        c = C()
+        c.foo = 42
+        c.bar = 'abc'
+        for proto in range(pickle.HIGHEST_PROTOCOL + 1):
+            z = pickle.dumps(c, proto)
+            x = pickle.loads(z)
+            self.assertEqual(x.foo, 42)
+            self.assertEqual(x.bar, 'abc')
+            self.assertEqual(x.__dict__, {'foo': 42, 'bar': 'abc'})
 
     def test_errors(self):
         with self.assertRaises(TypeError):
@@ -1133,6 +1163,15 @@ class NamedTupleTests(TestCase):
         assert Emp.__name__ == 'Emp'
         assert Emp._fields == ('name', 'id')
         assert Emp._field_types == dict(name=str, id=int)
+
+    def test_pickle(self):
+        global Emp  # pickle wants to reference the class by name
+        Emp = NamedTuple('Emp', [('name', str), ('id', int)])
+        jane = Emp('jane', 37)
+        for proto in range(pickle.HIGHEST_PROTOCOL + 1):
+            z = pickle.dumps(jane, proto)
+            jane2 = pickle.loads(z)
+            self.assertEqual(jane2, jane)
 
 
 class IOTests(TestCase):

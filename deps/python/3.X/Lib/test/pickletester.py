@@ -12,7 +12,7 @@ import weakref
 from http.cookies import SimpleCookie
 
 from test.support import (
-    TestFailed, TESTFN, run_with_locale, no_tracing,
+    TestFailed, TESTFN, run_with_locale, no_tracing, captured_stdout,
     _2G, _4G, bigmemtest,
     )
 
@@ -103,6 +103,15 @@ class E(C):
 class H(object):
     pass
 
+# Hashable mutable key
+class K(object):
+    def __init__(self, value):
+        self.value = value
+
+    def __reduce__(self):
+        # Shouldn't support the recursion itself
+        return K, (self.value,)
+
 import __main__
 __main__.C = C
 C.__module__ = "__main__"
@@ -112,6 +121,8 @@ __main__.E = E
 E.__module__ = "__main__"
 __main__.H = H
 H.__module__ = "__main__"
+__main__.K = K
+K.__module__ = "__main__"
 
 class myint(int):
     def __init__(self, x):
@@ -976,6 +987,89 @@ class AbstractUnpickleTests(unittest.TestCase):
             self.assertIs(type(unpickled), collections.UserDict)
             self.assertEqual(unpickled, collections.UserDict({1: 2}))
 
+    def test_bad_stack(self):
+        badpickles = [
+            b'0.',              # POP
+            b'1.',              # POP_MARK
+            b'2.',              # DUP
+            # b'(2.',           # PyUnpickler doesn't raise
+            b'R.',              # REDUCE
+            b')R.',
+            b'a.',              # APPEND
+            b'Na.',
+            b'b.',              # BUILD
+            b'Nb.',
+            b'd.',              # DICT
+            b'e.',              # APPENDS
+            # b'(e.',           # PyUnpickler raises AttributeError
+            b'ibuiltins\nlist\n.',  # INST
+            b'l.',              # LIST
+            b'o.',              # OBJ
+            b'(o.',
+            b'p1\n.',           # PUT
+            b'q\x00.',          # BINPUT
+            b'r\x00\x00\x00\x00.',  # LONG_BINPUT
+            b's.',              # SETITEM
+            b'Ns.',
+            b'NNs.',
+            b't.',              # TUPLE
+            b'u.',              # SETITEMS
+            b'(u.',
+            b'}(Nu.',
+            b'\x81.',           # NEWOBJ
+            b')\x81.',
+            b'\x85.',           # TUPLE1
+            b'\x86.',           # TUPLE2
+            b'N\x86.',
+            b'\x87.',           # TUPLE3
+            b'N\x87.',
+            b'NN\x87.',
+            b'\x90.',           # ADDITEMS
+            # b'(\x90.',        # PyUnpickler raises AttributeError
+            b'\x91.',           # FROZENSET
+            b'\x92.',           # NEWOBJ_EX
+            b')}\x92.',
+            b'\x93.',           # STACK_GLOBAL
+            b'Vlist\n\x93.',
+            b'\x94.',           # MEMOIZE
+        ]
+        for p in badpickles:
+            with self.subTest(p):
+                self.assertRaises(self.bad_stack_errors, self.loads, p)
+
+    def test_bad_mark(self):
+        badpickles = [
+            b'cbuiltins\nlist\n)(R.',           # REDUCE
+            b'cbuiltins\nlist\n()R.',
+            b']N(a.',                           # APPEND
+            b'cbuiltins\nValueError\n)R}(b.',   # BUILD
+            b'cbuiltins\nValueError\n)R(}b.',
+            b'(Nd.',                            # DICT
+            b'}NN(s.',                          # SETITEM
+            b'}N(Ns.',
+            b'cbuiltins\nlist\n)(\x81.',        # NEWOBJ
+            b'cbuiltins\nlist\n()\x81.',
+            b'N(\x85.',                         # TUPLE1
+            b'NN(\x86.',                        # TUPLE2
+            b'N(N\x86.',
+            b'NNN(\x87.',                       # TUPLE3
+            b'NN(N\x87.',
+            b'N(NN\x87.',
+            b'cbuiltins\nlist\n)}(\x92.',       # NEWOBJ_EX
+            b'cbuiltins\nlist\n)(}\x92.',
+            b'cbuiltins\nlist\n()}\x92.',
+            b'Vbuiltins\n(Vlist\n\x93.',        # STACK_GLOBAL
+            b'Vbuiltins\nVlist\n(\x93.',
+        ]
+        for p in badpickles:
+            # PyUnpickler prints reduce errors to stdout
+            with self.subTest(p), captured_stdout():
+                try:
+                    self.loads(p)
+                except (IndexError, AttributeError, TypeError,
+                        pickle.UnpicklingError):
+                    pass
+
 
 class AbstractPickleTests(unittest.TestCase):
     # Subclass must define self.dumps, self.loads.
@@ -1041,9 +1135,9 @@ class AbstractPickleTests(unittest.TestCase):
             x = self.loads(s)
             self.assertIsInstance(x, list)
             self.assertEqual(len(x), 1)
-            self.assertTrue(x is x[0])
+            self.assertIs(x[0], x)
 
-    def test_recursive_tuple(self):
+    def test_recursive_tuple_and_list(self):
         t = ([],)
         t[0].append(t)
         for proto in protocols:
@@ -1051,8 +1145,9 @@ class AbstractPickleTests(unittest.TestCase):
             x = self.loads(s)
             self.assertIsInstance(x, tuple)
             self.assertEqual(len(x), 1)
+            self.assertIsInstance(x[0], list)
             self.assertEqual(len(x[0]), 1)
-            self.assertTrue(x is x[0][0])
+            self.assertIs(x[0][0], x)
 
     def test_recursive_dict(self):
         d = {}
@@ -1062,29 +1157,63 @@ class AbstractPickleTests(unittest.TestCase):
             x = self.loads(s)
             self.assertIsInstance(x, dict)
             self.assertEqual(list(x.keys()), [1])
-            self.assertTrue(x[1] is x)
+            self.assertIs(x[1], x)
+
+    def test_recursive_dict_key(self):
+        d = {}
+        k = K(d)
+        d[k] = 1
+        for proto in protocols:
+            s = self.dumps(d, proto)
+            x = self.loads(s)
+            self.assertIsInstance(x, dict)
+            self.assertEqual(len(x.keys()), 1)
+            self.assertIsInstance(list(x.keys())[0], K)
+            self.assertIs(list(x.keys())[0].value, x)
 
     def test_recursive_set(self):
-        h = H()
-        y = set({h})
-        h.attr = y
-        for proto in protocols:
+        y = set()
+        k = K(y)
+        y.add(k)
+        for proto in range(4, pickle.HIGHEST_PROTOCOL + 1):
             s = self.dumps(y, proto)
             x = self.loads(s)
             self.assertIsInstance(x, set)
-            self.assertIs(list(x)[0].attr, x)
             self.assertEqual(len(x), 1)
+            self.assertIsInstance(list(x)[0], K)
+            self.assertIs(list(x)[0].value, x)
 
-    def test_recursive_frozenset(self):
-        h = H()
-        y = frozenset({h})
-        h.attr = y
-        for proto in protocols:
+    def test_recursive_list_subclass(self):
+        y = MyList()
+        y.append(y)
+        for proto in range(2, pickle.HIGHEST_PROTOCOL + 1):
             s = self.dumps(y, proto)
             x = self.loads(s)
-            self.assertIsInstance(x, frozenset)
-            self.assertIs(list(x)[0].attr, x)
+            self.assertIsInstance(x, MyList)
             self.assertEqual(len(x), 1)
+            self.assertIs(x[0], x)
+
+    def test_recursive_dict_subclass(self):
+        d = MyDict()
+        d[1] = d
+        for proto in range(2, pickle.HIGHEST_PROTOCOL + 1):
+            s = self.dumps(d, proto)
+            x = self.loads(s)
+            self.assertIsInstance(x, MyDict)
+            self.assertEqual(list(x.keys()), [1])
+            self.assertIs(x[1], x)
+
+    def test_recursive_dict_subclass_key(self):
+        d = MyDict()
+        k = K(d)
+        d[k] = 1
+        for proto in range(2, pickle.HIGHEST_PROTOCOL + 1):
+            s = self.dumps(d, proto)
+            x = self.loads(s)
+            self.assertIsInstance(x, MyDict)
+            self.assertEqual(len(list(x.keys())), 1)
+            self.assertIsInstance(list(x.keys())[0], K)
+            self.assertIs(list(x.keys())[0].value, x)
 
     def test_recursive_inst(self):
         i = C()
@@ -1110,6 +1239,48 @@ class AbstractPickleTests(unittest.TestCase):
             self.assertEqual(dir(x[0]), dir(i))
             self.assertEqual(list(x[0].attr.keys()), [1])
             self.assertTrue(x[0].attr[1] is x)
+
+    def check_recursive_collection_and_inst(self, factory):
+        h = H()
+        y = factory([h])
+        h.attr = y
+        for proto in protocols:
+            s = self.dumps(y, proto)
+            x = self.loads(s)
+            self.assertIsInstance(x, type(y))
+            self.assertEqual(len(x), 1)
+            self.assertIsInstance(list(x)[0], H)
+            self.assertIs(list(x)[0].attr, x)
+
+    def test_recursive_list_and_inst(self):
+        self.check_recursive_collection_and_inst(list)
+
+    def test_recursive_tuple_and_inst(self):
+        self.check_recursive_collection_and_inst(tuple)
+
+    def test_recursive_dict_and_inst(self):
+        self.check_recursive_collection_and_inst(dict.fromkeys)
+
+    def test_recursive_set_and_inst(self):
+        self.check_recursive_collection_and_inst(set)
+
+    def test_recursive_frozenset_and_inst(self):
+        self.check_recursive_collection_and_inst(frozenset)
+
+    def test_recursive_list_subclass_and_inst(self):
+        self.check_recursive_collection_and_inst(MyList)
+
+    def test_recursive_tuple_subclass_and_inst(self):
+        self.check_recursive_collection_and_inst(MyTuple)
+
+    def test_recursive_dict_subclass_and_inst(self):
+        self.check_recursive_collection_and_inst(MyDict.fromkeys)
+
+    def test_recursive_set_subclass_and_inst(self):
+        self.check_recursive_collection_and_inst(MySet)
+
+    def test_recursive_frozenset_subclass_and_inst(self):
+        self.check_recursive_collection_and_inst(MyFrozenSet)
 
     def test_unicode(self):
         endcases = ['', '<\\u>', '<\\\u1234>', '<\n>',

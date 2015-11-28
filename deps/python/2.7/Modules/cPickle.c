@@ -2533,6 +2533,27 @@ save_reduce(Picklerobject *self, PyObject *args, PyObject *fn, PyObject *ob)
     /* Memoize. */
     /* XXX How can ob be NULL? */
     if (ob != NULL) {
+        /* If the object is already in the memo, this means it is
+           recursive. In this case, throw away everything we put on the
+           stack, and fetch the object back from the memo. */
+        if (Py_REFCNT(ob) > 1 && !self->fast) {
+            PyObject *py_ob_id = PyLong_FromVoidPtr(ob);
+            if (!py_ob_id)
+                return -1;
+            if (PyDict_GetItem(self->memo, py_ob_id)) {
+                const char pop_op = POP;
+                if (self->write_func(self, &pop_op, 1) < 0 ||
+                    get(self, py_ob_id) < 0) {
+                    Py_DECREF(py_ob_id);
+                    return -1;
+                }
+                Py_DECREF(py_ob_id);
+                return 0;
+            }
+            Py_DECREF(py_ob_id);
+            if (PyErr_Occurred())
+                return -1;
+        }
         if (state && !PyDict_Check(state)) {
             if (put2(self, ob) < 0)
                 return -1;
@@ -3777,35 +3798,26 @@ load_binunicode(Unpicklerobject *self)
 
 
 static int
-load_tuple(Unpicklerobject *self)
+load_counted_tuple(Unpicklerobject *self, int len)
 {
     PyObject *tup;
-    Py_ssize_t i;
 
-    if ((i = marker(self)) < 0) return -1;
-    if (!( tup=Pdata_popTuple(self->stack, i)))  return -1;
+    if (self->stack->length < len)
+        return stackUnderflow();
+
+    if (!(tup = Pdata_popTuple(self->stack, self->stack->length - len)))
+        return -1;
     PDATA_PUSH(self->stack, tup, -1);
     return 0;
 }
 
 static int
-load_counted_tuple(Unpicklerobject *self, int len)
+load_tuple(Unpicklerobject *self)
 {
-    PyObject *tup = PyTuple_New(len);
+    Py_ssize_t i;
 
-    if (tup == NULL)
-        return -1;
-
-    while (--len >= 0) {
-        PyObject *element;
-
-        PDATA_POP(self->stack, element);
-        if (element == NULL)
-            return -1;
-        PyTuple_SET_ITEM(tup, len, element);
-    }
-    PDATA_PUSH(self->stack, tup, -1);
-    return 0;
+    if ((i = marker(self)) < 0) return -1;
+    return load_counted_tuple(self, self->stack->length - i);
 }
 
 static int
@@ -3924,6 +3936,10 @@ load_obj(Unpicklerobject *self)
     Py_ssize_t i;
 
     if ((i = marker(self)) < 0) return -1;
+
+    if (self->stack->length - i < 1)
+        return stackUnderflow();
+
     if (!( tup=Pdata_popTuple(self->stack, i+1)))  return -1;
     PDATA_POP(self->stack, class);
     if (class) {
@@ -4475,6 +4491,8 @@ do_append(Unpicklerobject *self, Py_ssize_t  x)
 static int
 load_append(Unpicklerobject *self)
 {
+    if (self->stack->length - 1 <= 0)
+        return stackUnderflow();
     return do_append(self, self->stack->length - 1);
 }
 
@@ -4482,7 +4500,10 @@ load_append(Unpicklerobject *self)
 static int
 load_appends(Unpicklerobject *self)
 {
-    return do_append(self, marker(self));
+    Py_ssize_t i = marker(self);
+    if (i < 0)
+        return -1;
+    return do_append(self, i);
 }
 
 
@@ -4494,6 +4515,14 @@ do_setitems(Unpicklerobject *self, Py_ssize_t x)
 
     if (!( (len=self->stack->length) >= x
            && x > 0 ))  return stackUnderflow();
+    if (len == x)  /* nothing to do */
+        return 0;
+    if ((len - x) % 2 != 0) {
+        /* Currupt or hostile pickle -- we never write one like this. */
+        PyErr_SetString(UnpicklingError,
+                        "odd number of items for SETITEMS");
+        return -1;
+    }
 
     dict=self->stack->data[x-1];
 
@@ -4521,7 +4550,10 @@ load_setitem(Unpicklerobject *self)
 static int
 load_setitems(Unpicklerobject *self)
 {
-    return do_setitems(self, marker(self));
+    Py_ssize_t i = marker(self);
+    if (i < 0)
+        return -1;
+    return do_setitems(self, i);
 }
 
 

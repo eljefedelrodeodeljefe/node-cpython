@@ -423,10 +423,10 @@ def join_header_words(lists):
     Takes a list of lists of (key, value) pairs and produces a single header
     value.  Attribute values are quoted if needed.
 
-    >>> join_header_words([[("text/plain", None), ("charset", "iso-8859/1")]])
-    'text/plain; charset="iso-8859/1"'
-    >>> join_header_words([[("text/plain", None)], [("charset", "iso-8859/1")]])
-    'text/plain, charset="iso-8859/1"'
+    >>> join_header_words([[("text/plain", None), ("charset", "iso-8859-1")]])
+    'text/plain; charset="iso-8859-1"'
+    >>> join_header_words([[("text/plain", None)], [("charset", "iso-8859-1")]])
+    'text/plain, charset="iso-8859-1"'
 
     """
     headers = []
@@ -1437,7 +1437,7 @@ class CookieJar:
                         break
                     # convert RFC 2965 Max-Age to seconds since epoch
                     # XXX Strictly you're supposed to follow RFC 2616
-                    #   age-calculation rules.  Remember that zero Max-Age is a
+                    #   age-calculation rules.  Remember that zero Max-Age
                     #   is a request to discard (old and new) cookie, though.
                     k = "expires"
                     v = self._now + v

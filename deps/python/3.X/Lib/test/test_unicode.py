@@ -43,6 +43,9 @@ def duplicate_string(text):
     """
     return text.encode().decode()
 
+class StrSubclass(str):
+    pass
+
 class UnicodeTest(string_tests.CommonTest,
         string_tests.MixinStrUnicodeUserStringTest,
         string_tests.MixinStrUnicodeTest,
@@ -849,7 +852,15 @@ class UnicodeTest(string_tests.CommonTest,
     @support.cpython_only
     def test_case_operation_overflow(self):
         # Issue #22643
-        self.assertRaises(OverflowError, ("ü"*(2**32//12 + 1)).upper)
+        size = 2**32//12 + 1
+        try:
+            s = "ü" * size
+        except MemoryError:
+            self.skipTest('no enough memory (%.0f MiB required)' % (size / 2**20))
+        try:
+            self.assertRaises(OverflowError, s.upper)
+        finally:
+            del s
 
     def test_contains(self):
         # Testing Unicode contains method
@@ -1433,11 +1444,8 @@ class UnicodeTest(string_tests.CommonTest,
             'unicode remains unicode'
         )
 
-        class UnicodeSubclass(str):
-            pass
-
         for text in ('ascii', '\xe9', '\u20ac', '\U0010FFFF'):
-            subclass = UnicodeSubclass(text)
+            subclass = StrSubclass(text)
             self.assertEqual(str(subclass), text)
             self.assertEqual(len(subclass), len(text))
             if text == 'ascii':
@@ -2191,6 +2199,9 @@ class UnicodeTest(string_tests.CommonTest,
         s = str(StrSubclassToStrSubclass("foo"))
         self.assertEqual(s, "foofoo")
         self.assertIs(type(s), StrSubclassToStrSubclass)
+        s = StrSubclass(StrSubclassToStrSubclass("foo"))
+        self.assertEqual(s, "foofoo")
+        self.assertIs(type(s), StrSubclass)
 
     def test_unicode_repr(self):
         class s1:
