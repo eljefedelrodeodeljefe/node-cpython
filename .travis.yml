@@ -40,6 +40,7 @@ before_install:
   - g++ --version
   - npm install node-gyp -g
   - npm install -g coveralls
+  - npm install -g istanbul
 
 before_script:
 script:
