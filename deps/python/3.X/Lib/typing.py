@@ -981,7 +981,7 @@ class GenericMeta(TypingMeta, abc.ABCMeta):
                         "Cannot substitute %s for %s in %s" %
                         (_type_repr(new), _type_repr(old), self))
 
-        return self.__class__(self.__name__, self.__bases__,
+        return self.__class__(self.__name__, (self,) + self.__bases__,
                               dict(self.__dict__),
                               parameters=params,
                               origin=self,
@@ -1479,6 +1479,11 @@ def NamedTuple(typename, fields):
     fields = [(n, t) for n, t in fields]
     cls = collections.namedtuple(typename, [n for n, t in fields])
     cls._field_types = dict(fields)
+    # Set the module to the caller's module (otherwise it'd be 'typing').
+    try:
+        cls.__module__ = sys._getframe(1).f_globals.get('__name__', '__main__')
+    except (AttributeError, ValueError):
+        pass
     return cls
 
 

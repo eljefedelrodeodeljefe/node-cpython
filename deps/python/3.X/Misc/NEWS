@@ -2,14 +2,75 @@
 Python News
 +++++++++++
 
+What's New in Python 3.5.2 release candidate 1?
+===============================================
+
+Release date: XXXX-XX-XX
+
+Core and Builtins
+-----------------
+
+- Issue #24097: Fixed crash in object.__reduce__() if slot name is freed inside
+  __getattr__.
+
+- Issue #24731: Fixed crash on converting objects with special methods
+  __bytes__, __trunc__, and __float__ returning instances of subclasses of
+  bytes, int, and float to subclasses of bytes, int, and float correspondingly.
+
+Library
+-------
+
+- Issue #10131: Fixed deep copying of minidom documents.  Based on patch
+  by Marian Ganisin.
+
+- Issue #25725: Fixed a reference leak in pickle.loads() when unpickling
+  invalid data including tuple instructions.
+
+- Issue #25663: In the Readline completer, avoid listing duplicate global
+  names, and search the global namespace before searching builtins.
+
+- Issue #25688: Fixed file leak in ElementTree.iterparse() raising an error.
+
+- Issue #23914: Fixed SystemError raised by unpickler on broken pickle data.
+
+- Issue #25691: Fixed crash on deleting ElementTree.Element attributes.
+
+- Issue #25624: ZipFile now always writes a ZIP_STORED header for directory
+  entries.  Patch by Dingyuan Wang.
+
+Tests
+-----
+
+- Issue #25616: Tests for OrderedDict are extracted from test_collections
+  into separate file test_ordered_dict.
+
+
+What's New in Python 3.5.1 final?
+=================================
+
+Release date: 2015-12-06
+
+Core and Builtins
+-----------------
+
+Library
+-------
+
 
 What's New in Python 3.5.1 release candidate 1?
 ===============================================
 
-Release date: TBA
+Release date: 2015-11-22
 
 Core and Builtins
 -----------------
+
+- Issue #25630: Fix a possible segfault during argument parsing in functions
+  that accept filesystem paths.
+
+- Issue #23564: Fixed a partially broken sanity check in the _posixsubprocess
+  internals regarding how fds_to_pass were passed to the child.  The bug had
+  no actual impact as subprocess.py already avoided it.
 
 - Issue #25388: Fixed tokenizer crash when processing undecodable source code
   with a null byte.
@@ -69,6 +130,22 @@ Core and Builtins
 
 Library
 -------
+
+- Issue #25626: Change three zlib functions to accept sizes that fit in
+  Py_ssize_t, but internally cap those sizes to UINT_MAX.  This resolves a
+  regression in 3.5 where GzipFile.read() failed to read chunks larger than 2
+  or 4 GiB.  The change affects the zlib.Decompress.decompress() max_length
+  parameter, the zlib.decompress() bufsize parameter, and the
+  zlib.Decompress.flush() length parameter.
+
+- Issue #25583: Avoid incorrect errors raised by os.makedirs(exist_ok=True)
+  when the OS gives priority to errors such as EACCES over EEXIST.
+
+- Issue #25593: Change semantics of EventLoop.stop() in asyncio.
+
+- Issue #6973: When we know a subprocess.Popen process has died, do
+  not allow the send_signal(), terminate(), or kill() methods to do
+  anything as they could potentially signal a different process.
 
 - Issue #25590: In the Readline completer, only call getattr() once per
   attribute.
@@ -245,6 +322,8 @@ Library
 - Issue #24881: Fixed setting binary mode in Python implementation of FileIO
   on Windows and Cygwin.  Patch from Akira Li.
 
+- Issue #25578: Fix (another) memory leak in SSLSocket.getpeercer().
+
 - Issue #25530: Disable the vulnerable SSLv3 protocol by default when creating
   ssl.SSLContext.
 
@@ -282,27 +361,53 @@ Library
 IDLE
 ----
 
+- Issue 15348: Stop the debugger engine (normally in a user process)
+  before closing the debugger window (running in the IDLE process).
+  This prevents the RuntimeErrors that were being caught and ignored.
+
+- Issue #24455: Prevent IDLE from hanging when a) closing the shell while the
+  debugger is active (15347); b) closing the debugger with the [X] button
+  (15348); and c) activating the debugger when already active (24455).
+  The patch by Mark Roseman does this by making two changes.
+  1. Suspend and resume the gui.interaction method with the tcl vwait
+  mechanism intended for this purpose (instead of root.mainloop & .quit).
+  2. In gui.run, allow any existing interaction to terminate first.
+
+- Change 'The program' to 'Your program' in an IDLE 'kill program?' message
+  to make it clearer that the program referred to is the currently running
+  user program, not IDLE itself.
+
+- Issue #24750: Improve the appearance of the IDLE editor window status bar.
+  Patch by Mark Roseman.
+
+- Issue #25313: Change the handling of new built-in text color themes to better
+  address the compatibility problem introduced by the addition of IDLE Dark.
+  Consistently use the revised idleConf.CurrentTheme everywhere in idlelib.
+
+- Issue #24782: Extension configuration is now a tab in the IDLE Preferences
+  dialog rather than a separate dialog.   The former tabs are now a sorted
+  list.  Patch by Mark Roseman.
+
+- Issue #22726: Re-activate the config dialog help button with some content
+  about the other buttons and the new IDLE Dark theme.
+
 - Issue #24820: IDLE now has an 'IDLE Dark' built-in text color theme.
   It is more or less IDLE Classic inverted, with a cobalt blue background.
   Strings, comments, keywords, ... are still green, red, orange, ... .
-  Selecting it displays the following warning and solution.
-  "IDLE Dark is new in October, 2015.  Trying to run earlier versions
-  of IDLE with it selected will disable colorizing, or worse.
-  If you might ever run an earlier release of IDLE, then before
-  exiting this version, either switch to another theme or hit the
-  'Save as New Custom Theme' button.  The latter requires a new name,
-  such as 'Custom Dark', but the custom theme will work with any IDLE
-  release, and can be modified."
+  To use it with IDLEs released before November 2015, hit the
+  'Save as New Custom Theme' button and enter a new name,
+  such as 'Custom Dark'.  The custom theme will work with any IDLE
+  release, and can be modified.
 
 - Issue #25224: README.txt is now an idlelib index for IDLE developers and
-  curious users.  The previous user content is now in the IDLE doc and is
-  redundant.  IDLE now means 'Integrated Development and Learning Environment'.
+  curious users.  The previous user content is now in the IDLE doc chapter.
+  'IDLE' now means 'Integrated Development and Learning Environment'.
 
 - Issue #24820: Users can now set breakpoint colors in
   Settings -> Custom Highlighting.  Original patch by Mark Roseman.
 
 - Issue #24972: Inactive selection background now matches active selection
-  background, as configured by user, on all systems.  Found items are now
+  background, as configured by users, on all systems.  Found items are now
   always highlighted on Windows.  Initial patch by Mark Roseman.
 
 - Issue #24570: Idle: make calltip and completion boxes appear on Macs
@@ -347,9 +452,6 @@ IDLE
   The now unused EditorWindow.HelpDialog class and helt.txt file are deprecated.
 
 - Issue #24199: Deprecate unused idlelib.idlever with possible removal in 3.6.
-
-- Issue #24782: In Idle extension config dialog, replace tabs with sorted list.
-  Patch by Mark Roseman.
 
 - Issue #24790: Remove extraneous code (which also create 2 & 3 conflicts).
 

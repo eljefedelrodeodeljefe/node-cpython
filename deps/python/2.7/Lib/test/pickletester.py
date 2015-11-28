@@ -634,6 +634,77 @@ class AbstractUnpickleTests(unittest.TestCase):
         self.assertEqual(unpickled, ([],)*2)
         self.assertIs(unpickled[0], unpickled[1])
 
+    def test_bad_stack(self):
+        badpickles = [
+            '0.',              # POP
+            '1.',              # POP_MARK
+            '2.',              # DUP
+            # '(2.',           # PyUnpickler doesn't raise
+            'R.',              # REDUCE
+            ')R.',
+            'a.',              # APPEND
+            'Na.',
+            'b.',              # BUILD
+            'Nb.',
+            'd.',              # DICT
+            'e.',              # APPENDS
+            # '(e.',           # PyUnpickler raises AttributeError
+            'i__builtin__\nlist\n.',  # INST
+            'l.',              # LIST
+            'o.',              # OBJ
+            '(o.',
+            'p1\n.',           # PUT
+            'q\x00.',          # BINPUT
+            'r\x00\x00\x00\x00.',  # LONG_BINPUT
+            's.',              # SETITEM
+            'Ns.',
+            'NNs.',
+            't.',              # TUPLE
+            'u.',              # SETITEMS
+            '(u.',
+            '}(Nu.',
+            '\x81.',           # NEWOBJ
+            ')\x81.',
+            '\x85.',           # TUPLE1
+            '\x86.',           # TUPLE2
+            'N\x86.',
+            '\x87.',           # TUPLE3
+            'N\x87.',
+            'NN\x87.',
+        ]
+        for p in badpickles:
+            try:
+                self.assertRaises(self.bad_stack_errors, self.loads, p)
+            except:
+                print '***', repr(p)
+                raise
+
+    def test_bad_mark(self):
+        badpickles = [
+            'c__builtin__\nlist\n)(R.',        # REDUCE
+            'c__builtin__\nlist\n()R.',
+            ']N(a.',                           # APPEND
+            'cexceptions\nValueError\n)R}(b.',  # BUILD
+            'cexceptions\nValueError\n)R(}b.',
+            '(Nd.',                            # DICT
+            '}NN(s.',                          # SETITEM
+            '}N(Ns.',
+            'c__builtin__\nlist\n)(\x81.',     # NEWOBJ
+            'c__builtin__\nlist\n()\x81.',
+            'N(\x85.',                         # TUPLE1
+            'NN(\x86.',                        # TUPLE2
+            'N(N\x86.',
+            'NNN(\x87.',                       # TUPLE3
+            'NN(N\x87.',
+            'N(NN\x87.',
+        ]
+        for p in badpickles:
+            try:
+                self.loads(p)
+            except (IndexError, AttributeError, TypeError,
+                    pickle.UnpicklingError):
+                pass
+
 
 class AbstractPickleTests(unittest.TestCase):
     # Subclass must define self.dumps, self.loads.

@@ -244,6 +244,33 @@ class ElementTreeTest(unittest.TestCase):
         self.assertEqual(ET.XML, ET.fromstring)
         self.assertEqual(ET.PI, ET.ProcessingInstruction)
 
+    def test_set_attribute(self):
+        element = ET.Element('tag')
+
+        self.assertEqual(element.tag, 'tag')
+        element.tag = 'Tag'
+        self.assertEqual(element.tag, 'Tag')
+        element.tag = 'TAG'
+        self.assertEqual(element.tag, 'TAG')
+
+        self.assertIsNone(element.text)
+        element.text = 'Text'
+        self.assertEqual(element.text, 'Text')
+        element.text = 'TEXT'
+        self.assertEqual(element.text, 'TEXT')
+
+        self.assertIsNone(element.tail)
+        element.tail = 'Tail'
+        self.assertEqual(element.tail, 'Tail')
+        element.tail = 'TAIL'
+        self.assertEqual(element.tail, 'TAIL')
+
+        self.assertEqual(element.attrib, {})
+        element.attrib = {'a': 'b', 'c': 'd'}
+        self.assertEqual(element.attrib, {'a': 'b', 'c': 'd'})
+        element.attrib = {'A': 'B', 'C': 'D'}
+        self.assertEqual(element.attrib, {'A': 'B', 'C': 'D'})
+
     def test_simpleops(self):
         # Basic method sanity checks.
 
@@ -534,10 +561,20 @@ class ElementTreeTest(unittest.TestCase):
         self.assertEqual(res, ['start-ns', 'end-ns'])
 
         events = ("start", "end", "bogus")
-        with self.assertRaises(ValueError) as cm:
-            with open(SIMPLE_XMLFILE, "rb") as f:
+        with open(SIMPLE_XMLFILE, "rb") as f:
+            with self.assertRaises(ValueError) as cm:
                 iterparse(f, events)
+            self.assertFalse(f.closed)
         self.assertEqual(str(cm.exception), "unknown event 'bogus'")
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.filterwarnings("always", category=ResourceWarning)
+            with self.assertRaises(ValueError) as cm:
+                iterparse(SIMPLE_XMLFILE, events)
+            self.assertEqual(str(cm.exception), "unknown event 'bogus'")
+            del cm
+            support.gc_collect()
+        self.assertEqual(w, [])
 
         source = io.BytesIO(
             b"<?xml version='1.0' encoding='iso-8859-1'?>\n"
@@ -558,6 +595,21 @@ class ElementTreeTest(unittest.TestCase):
             next(it)
         self.assertEqual(str(cm.exception),
                 'junk after document element: line 1, column 12')
+
+        with open(TESTFN, "wb") as f:
+            f.write(b"<document />junk")
+        it = iterparse(TESTFN)
+        action, elem = next(it)
+        self.assertEqual((action, elem.tag), ('end', 'document'))
+        with warnings.catch_warnings(record=True) as w:
+            warnings.filterwarnings("always", category=ResourceWarning)
+            with self.assertRaises(ET.ParseError) as cm:
+                next(it)
+            self.assertEqual(str(cm.exception),
+                    'junk after document element: line 1, column 12')
+            del cm, it
+            support.gc_collect()
+        self.assertEqual(w, [])
 
     def test_writefile(self):
         elem = ET.Element("tag")
@@ -2350,6 +2402,7 @@ class ElementSlicingTest(unittest.TestCase):
         self.assertEqual(e[-2].tag, 'a8')
 
         self.assertRaises(IndexError, lambda: e[12])
+        self.assertRaises(IndexError, lambda: e[-12])
 
     def test_getslice_range(self):
         e = self._make_elem_with_children(6)
@@ -2368,12 +2421,17 @@ class ElementSlicingTest(unittest.TestCase):
         self.assertEqual(self._elem_tags(e[::3]), ['a0', 'a3', 'a6', 'a9'])
         self.assertEqual(self._elem_tags(e[::8]), ['a0', 'a8'])
         self.assertEqual(self._elem_tags(e[1::8]), ['a1', 'a9'])
+        self.assertEqual(self._elem_tags(e[3::sys.maxsize]), ['a3'])
+        self.assertEqual(self._elem_tags(e[3::sys.maxsize<<64]), ['a3'])
 
     def test_getslice_negative_steps(self):
         e = self._make_elem_with_children(4)
 
         self.assertEqual(self._elem_tags(e[::-1]), ['a3', 'a2', 'a1', 'a0'])
         self.assertEqual(self._elem_tags(e[::-2]), ['a3', 'a1'])
+        self.assertEqual(self._elem_tags(e[3::-sys.maxsize]), ['a3'])
+        self.assertEqual(self._elem_tags(e[3::-sys.maxsize-1]), ['a3'])
+        self.assertEqual(self._elem_tags(e[3::-sys.maxsize<<64]), ['a3'])
 
     def test_delslice(self):
         e = self._make_elem_with_children(4)
@@ -2399,6 +2457,75 @@ class ElementSlicingTest(unittest.TestCase):
         e = self._make_elem_with_children(2)
         del e[::2]
         self.assertEqual(self._subelem_tags(e), ['a1'])
+
+    def test_setslice_single_index(self):
+        e = self._make_elem_with_children(4)
+        e[1] = ET.Element('b')
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b', 'a2', 'a3'])
+
+        e[-2] = ET.Element('c')
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b', 'c', 'a3'])
+
+        with self.assertRaises(IndexError):
+            e[5] = ET.Element('d')
+        with self.assertRaises(IndexError):
+            e[-5] = ET.Element('d')
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b', 'c', 'a3'])
+
+    def test_setslice_range(self):
+        e = self._make_elem_with_children(4)
+        e[1:3] = [ET.Element('b%s' % i) for i in range(2)]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b0', 'b1', 'a3'])
+
+        e = self._make_elem_with_children(4)
+        e[1:3] = [ET.Element('b')]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b', 'a3'])
+
+        e = self._make_elem_with_children(4)
+        e[1:3] = [ET.Element('b%s' % i) for i in range(3)]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b0', 'b1', 'b2', 'a3'])
+
+    def test_setslice_steps(self):
+        e = self._make_elem_with_children(6)
+        e[1:5:2] = [ET.Element('b%s' % i) for i in range(2)]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b0', 'a2', 'b1', 'a4', 'a5'])
+
+        e = self._make_elem_with_children(6)
+        with self.assertRaises(ValueError):
+            e[1:5:2] = [ET.Element('b')]
+        with self.assertRaises(ValueError):
+            e[1:5:2] = [ET.Element('b%s' % i) for i in range(3)]
+        with self.assertRaises(ValueError):
+            e[1:5:2] = []
+        self.assertEqual(self._subelem_tags(e), ['a0', 'a1', 'a2', 'a3', 'a4', 'a5'])
+
+        e = self._make_elem_with_children(4)
+        e[1::sys.maxsize] = [ET.Element('b')]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b', 'a2', 'a3'])
+        e[1::sys.maxsize<<64] = [ET.Element('c')]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'c', 'a2', 'a3'])
+
+    def test_setslice_negative_steps(self):
+        e = self._make_elem_with_children(4)
+        e[2:0:-1] = [ET.Element('b%s' % i) for i in range(2)]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b1', 'b0', 'a3'])
+
+        e = self._make_elem_with_children(4)
+        with self.assertRaises(ValueError):
+            e[2:0:-1] = [ET.Element('b')]
+        with self.assertRaises(ValueError):
+            e[2:0:-1] = [ET.Element('b%s' % i) for i in range(3)]
+        with self.assertRaises(ValueError):
+            e[2:0:-1] = []
+        self.assertEqual(self._subelem_tags(e), ['a0', 'a1', 'a2', 'a3'])
+
+        e = self._make_elem_with_children(4)
+        e[1::-sys.maxsize] = [ET.Element('b')]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'b', 'a2', 'a3'])
+        e[1::-sys.maxsize-1] = [ET.Element('c')]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'c', 'a2', 'a3'])
+        e[1::-sys.maxsize<<64] = [ET.Element('d')]
+        self.assertEqual(self._subelem_tags(e), ['a0', 'd', 'a2', 'a3'])
 
 
 class IOTest(unittest.TestCase):

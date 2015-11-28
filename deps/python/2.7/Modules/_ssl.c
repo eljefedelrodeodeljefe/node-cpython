@@ -965,7 +965,10 @@ _get_aia_uri(X509 *certificate, int nid) {
     AUTHORITY_INFO_ACCESS *info;
 
     info = X509_get_ext_d2i(certificate, NID_info_access, NULL, NULL);
-    if ((info == NULL) || (sk_ACCESS_DESCRIPTION_num(info) == 0)) {
+    if (info == NULL)
+        return Py_None;
+    if (sk_ACCESS_DESCRIPTION_num(info) == 0) {
+        AUTHORITY_INFO_ACCESS_free(info);
         return Py_None;
     }
 
@@ -3430,7 +3433,7 @@ PySSL_get_default_verify_paths(PyObject *self)
         if (!tmp) { Py_INCREF(Py_None); target = Py_None; } \
         else { target = PyBytes_FromString(tmp); } \
         if (!target) goto error; \
-    } 
+    }
 
     CONVERT(X509_get_default_cert_file_env(), ofile_env);
     CONVERT(X509_get_default_cert_file(), ofile);
