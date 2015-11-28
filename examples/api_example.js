@@ -24,8 +24,11 @@ ncpy.ffi
     console.log('ncpy -> Ending python context here.');
   })
 
-
 ncpy.ffi('examples/py/multiplication.py', 'multiply', [20, 5], function (err, res) {
-  // console.log('ncpy -> easy call to multiply, here');
+  console.log('ncpy -> ' + res);
+})
+
+var secondRefToPy = ncpy.init()
+secondRefToPy.ffi('examples/py/multiplication.py', 'multiply', [11, 5], function (err, res) {
   console.log('ncpy -> ' + res);
 })
