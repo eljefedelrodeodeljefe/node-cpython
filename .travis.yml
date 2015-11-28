@@ -44,7 +44,7 @@ before_install:
 before_script:
 script:
   - npm install
-  - npm run test-soft
+  - npm test
 
 cache:
   directories:
