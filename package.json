@@ -15,7 +15,7 @@
     "tape": "^4.2.2"
   },
   "bin": {
-    "cpython": "./bin/cpython",
+    "ncpy": "./bin/cpython",
     "node-cpython": "./bin/cpython"
   },
   "scripts": {
