@@ -13,7 +13,7 @@ test('Can be required', function (t) {
 });
 
 test('Simple ffi', function (t) {
-    t.plan(2);
+    t.plan(3);
 
     let ncpy = require('../')
     t.comment('Running ffi on simple multiplication')
@@ -21,6 +21,14 @@ test('Simple ffi', function (t) {
       t.deepEqual(err,{}, 'Error is falsy here')
       t.equal(res, 100, 'multiply fixture w/ integers should result in 100')
     })
+
+    ncpy.once('error', function(err) {
+      if(err instanceof Error) {
+        t.pass('Error from class emitter, when ncpy is run w/o insufficient arguments count')
+        console.log(err);
+      }
+    })
+    ncpy.ffi()
 });
 
 test('Py Streams', function (t) {
@@ -63,3 +71,27 @@ test('Py Streams', function (t) {
         t.comment('ncpy -> Ending python context here.');
       })
 });
+
+test('Py Streams', function (t) {
+  t.plan(4)
+  var ncpy = require('../')
+  ncpy.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", function() {
+    t.pass()
+  })
+  ncpy.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n")
+  t.pass('Can be executed w/ no callback also')
+
+  ncpy.once('error', function(err) {
+    if(err instanceof Error) {
+      t.pass('Error from class emitter is of type error')
+    }
+  })
+
+  ncpy.simpleString(2, function(err) {
+    if(err instanceof Error) {
+      t.pass('Error from callback is of type error')
+    }
+  })
+  // var count = 0
+  // ncpy.simpleString(2)
+})
