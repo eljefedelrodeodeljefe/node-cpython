@@ -39,11 +39,12 @@ before_install:
   - gcc --version
   - g++ --version
   - npm install node-gyp -g
+  - npm install -g coveralls
 
 before_script:
 script:
   - npm install
-  - npm test
+  - npm run test-soft
 
 cache:
   directories:
