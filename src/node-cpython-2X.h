@@ -19,7 +19,9 @@ class NodeCPython2X : public Nan::ObjectWrap {
 
   static void PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void IsInitialized(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void IsFinalized(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void SetPath(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
   static void SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info);
