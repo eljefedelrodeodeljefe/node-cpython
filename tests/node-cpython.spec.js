@@ -72,7 +72,7 @@ test('Py Streams', function (t) {
       })
 });
 
-test('Py Streams', function (t) {
+test('Ncpy.simpleString', function (t) {
   t.plan(4)
   var ncpy = require('../')
   ncpy.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", function() {
@@ -92,6 +92,4 @@ test('Py Streams', function (t) {
       t.pass('Error from callback is of type error')
     }
   })
-  // var count = 0
-  // ncpy.simpleString(2)
 })
