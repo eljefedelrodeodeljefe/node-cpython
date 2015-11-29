@@ -2,7 +2,7 @@
 
 Native bindings to run python in its native interpreter.
 
-This Library is in alpha status. **Do not use for fun or profit**
+This Library is in rc status. **Do only use if you know what you do**
 
 [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/node-cpython) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/) [![Join the chat at https://gitter.im/eljefedelrodeodeljefe/node-cpython](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eljefedelrodeodeljefe/node-cpython?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -17,7 +17,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
-| **Core** | - |
+| **Core** |  |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
 | .repl() | **yes** |
 | .run() | - |
@@ -26,14 +26,16 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .simpleString(string, [cb]) | **yes** |
 | .eval() | - |
 | - | - |
-| **Infrastructure** | - |
-| init() | - |
+| **Infrastructure** |  |
+| init() | **yes** |
 | initialize() | **yes** |
 | finalize() | **yes** |
+| isInitialized() | **yes** |
+| isFinalized() | **yes** |
 | setProgramName() | - |
 | setArgv() | - |
 | - | - |
-| **Stream API** | - |
+| **Stream API** |  |
 | ffi.require(py_file, [options]) | **yes** |
 | ffi.init(stream) | **yes** |
 | ffi.run(fn_name) | **yes** |

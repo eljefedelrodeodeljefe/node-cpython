@@ -13,7 +13,9 @@
   * [.ffi(file, functionname)](#Ncpy+ffi) ⇒ <code>Callback</code>
   * [.eval()](#Ncpy+eval)
   * [.initialize()](#Ncpy+initialize)
+  * [.isInitialized()](#Ncpy+isInitialized) ⇒ <code>Boolean</code>
   * [.finalize(callback)](#Ncpy+finalize)
+  * [.isFinalized()](#Ncpy+isFinalized) ⇒ <code>Boolean</code>
   * [.setProgramName(Program)](#Ncpy+setProgramName)
   * [.setArgv(string)](#Ncpy+setArgv)
 
@@ -174,6 +176,12 @@ ncpy.ffi
 initialize python context, reserve memory.
 
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+<a name="Ncpy+isInitialized"></a>
+### ncpy.isInitialized() ⇒ <code>Boolean</code>
+is-check for the interpreter not running
+
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+**Returns**: <code>Boolean</code> - returns true if Py_isInitialized is ecplictely not 0  
 <a name="Ncpy+finalize"></a>
 ### ncpy.finalize(callback)
 Finalize python context, clear memory.
@@ -184,6 +192,12 @@ Finalize python context, clear memory.
 | --- | --- | --- |
 | callback | <code>callback</code> | for completion of py context |
 
+<a name="Ncpy+isFinalized"></a>
+### ncpy.isFinalized() ⇒ <code>Boolean</code>
+is-check for the interpreter not running
+
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+**Returns**: <code>Boolean</code> - return true if Py_isInitialized explictely is 0  
 <a name="Ncpy+setProgramName"></a>
 ### ncpy.setProgramName(Program)
 set low level python program name (optional)

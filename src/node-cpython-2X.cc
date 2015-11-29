@@ -27,7 +27,9 @@ void NodeCPython2X::Init(v8::Local<v8::Object> exports) {
 
   Nan::SetPrototypeMethod(tpl, "preInit", PreInit);
   Nan::SetPrototypeMethod(tpl, "initialize", Initialize);
+  Nan::SetPrototypeMethod(tpl, "isInitialized", Initialize);
   Nan::SetPrototypeMethod(tpl, "finalize", Finalize);
+  Nan::SetPrototypeMethod(tpl, "isFinalized", Finalize);
   Nan::SetPrototypeMethod(tpl, "setPath", SetPath);
 
   Nan::SetPrototypeMethod(tpl, "addModule", AddModule);
@@ -76,10 +78,28 @@ void NodeCPython2X::PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
 void NodeCPython2X::Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Py_Initialize();
+  info.GetReturnValue().Set(Nan::True());
+}
+
+void NodeCPython2X::IsInitialized(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  if (Py_IsInitialized()) {
+    info.GetReturnValue().Set(Nan::True());
+  } else {
+    info.GetReturnValue().Set(Nan::False());
+  }
 }
 
 void NodeCPython2X::Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Py_Finalize();
+  info.GetReturnValue().Set(Nan::True());
+}
+
+void NodeCPython2X::IsFinalized(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  if (!Py_IsInitialized()) {
+    info.GetReturnValue().Set(Nan::True());
+  } else {
+    info.GetReturnValue().Set(Nan::False());
+  }
 }
 
 void NodeCPython2X::SetPath(const Nan::FunctionCallbackInfo<v8::Value>& info) {

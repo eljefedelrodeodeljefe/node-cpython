@@ -72,7 +72,7 @@ test('Py Streams', function (t) {
       })
 });
 
-test('Py Streams', function (t) {
+test('Ncpy.simpleString', function (t) {
   t.plan(4)
   var ncpy = require('../')
   ncpy.simpleString("from time import time,ctime\nprint 'Today is',ctime(time())\n", function() {
@@ -92,6 +92,25 @@ test('Py Streams', function (t) {
       t.pass('Error from callback is of type error')
     }
   })
-  // var count = 0
-  // ncpy.simpleString(2)
+})
+
+test('Ncpy.runString', function (t) {
+  t.plan(1)
+  t.pass()
+})
+
+test('Ncpy.initialize / Ncpy.finalize', function (t) {
+  t.plan(3)
+  var ncpy = require('../')
+  ncpy.initialize()
+  t.ok(ncpy.isInitialized(), 'Ncpy is initialized')
+  ncpy.finalize()
+  ncpy.isFinalized()
+  t.ok(ncpy.isFinalized(), 'Ncpy is finalized')
+  t.pass('initialize and finalize test is okay,q when no segfault or expection is thrown')
+})
+
+test('Ncpy.runString', function (t) {
+  t.plan(1)
+  t.pass()
 })
