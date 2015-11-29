@@ -2,7 +2,7 @@
 
 Native bindings to run python in its native interpreter.
 
-This Library is in alpha status. **Do not use for fun or profit**
+This Library is in rc status. **Do only use if you know what you do**
 
 [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/node-cpython) [![Build status](https://ci.appveyor.com/api/projects/status/59q34ua3i457k27x?svg=true)](https://ci.appveyor.com/project/eljefederodeodeljefe/node-cpython) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/) [![Join the chat at https://gitter.im/eljefedelrodeodeljefe/node-cpython](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eljefedelrodeodeljefe/node-cpython?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -17,7 +17,7 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 ## Implementation Status<a name="status"></a>
 | Method | implemented |
 | --- | --- |
-| **Core** | - |
+| **Core** |  |
 | .ffi(py_file, fn_name, args, [options], [cb]) | **yes** |
 | .repl() | **yes** |
 | .run() | - |
@@ -26,14 +26,16 @@ Sometimes you want to use Python scripts or even whole libraries, but you don't 
 | .simpleString(string, [cb]) | **yes** |
 | .eval() | - |
 | - | - |
-| **Infrastructure** | - |
-| init() | - |
+| **Infrastructure** |  |
+| init() | **yes** |
 | initialize() | **yes** |
 | finalize() | **yes** |
+| isInitialized() | **yes** |
+| isFinalized() | **yes** |
 | setProgramName() | - |
 | setArgv() | - |
 | - | - |
-| **Stream API** | - |
+| **Stream API** |  |
 | ffi.require(py_file, [options]) | **yes** |
 | ffi.init(stream) | **yes** |
 | ffi.run(fn_name) | **yes** |
@@ -87,7 +89,9 @@ Please see [list of the implemented methods](#status) for now.
   * [.ffi(file, functionname)](#Ncpy+ffi) ⇒ <code>Callback</code>
   * [.eval()](#Ncpy+eval)
   * [.initialize()](#Ncpy+initialize)
+  * [.isInitialized()](#Ncpy+isInitialized) ⇒ <code>Boolean</code>
   * [.finalize(callback)](#Ncpy+finalize)
+  * [.isFinalized()](#Ncpy+isFinalized) ⇒ <code>Boolean</code>
   * [.setProgramName(Program)](#Ncpy+setProgramName)
   * [.setArgv(string)](#Ncpy+setArgv)
 
@@ -248,6 +252,12 @@ ncpy.ffi
 initialize python context, reserve memory.
 
 **Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+<a name="Ncpy+isInitialized"></a>
+### ncpy.isInitialized() ⇒ <code>Boolean</code>
+is-check for the interpreter not running
+
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+**Returns**: <code>Boolean</code> - returns true if Py_isInitialized is ecplictely not 0  
 <a name="Ncpy+finalize"></a>
 ### ncpy.finalize(callback)
 Finalize python context, clear memory.
@@ -258,6 +268,12 @@ Finalize python context, clear memory.
 | --- | --- | --- |
 | callback | <code>callback</code> | for completion of py context |
 
+<a name="Ncpy+isFinalized"></a>
+### ncpy.isFinalized() ⇒ <code>Boolean</code>
+is-check for the interpreter not running
+
+**Kind**: instance method of <code>[Ncpy](#Ncpy)</code>  
+**Returns**: <code>Boolean</code> - return true if Py_isInitialized explictely is 0  
 <a name="Ncpy+setProgramName"></a>
 ### ncpy.setProgramName(Program)
 set low level python program name (optional)
