@@ -30,10 +30,11 @@
     },
   "targets": [
     {
-      "target_name": "node-cpython-2X",
+      "target_name": "node-cpython",
       "sources": [
         "src/addon.cc",
         "src/node-cpython-2X.cc",
+        "src/node-cpython-3X.cc",
         "src/ffi.cc"
         ],
       "include_dirs": [

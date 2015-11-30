@@ -1,174 +1,143 @@
-#include <nan.h>
-
-
-
-using namespace v8;
-using namespace std;
+#include "node-cpython-3X.h"
 
 extern "C" {
   #include <Python.h>
+}
 
+Nan::Persistent<v8::Function> NodeCPython3X::constructor;
 
+NodeCPython3X::NodeCPython3X() {
+  Py_Initialize();
+}
+
+NodeCPython3X::~NodeCPython3X() {
+  Py_Finalize();
+}
+
+void NodeCPython3X::Init(v8::Local<v8::Object> exports) {
+  Nan::HandleScope scope;
+
+  // Prepare constructor template
+  v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
+  tpl->SetClassName(Nan::New("NodeCPython3X").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+  // Prototype
+  Nan::SetPrototypeMethod(tpl, "value", GetValue);
+
+  Nan::SetPrototypeMethod(tpl, "preInit", PreInit);
+  Nan::SetPrototypeMethod(tpl, "initialize", Initialize);
+  Nan::SetPrototypeMethod(tpl, "isInitialized", Initialize);
+  Nan::SetPrototypeMethod(tpl, "finalize", Finalize);
+  Nan::SetPrototypeMethod(tpl, "isFinalized", Finalize);
+  Nan::SetPrototypeMethod(tpl, "setPath", SetPath);
+
+  Nan::SetPrototypeMethod(tpl, "addModule", AddModule);
+  Nan::SetPrototypeMethod(tpl, "getDict", GetDict);
+
+  Nan::SetPrototypeMethod(tpl, "simpleString", SimpleString);
+  Nan::SetPrototypeMethod(tpl, "runString", RunString);
+
+  constructor.Reset(tpl->GetFunction());
+  exports->Set(Nan::New("NodeCPython3X").ToLocalChecked(), tpl->GetFunction());
+}
+
+void NodeCPython3X::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  if (info.IsConstructCall()) {
+    // Invoked as constructor: `new NodeCPython3X(...)`
+    NodeCPython3X* obj = new NodeCPython3X();
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
+  } else {
+    // Invoked as plain function `NodeCPython3X(...)`, turn into construct call.
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = { info[0] };
+    v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+    info.GetReturnValue().Set(cons->NewInstance(argc, argv));
+  }
+}
+
+void NodeCPython3X::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  // NodeCPython3X* obj = ObjectWrap::Unwrap<NodeCPython3X>(info.Holder());
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
 
-// NAN_METHOD(simpleString) {
-//   NanScope();
-//
-//   // TODO: Check whether this check is necessary and
-//   // if not redundant to JS check
-//   if (args.Length() != 1) {
-//     NanThrowTypeError("Function expects one argument");
-//     NanReturnUndefined();
-//   }
-//
-//   /*
-//   * This method takes the string from arguments and goes to
-//   * great length to convert from arguments to v8::String.. to
-//   * std::string to c-string, to eventually pass into cpython methods
-//   */
-//   v8::String::Utf8Value py_string_param(args[0]->ToString());
-//   std::string param = std::string(*py_string_param);
-//   const char *py_cstr = param.c_str();
-//
-//   simple_String(py_cstr);
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// NAN_METHOD(simpleFile) {
-//   NanScope();
-//
-//   // TODO: Check whether this check is necessary and
-//   // if not redundant to JS check
-//   // if (args.Length() != 1) {
-//   //   NanThrowTypeError("Function expects one argument");
-//   //   NanReturnUndefined();
-//   // }
-//
-//   // v8::String::Utf8Value py_filepath_string_param(args[0]->ToString());
-//   // std::string param0 = std::string(*py_filepath_string_param);
-//   // const char *py_filepath_cstr = param0.c_str();
-//   //
-//   // v8::String::Utf8Value py_filename_string_param(args[1]->ToString());
-//   // std::string param1 = std::string(*py_filename_string_param);
-//   // const char *py_filename_cstr = param1.c_str();
-//
-//   FILE * fp;
-//   fp = fopen(py_filepath_cstr, "r");
-//
-//   simple_File(fp, py_filename_cstr);
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// NAN_METHOD(run) {
-//   NanScope();
-//
-//   if (args.Length() != 3) {
-//     NanThrowTypeError("Function expects one argument");
-//     NanReturnUndefined();
-//   }
-//
-//
-//
-//   v8::String::Utf8Value py_program_path_string(args[0]->ToString());
-//   std::string param0 = std::string(*py_program_path_string);
-//   const char *path = param0.c_str();
-//
-//   char *program_path;
-//   strcpy(program_path, path);
-//
-//   printf("hello %s\n", program_path);
-//
-//   int arrc = args[1]->NumberValue();
-//
-//   Local<Array> arr= Local<Array>::Cast(args[2]);
-//   char * arrv[] = {};
-//
-//   for (size_t i = 0; i < arrc; i++) {
-//
-//     Local<Value> item = arr->Get(i);
-//     v8::String::Utf8Value array_string(item->ToString());
-//     std::string param = std::string(*array_string);
-//
-//     // first cast const char to char and then
-//     arrv[i] = strdup((char *) param.c_str());
-//   }
-//   // last statement: http://stackoverflow.com/a/1788749/3580261
-//
-//
-//
-//   run(program_path , arrc , arrv);
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// //
-// //
-// NAN_METHOD(initialize) {
-//   NanScope();
-//
-//   initialize();
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// //
-// //
-// NAN_METHOD(finalize) {
-//   NanScope();
-//
-//   finalize();
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// //
-// //
-// NAN_METHOD(setArgv) {
-//   NanScope();
-//
-//   // v8::String::Utf8Value py_filename_string_param(args[0]->ToString());
-//   // std::string param1 = std::string(*py_filename_string_param);
-//   // const char *py_filename_cstr = param1.c_str();
-//
-//   char *arrv[] = {"program name", "arg1", "arg2"};
-//   int arrc = sizeof(arrv) / sizeof(char*) - 1;
-//
-//   pysetargv(arrc,arrv);
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-// NAN_METHOD(setProgramName) {
-//   NanScope();
-//
-//   v8::String::Utf8Value py_program_name_string(args[0]->ToString());
-//   std::string param0 = std::string(*py_program_name_string);
-//   const char *py_program_name_cstr = param0.c_str();
-//
-//   setprogramname(py_program_name_cstr);
-//
-//   // TODO: Clean-up
-//   NanReturnValue(NanNew(0));
-// }
-//
-void Init(Handle<Object> exports) {
-  // exports->Set(NanNew("simpleString"), NanNew<FunctionTemplate>(simpleString)->GetFunction());
-  // exports->Set(NanNew("simpleFile"), NanNew<FunctionTemplate>(simpleFile)->GetFunction());
-  // exports->Set(NanNew("runRun"), NanNew<FunctionTemplate>(run)->GetFunction());
-  // exports->Set(NanNew("initialize"), NanNew<FunctionTemplate>(initialize)->GetFunction());
-  // exports->Set(NanNew("finalize"), NanNew<FunctionTemplate>(finalize)->GetFunction());
-  // exports->Set(NanNew("setargv"), NanNew<FunctionTemplate>(setArgv)->GetFunction());
-  // exports->Set(NanNew("setprogramname"), NanNew<FunctionTemplate>(setProgramName)->GetFunction());
+void NodeCPython3X::PreInit(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  // NodeCPython3X* obj = ObjectWrap::Unwrap<NodeCPython3X>(info.Holder());
+  // obj->value_ += 1;
+  // program = Py_DecodeLocale(info[0], NULL);
+  // if (program == NULL) {
+  //     fprintf(stderr, "Fatal error: cannot decode argv[0]\n");
+  //     exit(1);
+  // }
+  // obj->value_ = program;
+  // info.GetReturnValue().Set(Nan::New(obj->program));
+  // info.GetReturnValue().Set(Nan::New(obj->value_));
 }
 
+void NodeCPython3X::Initialize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  Py_Initialize();
+  info.GetReturnValue().Set(Nan::True());
+}
 
-NODE_MODULE(cpython, Init)
+void NodeCPython3X::IsInitialized(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  if (Py_IsInitialized()) {
+    info.GetReturnValue().Set(Nan::True());
+  } else {
+    info.GetReturnValue().Set(Nan::False());
+  }
+}
+
+void NodeCPython3X::Finalize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  Py_Finalize();
+  info.GetReturnValue().Set(Nan::True());
+}
+
+void NodeCPython3X::IsFinalized(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  if (!Py_IsInitialized()) {
+    info.GetReturnValue().Set(Nan::True());
+  } else {
+    info.GetReturnValue().Set(Nan::False());
+  }
+}
+
+void NodeCPython3X::SetPath(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  std::string argStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = argStr.c_str();
+  // Lorenzo did some magic below
+  PySys_SetPath(const_cast<char*>(str));
+}
+
+void NodeCPython3X::AddModule(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython3X* obj = ObjectWrap::Unwrap<NodeCPython3X>(info.Holder());
+
+  obj->main = PyImport_AddModule("__main__");
+  info.GetReturnValue().Set(Nan::New(obj->main));
+}
+
+void NodeCPython3X::GetDict(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython3X* obj = ObjectWrap::Unwrap<NodeCPython3X>(info.Holder());
+
+  obj->d = PyModule_GetDict(obj->main);
+  info.GetReturnValue().Set(Nan::New(obj->d));
+}
+
+// =============================================================================
+// ================================== High Level ===============================
+// =============================================================================
+
+void NodeCPython3X::SimpleString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = pyStr.c_str();
+  PyRun_SimpleString(str);
+}
+
+void NodeCPython3X::RunString(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  NodeCPython3X* obj = ObjectWrap::Unwrap<NodeCPython3X>(info.Holder());
+
+  std::string pyStr = std::string(*Nan::Utf8String(info[0]->ToString()));
+  const char *str = pyStr.c_str();
+
+  PyRun_String(str, Py_single_input, obj->d, obj->d);
+}
