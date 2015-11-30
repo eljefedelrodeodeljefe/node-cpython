@@ -44,7 +44,12 @@ test('Py Streams', function (t) {
     }
     util.inherits(testTransform, Transform)
     testTransform.prototype._transform = function(data, encoding, done) {
-      console.log(data);
+      let res = [2, 60, 120, 200, 3630]
+      if((res.indexOf(data) > -1) ) {
+        // noop
+      } else {
+        t.fail('When the result is not contained I am failing')
+      }
       return done()
     }
 
@@ -55,7 +60,6 @@ test('Py Streams', function (t) {
     SomeStream.push([55,66])
     SomeStream.push(null)
 
-    let res = [2, 60, 120, 200, 3630]
 
     ncpy.ffi
       // load the python script and intitialize the python interpreter
@@ -67,8 +71,7 @@ test('Py Streams', function (t) {
       // add your own transform or any other stream here
       .pipe(new testTransform())
       .on('end', function() {
-        t.pass()
-        t.comment('ncpy -> Ending python context here.');
+        t.pass('hitting end means a I was able to create and process a stream and pushing it\'s reseult back')
       })
 });
 

@@ -1,7 +1,9 @@
 'use strict';
-var ncpy = require('../index');
+var ncpy = require('../index')
+var util = require('util')
 
 var Readable = require('stream').Readable;
+var Transform = require('stream').Transform;
 var SomeStream = new Readable({ "objectMode": true })
 
 SomeStream.push([1,2])
@@ -11,6 +13,16 @@ SomeStream.push([4,50])
 SomeStream.push([55,66])
 SomeStream.push(null)
 
+function testTransform() {
+  Transform.call(this, { objectMode: true })
+}
+util.inherits(testTransform, Transform)
+
+testTransform.prototype._transform = function(data, encoding, done) {
+  // console.log(data);
+  return done()
+}
+
 ncpy.ffi
   // load the python script and intitialize the python interpreter
   .require('py/multiplication.py', { path: './examples' })
@@ -19,7 +31,7 @@ ncpy.ffi
   // Tell `ncpy` what function to excute.
   .run('multiply')
   // add your own transform or any other stream here
-  .pipe(/*some transform*/)
+  .pipe(new testTransform())
   .on('end', function() {
     console.log('ncpy -> Ending python context here.');
   })
