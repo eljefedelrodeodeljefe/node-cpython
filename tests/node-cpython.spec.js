@@ -110,7 +110,12 @@ test('Ncpy.initialize / Ncpy.finalize', function (t) {
   t.pass('initialize and finalize test is okay,q when no segfault or expection is thrown')
 })
 
-test('Ncpy.runString', function (t) {
-  t.plan(1)
-  t.pass()
+test('Ncpy.init and default options', function (t) {
+  t.plan(3)
+  var ncpy = require('../')
+  t.equal(ncpy.opts.version, '2.7', 'Default version (w/o calling constructor explictely) is 2.7')
+  var ref1 = ncpy.init({version: '2.7'})
+  t.equal(ref1.opts.version, '2.7', 'Version (w/ calling constructor explictely) is 2.7')
+  var ref2 = ncpy.init({version: '3.x'})
+  t.equal(ref2.opts.version, '3.x', 'Version (w/ calling constructor explictely) is 3.x')
 })
