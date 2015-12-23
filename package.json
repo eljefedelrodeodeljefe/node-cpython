@@ -12,7 +12,7 @@
     "nan": "^2.1.0"
   },
   "devDependencies": {
-    "tape": "^4.2.2"
+    "tape": "^4.3.0"
   },
   "bin": {
     "ncpy": "./bin/cpython",
