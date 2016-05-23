@@ -12,6 +12,7 @@
     "nan": "^2.2.1"
   },
   "devDependencies": {
+    "istanbul": "^0.4.3",
     "tape": "^4.5.1"
   },
   "bin": {
