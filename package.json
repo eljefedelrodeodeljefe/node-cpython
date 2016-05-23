@@ -20,9 +20,9 @@
   },
   "scripts": {
     "dev": "nodemon -e js --exec \"./node_modules/tape/bin/tape 'tests/**/*.spec.js'\"",
-    "clone": "git clone -b 2.7 --depth=1 https://github.com/python/cpython deps/python/2.7 && git clone -b 3.5 --depth=1 https://github.com/python/cpython deps/python/3.X",
-    "clean": "rm -rf deps/python/{2.7,3.X}/{Doc,Demo,.git,bzignore,.gitignore,.hgeol,.hgignore,.hgtouch,README}",
-    "deep-clean": "rm -rf deps/python/{2.7,3.X}",
+    "clone": "git clone -b 2.7 --depth=1 https://github.com/python/cpython deps/python/2.7",
+    "clean": "rm -rf deps/python/2.7/{Doc,Demo,.git,bzignore,.gitignore,.hgeol,.hgignore,.hgtouch,README}",
+    "deep-clean": "rm -rf deps/python/2.7",
     "lint": "standard lib/**/*.js",
     "test": "istanbul cover ./node_modules/tape/bin/tape 'tests/**/*.spec.js'",
     "posttest": "(istanbul check-coverage --statements 80 --branches 65 --functions 55 --lines 80 && rm -rf coverage) || echo Look at 'coverage/lcov-report/index.html' to find out more",

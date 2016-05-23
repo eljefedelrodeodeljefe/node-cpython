@@ -391,7 +391,7 @@ buffered_sizeof(buffered *self, void *unused)
 {
     Py_ssize_t res;
 
-    res = sizeof(buffered);
+    res = _PyObject_SIZE(Py_TYPE(self));
     if (self->buffer)
         res += self->buffer_size;
     return PyLong_FromSsize_t(res);
@@ -1028,8 +1028,7 @@ found:
         Py_CLEAR(res);
         goto end;
     }
-    Py_CLEAR(res);
-    res = _PyBytes_Join(_PyIO_empty_bytes, chunks);
+    Py_XSETREF(res, _PyBytes_Join(_PyIO_empty_bytes, chunks));
 
 end:
     LEAVE_BUFFERED(self)
@@ -1264,9 +1263,8 @@ bufferedreader_init(buffered *self, PyObject *args, PyObject *kwds)
     if (_PyIOBase_check_readable(raw, Py_True) == NULL)
         return -1;
 
-    Py_CLEAR(self->raw);
     Py_INCREF(raw);
-    self->raw = raw;
+    Py_XSETREF(self->raw, raw);
     self->buffer_size = buffer_size;
     self->readable = 1;
     self->writable = 0;
@@ -1687,9 +1685,8 @@ bufferedwriter_init(buffered *self, PyObject *args, PyObject *kwds)
     if (_PyIOBase_check_writable(raw, Py_True) == NULL)
         return -1;
 
-    Py_CLEAR(self->raw);
     Py_INCREF(raw);
-    self->raw = raw;
+    Py_XSETREF(self->raw, raw);
     self->readable = 0;
     self->writable = 1;
 
@@ -2344,9 +2341,8 @@ bufferedrandom_init(buffered *self, PyObject *args, PyObject *kwds)
     if (_PyIOBase_check_writable(raw, Py_True) == NULL)
         return -1;
 
-    Py_CLEAR(self->raw);
     Py_INCREF(raw);
-    self->raw = raw;
+    Py_XSETREF(self->raw, raw);
     self->buffer_size = buffer_size;
     self->readable = 1;
     self->writable = 1;
