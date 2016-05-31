@@ -1,6 +1,6 @@
 {
   "name": "cpython",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Native bindings to run python in its native interpreter.",
   "main": "index.js",
   "directories": {
