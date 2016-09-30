@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "istanbul": "^0.4.3",
-    "tape": "^4.5.1"
+    "tape": "^4.6.2"
   },
   "bin": {
     "ncpy": "./bin/cpython",
