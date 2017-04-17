@@ -1,5 +1,7 @@
 # node-cpython
 
+[![Join the chat at https://gitter.im/eljefedelrodeodeljefe/node-cpython](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eljefedelrodeodeljefe/node-cpython?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Native bindings to run python in its native interpreter.
 
 This Library is in rc status. **Do only use if you know what you do**
